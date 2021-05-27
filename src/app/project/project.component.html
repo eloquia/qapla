@@ -1,0 +1,48 @@
+<div id="project-dashboard" class="p-8">
+  <h1 class="text-xl">Projects!</h1>
+
+  <!-- Create Project Action -->
+  <button
+      id="create-project-toggle"
+      class="button py-1 px-2 border border rounded border-blue-300 bg-blue-200 hover:bg-blue-300"
+      (click)="toggleShowForm()">Toggle Form</button>
+  <form
+      id="create-project-form"
+      class="flex flex-col gap-2 w-64"
+      [formGroup]="projectForm"
+      *ngIf="showForm">
+    <label class="flex flex-col">
+      Name:
+      <input type="text" formControlName="name">
+    </label>
+
+    <label class="flex flex-col">
+      Description:
+      <textarea formControlName="description"></textarea>
+    </label>
+
+    <button class="bg-green-200 border border-green-300 hover:bg-green-300" (click)="createProject()">Create</button>
+  </form>
+
+
+  <!-- List Projects -->
+  <div id="project-list" class="my-4">
+    <h1 class="text-xl mb-2">Existing Projects</h1>
+
+    <div
+        id="project-table"
+        class="flex flex-col gap-2">
+      <div
+          id="project-table-header"
+          class="flex gap-2">
+        <span class="w-32 font-bold">Name</span>
+        <span class="w-64 font-bold">Description</span>
+      </div>
+      <div class="flex gap-2" *ngFor="let project of projects; index as i">
+        <span class="w-32">{{ project.name }}</span>
+        <span class="w-64">{{ project.description }}</span>
+        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2" (click)="deleteProject(project.id)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
