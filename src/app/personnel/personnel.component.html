@@ -8,35 +8,84 @@
         (click)="toggleShowForm()">Toggle Form</button>
     <form
         id="create-personnel-form"
-        class="flex flex-col gap-2 w-64"
+        class="flex flex-col gap-2 w-1/2"
         [formGroup]="personnelForm"
         *ngIf="showForm">
-      <label class="flex flex-col">
-        First Name:
-        <input type="text" formControlName="firstName">
-      </label>
 
-      <label class="flex flex-col">
-        Last Name:
-        <input type="text" formControlName="lastName">
-      </label>
+      <div id="create-personnel-form-contents" class="grid grid-cols-2 gap-2">
+        <label class="flex flex-col">
+          First Name:
+          <input type="text" formControlName="firstName" required>
+          <span
+              *ngIf="showErrors && personnelForm.controls.firstName.invalid"
+              class="error text-red-500">
+            First Name is required.
+          </span>
+        </label>
 
-      <label class="flex flex-col">
-        Middle Name:
-        <input type="text" formControlName="middleName">
-      </label>
+        <label class="flex flex-col">
+          Last Name:
+          <input type="text" formControlName="lastName" required>
+          <span
+              *ngIf="showErrors && personnelForm.controls.lastName.invalid"
+              class="error text-red-500">
+            Last Name is required.
+          </span>
+        </label>
 
-      <label class="flex flex-col">
-        Goes By:
-        <input type="text" formControlName="goesBy">
-      </label>
+        <label class="flex flex-col">
+          Middle Name:
+          <input type="text" formControlName="middleName">
+        </label>
 
-      <label class="flex flex-col">
-        Email:
-        <input type="text" formControlName="email">
-      </label>
+        <label class="flex flex-col">
+          Goes By:
+          <input type="text" formControlName="goesBy">
+        </label>
 
-      <button class="bg-green-200 border border-green-300 hover:bg-green-300" (click)="createPersonnel()">Create</button>
+        <label class="flex flex-col">
+          Email:
+          <input type="email" formControlName="email">
+        </label>
+
+        <!-- <div *ngIf="email.invalid && userForm.dirty" class="error">
+          Technologies required.
+        </div>  -->
+
+        <label class="flex flex-col">
+          Gender:
+          <input type="text" formControlName="gender">
+        </label>
+
+        <label class="flex flex-col">
+          Ethnicity:
+          <input type="text" formControlName="ethnicity">
+        </label>
+
+        <label class="flex flex-col">
+          Position:
+          <input type="text" formControlName="position">
+        </label>
+
+        <label class="flex flex-col">
+          Institution:
+          <input type="text" formControlName="institution">
+        </label>
+
+        <label class="flex flex-col">
+          Project(s):
+          <select multiple formControlName="assignedProjects">
+            <option [ngValue]="null" disabled>Assign to a Project?</option>
+            <option *ngFor="let project of projects | async" [ngValue]="project.id">
+              {{ project.name }}
+            </option>
+          </select>
+        </label>
+      </div>
+
+      <button
+          class="bg-green-200 border border-green-300 hover:bg-green-300"
+          (click)="createPersonnel()">Create</button>
     </form>
   </section>
 
@@ -45,10 +94,18 @@
     <div id="personnel-list">
       <div id="personnel-list-header" class="flex gap-2">
         <span class="w-64 font-bold">Name</span>
+        <span class="w-32 font-bold">Recent Activity</span>
         <span class="w-64 font-bold">Email</span>
       </div>
-      <div class="personnel-list-item" class="flex gap-2" *ngFor="let person of personnel; index as i">
-        <span class="w-64">{{ person.firstName }} {{ person.lastName }}</span>
+      <div class="personnel-list-item" class="flex gap-2" *ngFor="let person of personnel | async; index as i">
+        <span class="w-64">
+          <a class="hover:underline text-blue-400" [routerLink]="['/personnel', person.id]">
+            {{ person.firstName }} {{ person.lastName }}
+          </a>
+        </span>
+        <span class="w-32">
+          <!-- <app-personnel-activity></app-personnel-activity> -->
+        </span>
         <span class="w-64">{{ person.email }}</span>
       </div>
     </div>

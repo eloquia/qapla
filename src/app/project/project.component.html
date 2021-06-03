@@ -38,11 +38,22 @@
         <span class="w-32 font-bold">Name</span>
         <span class="w-64 font-bold">Description</span>
       </div>
-      <div class="flex gap-2" *ngFor="let project of projects; index as i">
-        <span class="w-32">{{ project.name }}</span>
-        <span class="w-64">{{ project.description }}</span>
-        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2" (click)="deleteProject(project.id)">Delete</button>
+      <div
+          class="flex gap-2"
+          *ngFor="let project of projects | async; index as i">
+        <span class="w-32">
+          <a class="hover:underline text-blue-400" [routerLink]="['/project', project.id]">
+            {{ project.name }}
+          </a>
+        </span>
+        <span class="w-64">
+          <a class="hover:underline text-blue-400" [routerLink]="['/project', project.id]">
+            {{ project.description }}
+          </a>
+        </span>
+        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2" (click)="deleteProject(project.id, project.name)">Delete</button>
       </div>
     </div>
   </div>
+
 </div>

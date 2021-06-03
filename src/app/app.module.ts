@@ -14,10 +14,10 @@ import { EffectsModule } from '@ngrx/effects';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     CoreModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
+    AppRoutingModule,
   ],
   exports: [
     CoreModule,

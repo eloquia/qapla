@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
-import { Personnel } from './models';
+import { CreatePersonnelRequest, Personnel } from './models';
 import { PersonnelService } from './personnel.service';
+
+import { Project } from '../project/models';
+import { ProjectService } from '../project/project.service';
 
 @Component({
   selector: 'app-personnel',
@@ -12,23 +16,32 @@ import { PersonnelService } from './personnel.service';
 export class PersonnelComponent implements OnInit {
 
   personnelForm = this.formBuilder.group({
-    firstName: [''],
-    lastName: [''],
+    firstName: ['', [ Validators.required ]],
+    lastName: ['', [ Validators.required ]],
     goesBy: [''],
     middleName: [''],
     email: [''],
+    gender: [''],
+    ethnicity: [''],
+    position: [''],
+    institution: [''],
+    assignedProjects: [''],
   });
   showForm: boolean = false;
+  showErrors: boolean = false;
 
-  personnel: Personnel[] = [];
+  personnel: Observable<Personnel[]> = this.personnelService.personnel$;
+  projects: Observable<Project[]> = this.projectService.projects$;
 
   constructor(
     private formBuilder: FormBuilder,
     private personnelService: PersonnelService,
+    private projectService: ProjectService,
   ) { }
 
   ngOnInit(): void {
     this.fetchPersonnel();
+    this.projectService.getAllProjects();
   }
 
   public toggleShowForm(): void {
@@ -36,17 +49,34 @@ export class PersonnelComponent implements OnInit {
   }
 
   public createPersonnel(): void {
-    // this.personnelService.createPersonnel({
+    if (this.personnelForm.invalid) {
+      this.showErrors = true;
+      console.log('errors in form!', this.personnelForm)
+    } else {
+      this.showErrors = false;
+      const createPersonnelRequest: CreatePersonnelRequest = {
+        // required properties
+        firstName: this.personnelForm.get('firstName')?.value,
+        lastName: this.personnelForm.get('lastName')?.value,
 
-    // }).subscribe(response => {
-    //   console.log('response', response)
-    // });
+        // optional properties
+        email: this.personnelForm.get('email')?.value ? this.personnelForm.get('email')?.value : '',
+        middleName: this.personnelForm.get('middleName')?.value ? this.personnelForm.get('middleName')?.value : '',
+        goesBy: this.personnelForm.get('goesBy')?.value ? this.personnelForm.get('goesBy')?.value : '',
+        gender: this.personnelForm.get('gender')?.value ? this.personnelForm.get('gender')?.value : '',
+        ethnicity: this.personnelForm.get('ethnicity')?.value ? this.personnelForm.get('ethnicity')?.value : '',
+        position: this.personnelForm.get('position')?.value ? this.personnelForm.get('position')?.value : '',
+        institution: this.personnelForm.get('institution')?.value ? this.personnelForm.get('institution')?.value : '',
+        assignedProjectIDs: this.personnelForm.get('assignedProjects')?.value ? this.personnelForm.get('assignedProjects')?.value : [],
+      }
+      this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
+        console.log('response', response)
+      });
+    }
   }
 
   public fetchPersonnel(): void {
-    this.personnelService.getAllPersonnel().subscribe(response => {
-      this.personnel = response;
-    });
+    this.personnelService.getAllPersonnel();
   }
 
 }

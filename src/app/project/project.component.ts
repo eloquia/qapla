@@ -17,7 +17,7 @@ export class ProjectComponent implements OnInit {
     description: [''],
   });
 
-  projects: Project[] = [];
+  projects: Observable<Project[]> = this.projectService.projects$;
   showForm: boolean = false;
 
   constructor(
@@ -37,22 +37,15 @@ export class ProjectComponent implements OnInit {
     this.projectService.createProject({
       name: this.projectForm.get('name')?.value,
       description: this.projectForm.get('description')?.value,
-    }).subscribe(response => {
-      console.log('response', response)
     });
   }
 
   public fetchProjects() {
-    return this.projectService.getAllProjects().subscribe((data: any) => {
-      this.projects = data;
-    });
+    return this.projectService.getAllProjects();
   }
 
-  public deleteProject(id: number) {
-    this.projectService.deleteProjectById(id).subscribe(resp => {
-      console.log(`delete response ${resp}`)
-    });
-    // this.projectService.getAllProjects();
+  public deleteProject(id: number, name: string) {
+    this.projectService.deleteProjectById(id, name);
   }
 
 }

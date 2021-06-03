@@ -6,10 +6,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { PersonnelComponent } from './personnel.component';
 import { PersonnelRoutingModule } from './personnel-routing.module';
 import { PersonnelService } from './personnel.service';
+import { PersonnelActivityComponent } from './views/personnel-activity/personnel-activity.component';
+import { ProjectService } from '../project/project.service';
 
 @NgModule({
   declarations: [
-    PersonnelComponent
+    PersonnelComponent,
+    PersonnelActivityComponent
   ],
   imports: [
     CommonModule,
@@ -23,6 +26,7 @@ import { PersonnelService } from './personnel.service';
   ],
   providers: [
     PersonnelService,
+    ProjectService,
   ],
 })
 export class PersonnelModule { }

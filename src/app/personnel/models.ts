@@ -1,3 +1,5 @@
+import { Project } from "../project/models";
+
 export interface Personnel {
   id: number;
   firstName: string;
@@ -5,6 +7,7 @@ export interface Personnel {
   goesBy: string;
   middleName: string;
   email: string;
+  projects: Project[];
 }
 
 export interface CreatePersonnelRequest {
@@ -13,6 +16,11 @@ export interface CreatePersonnelRequest {
   goesBy?: string;
   middleName?: string;
   email: string;
+  gender?: string;
+  ethnicity?: string;
+  position?: string;
+  institution?: string;
+  assignedProjectIDs?: number[];
 }
 
 export interface CreatePersonnelResponse {
@@ -29,4 +37,13 @@ export interface UpdatePersonnelRequest {
   goesBy: string;
   middleName: string;
   email: string;
+}
+
+/*
+
+*/
+
+export interface PersonnelRecentActivity {
+  points: number[];
+  values: number[];
 }
