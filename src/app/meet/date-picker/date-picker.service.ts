@@ -12,8 +12,8 @@ import { DatePickerDay } from '../models';
 export class DatePickerService {
 
   // list of all days displayed in the calendar
-  private daysSubject: Subject<DatePickerDay[]> = new BehaviorSubject<DatePickerDay[]>([]);
-  public days$: Observable<DatePickerDay[]> = this.daysSubject.asObservable();
+  private daysSubject_: Subject<DatePickerDay[]> = new BehaviorSubject<DatePickerDay[]>([]);
+  public days$: Observable<DatePickerDay[]> = this.daysSubject_.asObservable();
 
   public monthOptions: string[] = [
     'Jan',
@@ -29,30 +29,30 @@ export class DatePickerService {
     'Nov',
     'Dec',
   ];
-  private selectedMonthSubject: Subject<string> = new BehaviorSubject<string>(DateTime.now().toFormat('MMM'));
-  public selectedMonth$: Observable<string> = this.selectedMonthSubject.asObservable();
+  private selectedMonthSubject_: Subject<string> = new BehaviorSubject<string>(DateTime.now().toFormat('MMM'));
+  public selectedMonth$: Observable<string> = this.selectedMonthSubject_.asObservable();
   public initialMonth: string = DateTime.now().toFormat('MMM');
 
   public years: number[] = [2020, 2021, 2022];
-  private selectedYearSubject: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
-  public selectedYear$: Observable<number> = this.selectedYearSubject.asObservable();
+  private selectedYearSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
+  public selectedYear$: Observable<number> = this.selectedYearSubject_.asObservable();
   public initialYear: number = DateTime.now().year;
 
-  private selectedDateSubject: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
-  public selectedDate$: Observable<number> = this.selectedDateSubject.asObservable();
+  private selectedDateSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
+  public selectedDate$: Observable<number> = this.selectedDateSubject_.asObservable();
 
-  private updateDateSubject: Subject<any> = new BehaviorSubject<any>(null);
-  public updateDate$: Observable<any> = this.updateDateSubject.asObservable();
+  private updateDateSubject_: Subject<any> = new BehaviorSubject<any>(null);
+  public updateDate$: Observable<any> = this.updateDateSubject_.asObservable();
 
   // displayed dates
-  private displayedYearSubject: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
-  public displayedYear$: Observable<number> = this.displayedYearSubject.asObservable();
+  private displayedYearSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
+  public displayedYear$: Observable<number> = this.displayedYearSubject_.asObservable();
 
-  private displayedMonthSubject: Subject<string> = new BehaviorSubject<string>(DateTime.now().toFormat('MMM'));
-  public displayedMonth$: Observable<string> = this.displayedMonthSubject.asObservable();
+  private displayedMonthSubject_: Subject<string> = new BehaviorSubject<string>(DateTime.now().toFormat('MMM'));
+  public displayedMonth$: Observable<string> = this.displayedMonthSubject_.asObservable();
 
-  private displayedDaySubject: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
-  public displayedDay$: Observable<number> = this.displayedDaySubject.asObservable();
+  private displayedDaySubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
+  public displayedDay$: Observable<number> = this.displayedDaySubject_.asObservable();
 
   constructor(
     private router: Router,
@@ -86,7 +86,7 @@ export class DatePickerService {
         return allDatePickerDays;
       }),
       tap(days => {
-        this.daysSubject.next(days);
+        this.daysSubject_.next(days);
       })
     ).subscribe();
 
@@ -99,19 +99,19 @@ export class DatePickerService {
       const month = dates[1][0]
       const monthNumber: string = `${DateTime.fromFormat(`${month}`, 'MMM').toFormat('MM')}`;
       const year = dates[1][1]
-      this.displayedYearSubject.next(year);
-      this.displayedMonthSubject.next(month);
-      this.displayedDaySubject.next(day);
+      this.displayedYearSubject_.next(year);
+      this.displayedMonthSubject_.next(month);
+      this.displayedDaySubject_.next(day);
       this.router.navigate([`/meet/${year}-${monthNumber}-${day}`])
     });
   }
 
   public updateMonth(month: string): void {
-    this.selectedMonthSubject.next(month);
+    this.selectedMonthSubject_.next(month);
   }
 
   public updateYear(year: number): void {
-    this.selectedYearSubject.next(year);
+    this.selectedYearSubject_.next(year);
   }
 
   /**
@@ -121,7 +121,7 @@ export class DatePickerService {
    * @param day
    */
   public handleSelectedDay(day: string): void {
-    this.updateDateSubject.next(parseInt(day));
+    this.updateDateSubject_.next(parseInt(day));
   }
 
 }
