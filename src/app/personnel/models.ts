@@ -1,12 +1,17 @@
 import { Project } from "../project/models";
 
 export interface Personnel {
-  id: number;
+  personnelID: number;
   firstName: string;
   lastName: string;
   goesBy: string;
   middleName: string;
   email: string;
+  gender?: string;
+  ethnicity?: string;
+  position?: string;
+  institution?: string;
+  isActive?: boolean;
   projects: Project[];
 }
 
@@ -20,6 +25,7 @@ export interface CreatePersonnelRequest {
   ethnicity?: string;
   position?: string;
   institution?: string;
+  isActive?: boolean;
   assignedProjectIDs?: number[];
 }
 
@@ -34,9 +40,15 @@ export interface DeletePersonnelRequest {
 export interface UpdatePersonnelRequest {
   firstName: string;
   lastName: string;
-  goesBy: string;
-  middleName: string;
+  goesBy?: string;
+  middleName?: string;
   email: string;
+  gender?: string;
+  ethnicity?: string;
+  position?: string;
+  institution?: string;
+  isActive?: boolean;
+  assignedProjectIDs?: number[];
 }
 
 /*

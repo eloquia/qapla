@@ -1,9 +1,13 @@
 <div id="project-detail-view" class="m-8 p-8 border rounded">
-  <h1 class="text-xl">{{ project.name }}</h1>
+  <button class="flex py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300" (click)="backToProjects()">
+    <!-- <app-left-arrow></app-left-arrow> -->
+    All Projects
+  </button>
+  <h1 class="text-xl my-2">{{ project.name }}</h1>
 
   <p>{{ project.description }}</p>
 
-  <p>Assigned Interns</p>
+  <p>Assigned Personnel</p>
 
   <ul *ngIf="project.assignedPersonnel && project.assignedPersonnel.length; else noPersonnel">
     <li *ngFor="let person of project.assignedPersonnel">

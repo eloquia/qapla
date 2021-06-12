@@ -1,0 +1,5 @@
+<div id="personnel-detail">
+  <h1 class="text-xl">{{ personnel.firstName }} <span *ngIf="personnel.middleName">{{ personnel.middleName }} </span>{{ personnel.lastName }}</h1>
+
+  <p>Goes By: <span *ngIf="personnel.goesBy; else firstName">{{ personnel.goesBy }}</span><ng-template #firstName>{{ personnel.firstName }}</ng-template></p>
+</div>

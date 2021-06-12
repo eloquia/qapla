@@ -19,9 +19,9 @@ export class ProjectDetailResolverService implements Resolve<Project> {
 
     return this.projectService.getProjectDetails(id).pipe(
       take(1),
-      mergeMap(crisis => {
-        if (crisis) {
-          return of(crisis);
+      mergeMap(project => {
+        if (project) {
+          return of(project);
         } else { // id not found
           this.router.navigate(['/project']);
           return EMPTY;

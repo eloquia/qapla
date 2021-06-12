@@ -1,6 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { Project } from '../../models';
 
 @Component({
@@ -15,7 +15,6 @@ export class ProjectDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location,
   ) { }
 
   ngOnInit(): void {
@@ -26,8 +25,8 @@ export class ProjectDetailComponent implements OnInit {
       });
   }
 
-  back(): void {
-    this.location.back();
+  backToProjects(): void {
+    this.router.navigate(['project'])
   }
 
 }

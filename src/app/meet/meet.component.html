@@ -1,1 +1,12 @@
-<p>meet works!</p>
+<div id="meetings-panel" class="grid grid-cols-12 p-4">
+  <div id="meetings-container" class="col-span-10">
+    <h1>Meetings</h1>
+    <!-- List of any meetings planned -->
+    <router-outlet></router-outlet>
+  </div>
+
+  <div id="meetings-right-panel" class="col-span-2">
+    <!-- Date Picker -->
+    <app-date-picker></app-date-picker>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<div id="personnel-content" class="p-8">
+<div id="personnel-content" class="m-8 p-8 border rounded">
   <h1 class="text-xl">Personnel</h1>
 
   <!-- Create Personnel -->
@@ -90,7 +90,7 @@
   </section>
 
   <!-- List Personnel -->
-  <section>
+  <section class="m-2 p-2">
     <div id="personnel-list">
       <div id="personnel-list-header" class="flex gap-2">
         <span class="w-64 font-bold">Name</span>
@@ -99,7 +99,7 @@
       </div>
       <div class="personnel-list-item" class="flex gap-2" *ngFor="let person of personnel | async; index as i">
         <span class="w-64">
-          <a class="hover:underline text-blue-400" [routerLink]="['/personnel', person.id]">
+          <a class="hover:underline text-blue-400" [routerLink]="['/personnel', person.personnelID]">
             {{ person.firstName }} {{ person.lastName }}
           </a>
         </span>

@@ -7,12 +7,16 @@ import { PersonnelComponent } from './personnel.component';
 import { PersonnelRoutingModule } from './personnel-routing.module';
 import { PersonnelService } from './personnel.service';
 import { PersonnelActivityComponent } from './views/personnel-activity/personnel-activity.component';
+import { PersonnelDetailComponent } from './views/personnel-detail/personnel-detail.component';
+import { PersonnelDetailResolverService } from './views/personnel-detail/personnel-detail-resolver.service';
+
 import { ProjectService } from '../project/project.service';
 
 @NgModule({
   declarations: [
     PersonnelComponent,
-    PersonnelActivityComponent
+    PersonnelActivityComponent,
+    PersonnelDetailComponent,
   ],
   imports: [
     CommonModule,
@@ -27,6 +31,7 @@ import { ProjectService } from '../project/project.service';
   providers: [
     PersonnelService,
     ProjectService,
+    PersonnelDetailResolverService,
   ],
 })
 export class PersonnelModule { }
