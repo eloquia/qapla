@@ -12,7 +12,7 @@ import { DatePickerService } from './date-picker.service';
 })
 export class DatePickerComponent implements OnInit, OnDestroy {
 
-  days: Observable<DatePickerDay[]> = this.datePickerService.days$;
+  days: Observable<DatePickerDay[]> = this.datePickerService.calendarDays$;
   monthOptions: string[] = this.datePickerService.monthOptions;
   years: number[] = this.datePickerService.years;
 

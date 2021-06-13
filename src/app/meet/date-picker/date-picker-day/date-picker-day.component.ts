@@ -7,7 +7,7 @@ import { DatePickerService } from '../date-picker.service';
   selector: 'app-date-picker-day',
   template: `<div
       class="date-picker-day"
-      class="w-6 h-6 flex items-center justify-center hover:cursor-pointer hover:bg-green-100"
+      class="w-6 h-6 flex items-center justify-center hover:cursor-pointer hover:bg-blue-100"
       [class]="{
         'cursor-pointer': !!displayValue,
         'border': isToday,

@@ -16,10 +16,12 @@ export class MeetDateResolverService implements Resolve<Meeting[]> {
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Meeting[] | Observable<Meeting[]> | Promise<Meeting[]> {
     const date = route.paramMap.get('date')!;
+    console.log('date!', date)
 
     return this.meetingService.getMeetingsByDate(date).pipe(
       take(1),
       mergeMap(meetings => {
+        console.log('meetings from API', meetings)
         if (meetings) {
           return of(meetings);
         } else {

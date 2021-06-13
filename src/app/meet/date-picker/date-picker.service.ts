@@ -12,8 +12,11 @@ import { DatePickerDay } from '../models';
 export class DatePickerService {
 
   // list of all days displayed in the calendar
-  private daysSubject_: Subject<DatePickerDay[]> = new BehaviorSubject<DatePickerDay[]>([]);
-  public days$: Observable<DatePickerDay[]> = this.daysSubject_.asObservable();
+  private calendarDaysSubject_: Subject<DatePickerDay[]> = new BehaviorSubject<DatePickerDay[]>([]);
+  public calendarDays$: Observable<DatePickerDay[]> = this.calendarDaysSubject_.asObservable();
+
+  private selectedDateSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
+  public selectedDate$: Observable<number> = this.selectedDateSubject_.asObservable();
 
   public monthOptions: string[] = [
     'Jan',
@@ -29,20 +32,17 @@ export class DatePickerService {
     'Nov',
     'Dec',
   ];
+  public initialMonth: string = DateTime.now().toFormat('MMM');
   private selectedMonthSubject_: Subject<string> = new BehaviorSubject<string>(DateTime.now().toFormat('MMM'));
   public selectedMonth$: Observable<string> = this.selectedMonthSubject_.asObservable();
-  public initialMonth: string = DateTime.now().toFormat('MMM');
 
   public years: number[] = [2020, 2021, 2022];
+  public initialYear: number = DateTime.now().year;
   private selectedYearSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
   public selectedYear$: Observable<number> = this.selectedYearSubject_.asObservable();
-  public initialYear: number = DateTime.now().year;
 
-  private selectedDateSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().day);
-  public selectedDate$: Observable<number> = this.selectedDateSubject_.asObservable();
-
-  private updateDateSubject_: Subject<any> = new BehaviorSubject<any>(null);
-  public updateDate$: Observable<any> = this.updateDateSubject_.asObservable();
+  // private updateDateSubject_: Subject<any> = new BehaviorSubject<any>(null);
+  // public updateDate$: Observable<any> = this.updateDateSubject_.asObservable();
 
   // displayed dates
   private displayedYearSubject_: Subject<number> = new BehaviorSubject<number>(DateTime.now().year);
@@ -68,6 +68,7 @@ export class DatePickerService {
         const actualDays: string[] = Array.from(Array(dt.daysInMonth).keys()).map(n => `${n + 1}`);
         const allDays = paddedDays.concat(actualDays);
 
+        // TODO: eventually refactor this to use this.computeCalendarDays()
         const allDatePickerDays: DatePickerDay[] = allDays.map<DatePickerDay>(displayValue => {
           const todaysDate = DateTime.now().startOf('day').toMillis()
           const iteratedDate = DateTime.fromFormat(`${year}-${month}-${displayValue}`, 'yyyy-MMM-d').startOf('day').toMillis()
@@ -86,13 +87,16 @@ export class DatePickerService {
         return allDatePickerDays;
       }),
       tap(days => {
-        this.daysSubject_.next(days);
+        this.calendarDaysSubject_.next(days);
       })
     ).subscribe();
 
-    // every time a day is clicked, take values from year, month, and day, and pass them to displayed dates
+    // every time a day is clicked, do the following:
+    // 1. Update displayed dates
+    // 2. Update routing
+    // 3. Update calendar days
     const monthYear = combineLatest([this.selectedMonth$, this.selectedYear$])
-    this.updateDate$.pipe(
+    this.selectedDate$.pipe(
       withLatestFrom(monthYear)
     ).subscribe(dates => {
       const day = dates[0];
@@ -103,6 +107,9 @@ export class DatePickerService {
       this.displayedMonthSubject_.next(month);
       this.displayedDaySubject_.next(day);
       this.router.navigate([`/meet/${year}-${monthNumber}-${day}`])
+
+      const calendarDays: DatePickerDay[] = this.computeCalendarDays(year, month, day);
+      this.calendarDaysSubject_.next(calendarDays);
     });
   }
 
@@ -121,7 +128,43 @@ export class DatePickerService {
    * @param day
    */
   public handleSelectedDay(day: string): void {
-    this.updateDateSubject_.next(parseInt(day));
+    this.selectedDateSubject_.next(parseInt(day));
+  }
+
+  /**
+   * Function that calculates the days in the calendar.
+   * @param year
+   * @param month
+   * @param day
+   * @returns
+   */
+  private computeCalendarDays(year: number, month: string, day: number): DatePickerDay[] {
+    // TODO: refactor to handle optional day input
+    const dt = DateTime.fromFormat(`${year}-${month}`, 'yyyy-MMM').startOf('day');
+
+    // Monday is 1, so Sunday must be 0
+    const numPaddedDays = dt.weekday % 7;
+    const paddedDays: string[] = Array.from(Array(numPaddedDays).keys()).map(() => ''); // blank days on the calendar before actual days
+    const actualDays: string[] = Array.from(Array(dt.daysInMonth).keys()).map(n => `${n + 1}`);
+    const allDays = paddedDays.concat(actualDays);
+
+    // apply properties to
+    const allDatePickerDays: DatePickerDay[] = allDays.map<DatePickerDay>(displayValue => {
+      const iteratedDate = DateTime.fromFormat(`${year}-${month}-${displayValue}`, 'yyyy-MMM-d').startOf('day').toMillis()
+      const todaysDate = DateTime.now().startOf('day').toMillis()
+      const isToday = todaysDate === iteratedDate
+
+      const selectedDate = DateTime.fromFormat(`${year}-${month}-${day}`, 'yyyy-MMM-d').toMillis();
+      const isSelectedDay = iteratedDate === selectedDate;
+
+      return {
+        displayValue,
+        isToday,
+        isSelectedDay,
+      }
+    });
+
+    return allDatePickerDays;
   }
 
 }
