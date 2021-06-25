@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Personnel } from '../../models';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { DisplayedPersonnel, UpdatePersonnelRequest } from '../../models';
+import { PersonnelService } from '../../personnel.service';
 
 @Component({
   selector: 'app-personnel-detail',
@@ -9,22 +13,109 @@ import { Personnel } from '../../models';
 })
 export class PersonnelDetailComponent implements OnInit {
 
-  personnel!: Personnel;
+  personnel$: Observable<DisplayedPersonnel> = this.personnelService.selectedPersonnel$.pipe(
+    tap(personnel => {
+      this.editPersonnelForm.setControl('firstName', new FormControl(personnel.firstName));
+      this.editPersonnelForm.setControl('lastName', new FormControl(personnel.lastName));
+      this.editPersonnelForm.setControl('goesBy', new FormControl(personnel.goesBy));
+      this.editPersonnelForm.setControl('middleName', new FormControl(personnel.middleName));
+      this.editPersonnelForm.setControl('email', new FormControl(personnel.email));
+      this.editPersonnelForm.setControl('gender', new FormControl(personnel.gender));
+      this.editPersonnelForm.setControl('position', new FormControl(personnel.position));
+      this.editPersonnelForm.setControl('institution', new FormControl(personnel.institution));
+
+      this.editPersonnelForm.setControl('isActive', new FormControl(personnel.isActive));
+    })
+  );
+
+  editPersonnelForm = this.formBuilder.group({
+    firstName: [''],
+    lastName: [''],
+    goesBy: [''],
+    middleName: [''],
+    email: [''],
+    gender: [''],
+    ethnicity: [''],
+    position: [''],
+    institution: [''],
+    isActive: [''],
+  });
+
+  id: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private personnelService: PersonnelService,
+    private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit(): void {
     this.route.data
       .subscribe(data => {
-        this.personnel = data.personnel;
+        const personnel = data.personnel;
+        this.id = personnel.id;
+
+        this.personnelService.setFocusedPersonnel(personnel);
       });
   }
 
   backToPersonnel(): void {
     this.router.navigate(['personnel'])
+  }
+
+  public focusout(input?: any): void {
+    console.log('focusout', input)
+  }
+
+  public handleAddGoal(text: string, type: string) {
+    this.personnelService.addPersonnelGoal({
+      text,
+      type
+    })
+  }
+  public handleRemoveGoal(goalId: number) {
+    this.personnelService.removePersonnelGoalById(goalId)
+  }
+  public handleAddExperience(text: string, type: string) {
+    this.personnelService.addPersonnelExperience({
+      text,
+      type
+    })
+  }
+  public handleRemoveExperience(experienceId: number) {
+    this.personnelService.removePersonnelExperienceById(experienceId)
+  }
+  public handleAddLike(text: string, type: string) {
+    this.personnelService.addPersonnelLike({
+      text,
+      type
+    })
+  }
+  public handleRemoveLike(likeId: number) {
+    this.personnelService.removePersonnelLikeById(likeId)
+  }
+
+  public updatePersonnel(): void {
+    // create the updateRequest from from values
+    const updatePersonnelRequest: UpdatePersonnelRequest = {
+      id: this.id,
+      firstName: this.editPersonnelForm.get('firstName')?.value,
+      lastName: this.editPersonnelForm.get('lastName')?.value,
+      middleName: this.editPersonnelForm.get('middleName')?.value,
+      goesBy: this.editPersonnelForm.get('goesBy')?.value,
+      email: this.editPersonnelForm.get('email')?.value,
+      gender: this.editPersonnelForm.get('gender')?.value,
+      ethnicity: this.editPersonnelForm.get('ethnicity')?.value,
+      position: this.editPersonnelForm.get('position')?.value,
+      institution: this.editPersonnelForm.get('institution')?.value,
+      isActive: this.editPersonnelForm.get('isActive')?.value,
+    };
+    this.personnelService.updatePersonnel(updatePersonnelRequest);
+  }
+
+  public setActivity(isActive: boolean): void {
+    this.editPersonnelForm.get('isActive')?.setValue(isActive);
   }
 
 }

@@ -1,0 +1,6 @@
+{
+  "/api": {
+    "target": "http://cevapi:8080",
+    "secure": false
+  }
+}

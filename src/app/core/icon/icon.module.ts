@@ -3,15 +3,19 @@ import { CommonModule } from '@angular/common';
 
 import { XComponent } from './x/x.component';
 import { LeftArrowComponent } from './left-arrow/left-arrow.component';
+import { PlusCircleComponent } from './plus-circle/plus-circle.component';
 
 @NgModule({
   declarations: [
     XComponent,
     LeftArrowComponent,
+    PlusCircleComponent,
   ],
   exports: [
     XComponent,
     LeftArrowComponent,
+    PlusCircleComponent,
+    CommonModule,
   ],
   imports: [
     CommonModule

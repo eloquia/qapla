@@ -70,13 +70,18 @@ export class PersonnelComponent implements OnInit {
         assignedProjectIDs: this.personnelForm.get('assignedProjects')?.value ? this.personnelForm.get('assignedProjects')?.value : [],
       }
       this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
-        console.log('response', response)
+        this.clearForm();
+        this.showForm = false;
       });
     }
   }
 
   public fetchPersonnel(): void {
     this.personnelService.getAllPersonnel();
+  }
+
+  public clearForm(): void {
+    this.personnelForm.reset();
   }
 
 }

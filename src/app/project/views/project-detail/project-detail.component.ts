@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
+import { Personnel } from 'src/app/personnel/models';
+import { PersonnelService } from 'src/app/personnel/personnel.service';
 import { Project } from '../../models';
+import { ProjectService } from '../../project.service';
 
 @Component({
   selector: 'app-project-detail',
@@ -10,23 +16,87 @@ import { Project } from '../../models';
 })
 export class ProjectDetailComponent implements OnInit {
 
-  project!: Project;
+  unassignedPersonnel: Observable<Personnel[]> = this.personnelService.unassignedPersonnel$;
+  personnelRemovalForm = this.formBuilder.group({
+    removePersonnelArray: this.formBuilder.array([]),
+  });
+
+  // Every time project changes, update the personnel removal form
+  project$: Observable<Project> = this.projectService.selectedProject$;
+  subscription = this.projectService.selectedProject$.pipe(
+    tap(newProject => {
+      // fill out form--create a form control inside the array
+      newProject.assignedPersonnel
+
+      if (newProject.assignedPersonnel) {
+        const fgArgs = newProject.assignedPersonnel.map(() => {
+
+          return this.formBuilder.group({
+            remove: new FormControl(false),
+          })
+        });
+
+        const fa = this.formBuilder.array(fgArgs);
+        this.personnelRemovalForm.setControl('removePersonnelArray', fa)
+      }
+    })
+  ).subscribe();
+
+  assignPersonnelForm = this.formBuilder.group({
+    personnels: [''],
+  });
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-  ) { }
+    private personnelService: PersonnelService,
+    private projectService: ProjectService,
+    private formBuilder: FormBuilder,
+  ) {
+    this.personnelService.getAllPersonnel();
+  }
 
   ngOnInit(): void {
     this.route.data
       .subscribe(data => {
         const project: Project = data.project;
-        this.project = project;
+
+        if (!project.slug) {
+          console.warn('No slug for this project!');
+        } else {
+          this.projectService.getProjectBySlug(project.slug);
+        }
       });
   }
 
-  backToProjects(): void {
+  public backToProjects(): void {
     this.router.navigate(['project'])
   }
+
+  public addPersonnel(): void {
+    if (this.assignPersonnelForm.get('personnels')?.value) {
+      const assignedPersonnelIDs = this.assignPersonnelForm.get('personnels')?.value;
+
+      this.projectService.addProjectPersonnel(assignedPersonnelIDs);
+    }
+  }
+
+  public get removePersonnelArray(): FormArray {
+    return this.personnelRemovalForm.get('removePersonnelArray') as FormArray;
+  }
+
+  public removePersonnel(): void {
+    const removalArray = this.personnelRemovalForm.get('removePersonnelArray')?.value;
+    this.projectService.removeProjectPersonnel(removalArray);
+  }
+
+  // TODO: Re-enable this validator, possibly
+  // public minRemoveValidator(): ValidatorFn {
+  //   return (control: AbstractControl) : ValidationErrors | null => {
+  //     const value = control;
+  //     console.log('value', value)
+  //     return null;
+  //   }
+  // }
 
 }

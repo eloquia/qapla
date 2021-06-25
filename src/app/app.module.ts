@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -15,8 +16,9 @@ import { EffectsModule } from '@ngrx/effects';
   imports: [
     BrowserModule,
     CoreModule,
-    StoreModule.forRoot({}, {}),
-    EffectsModule.forRoot([]),
+    HttpClientModule,
+    // StoreModule.forRoot({}, {}),
+    // EffectsModule.forRoot([]),
     AppRoutingModule,
   ],
   exports: [

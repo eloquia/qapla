@@ -99,7 +99,7 @@
       </div>
       <div class="personnel-list-item" class="flex gap-2" *ngFor="let person of personnel | async; index as i">
         <span class="w-64">
-          <a class="hover:underline text-blue-400" [routerLink]="['/personnel', person.personnelID]">
+          <a class="hover:underline text-blue-400" [routerLink]="['/personnel', person.id]">
             {{ person.firstName }} {{ person.lastName }}
           </a>
         </span>

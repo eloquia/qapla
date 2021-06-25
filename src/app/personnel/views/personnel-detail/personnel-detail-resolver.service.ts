@@ -3,18 +3,18 @@ import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@a
 import { EMPTY, Observable, of } from 'rxjs';
 import { mergeMap, take } from 'rxjs/operators';
 
-import { Personnel } from '../../models';
+import { DisplayedPersonnel } from '../../models';
 import { PersonnelService } from '../../personnel.service';
 
 @Injectable()
-export class PersonnelDetailResolverService implements Resolve<Personnel> {
+export class PersonnelDetailResolverService implements Resolve<DisplayedPersonnel> {
 
   constructor(
     private personnelService: PersonnelService,
     private router: Router,
   ) { }
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Personnel | Observable<Personnel> | Promise<Personnel> {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): DisplayedPersonnel | Observable<DisplayedPersonnel> | Promise<DisplayedPersonnel> {
     const id = route.paramMap.get('id');
 
     if (!id) {
@@ -24,9 +24,9 @@ export class PersonnelDetailResolverService implements Resolve<Personnel> {
 
     return this.personnelService.getPersonnelDetails(id).pipe(
       take(1),
-      mergeMap(personnel => {
-        if (personnel) {
-          return of(personnel);
+      mergeMap(displayedPersonnel => {
+        if (displayedPersonnel) {
+          return of(displayedPersonnel);
         } else {
           this.router.navigate(['personnel']);
           return EMPTY

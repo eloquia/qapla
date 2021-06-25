@@ -1,0 +1,22 @@
+{
+  "id": 19,
+  "firstName": "Dale",
+  "lastName": "Chang",
+  "goesBy": "",
+  "middleName": "",
+  "email": "dale@eloquia.io",
+  "gender": "M",
+  "ethnicity": "East Asian",
+  "position": "Industry",
+  "institution": "Cigna/Evernorth",
+  "isActive": true,
+  "assignedProjects": [
+    {
+      "id": 7,
+      "name": "Unassigned Project",
+      "slug": "unassigned-project",
+      "description": "This is the project that you can assign people to when no suitable project exists, or if the person does not belong to a specific project",
+      "assignedPersonnel": null
+    }
+  ]
+}

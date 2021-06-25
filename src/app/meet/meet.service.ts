@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 
 import { Meeting } from './models';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MeetService {
 
   constructor(

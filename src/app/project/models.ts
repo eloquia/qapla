@@ -13,7 +13,15 @@ export interface Project {
   id: number;
   name: string;
   description: string;
-  assignedPersonnel: Personnel[];
+  slug?: string;
+  assignedPersonnel?: Personnel[];
+  assignedPersonnelIDs?: number[];
+}
+
+export const EMPTY_PROJECT: Project = {
+  id: 0,
+  name: '',
+  description: '',
 }
 
 export interface ProjectNote {

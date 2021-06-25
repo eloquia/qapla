@@ -11,7 +11,7 @@ const projectRoutes: Routes = [
     component: ProjectComponent,
   },
   {
-    path: ':id',
+    path: ':slug',
     component: ProjectDetailComponent,
     resolve: {
       project: ProjectDetailResolverService,

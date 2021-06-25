@@ -15,9 +15,9 @@ export class ProjectDetailResolverService implements Resolve<Project> {
   ) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Project | Observable<Project> | Promise<Project> {
-    const id = route.paramMap.get('id')!;
+    const slug = route.paramMap.get('slug')!;
 
-    return this.projectService.getProjectDetails(id).pipe(
+    return this.projectService.getProjectBySlug(slug).pipe(
       take(1),
       mergeMap(project => {
         if (project) {

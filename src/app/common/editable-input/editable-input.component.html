@@ -1,0 +1,8 @@
+<p
+    *ngIf="isEditing; else editMode"
+    (click)="toggleEditMode(true)">
+  {{ displayValue }}
+</p>
+<ng-template #editMode>
+  <input type="text" (focusout)="focusout()">
+</ng-template>

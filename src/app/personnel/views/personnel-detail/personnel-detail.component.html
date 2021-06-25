@@ -1,5 +1,159 @@
 <div id="personnel-detail">
-  <h1 class="text-xl">{{ personnel.firstName }} <span *ngIf="personnel.middleName">{{ personnel.middleName }} </span>{{ personnel.lastName }}</h1>
+  <div
+      class="m-8 p-8"
+      *ngIf="personnel$ | async as personnel; else noPersonnel">
+    <button class="w-32 py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300" (click)="backToPersonnel()">
+      <!-- <app-left-arrow></app-left-arrow> -->
+      All Personnel
+    </button>
 
-  <p>Goes By: <span *ngIf="personnel.goesBy; else firstName">{{ personnel.goesBy }}</span><ng-template #firstName>{{ personnel.firstName }}</ng-template></p>
+    <button
+        class="w-32 py-1 px-2 border rounded border-indigo-300 bg-indigo-200 hover:bg-indigo-300"
+        (click)="updatePersonnel()">
+      Update
+    </button>
+
+    <h1 class="text-xl font-bold">{{ personnel.firstName }} <span *ngIf="personnel.middleName">{{ personnel.middleName }} </span>{{ personnel.lastName }}</h1>
+
+    <form
+        [formGroup]="editPersonnelForm"
+        id="personnel-detail-content">
+
+      <div class="grid grid-cols-4 grid-rows-4 gap-4">
+
+        <!-- Summary Overview -->
+        <article class="col-span-1 row-span-full p-8">
+          <div class="flex flex-col gap-4">
+            <div id="profile-picture" class="w-32 h-32 bg-gray-200 rounded-md">
+
+            </div>
+
+            <section class="">
+              <app-dynamic-list
+                  [topic]="'Goals'"
+                  [items]="personnel.goals"
+                  (addItemEvent)="handleAddGoal($event, 'goal')"
+                  (removeItemEvent)="handleRemoveGoal($event)"></app-dynamic-list>
+            </section>
+
+            <section class="">
+              <app-dynamic-list
+                  [topic]="'Experiences'"
+                  [items]="personnel.experiences"
+                  (addItemEvent)="handleAddExperience($event, 'experience')"
+                  (removeItemEvent)="handleRemoveExperience($event)"></app-dynamic-list>
+            </section>
+
+            <section class="">
+              <app-dynamic-list
+                  [topic]="'Likes'"
+                  [items]="personnel.likes"
+                  (addItemEvent)="handleAddLike($event, 'like')"
+                  (removeItemEvent)="handleRemoveLike($event)"></app-dynamic-list>
+            </section>
+          </div>
+        </article>
+
+        <article class="col-span-3 auto-rows-min p-8 border rounded shadow-sm">
+          <div class="">
+            <h2 class="text-lg font-bold">Basics</h2>
+
+            <div class="grid grid-cols-2 gap-2">
+              <section class="">
+                <p class="text-gray-500">First Name</p>
+                <input type="text" formControlName="firstName" />
+              </section>
+
+              <section class="">
+                <p class="text-gray-500">Last Name</p>
+                <input type="text" formControlName="lastName" />
+              </section>
+
+              <section class="">
+                <p class="text-gray-500">Goes By</p>
+                <input type="text" formControlName="goesBy" />
+              </section>
+
+              <section class="">
+                <p class="text-gray-500">Middle Name</p>
+                <input type="text" formControlName="middleName" />
+              </section>
+
+              <section class="">
+                <p class="text-gray-500">Email</p>
+                <input type="email" formControlName="email" />
+              </section>
+
+              <section class="">
+                <label class="">
+                  <input
+                      type="radio"
+                      value="true"
+                      formControlName="isActive"
+                      [checked]="editPersonnelForm.get('isActive')?.value === true"
+                      (change)="setActivity(true)">
+                  Active
+                </label>
+                <label class="">
+                  <input
+                      type="radio"
+                      value="false"
+                      formControlName="isActive"
+                      [checked]="editPersonnelForm.get('isActive')?.value === false"
+                      (change)="setActivity(false)">
+                  Inactive
+                </label>
+              </section>
+            </div>
+          </div>
+        </article>
+
+        <article class="col-span-3 auto-rows-min p-8 border rounded shadow-sm">
+          <h2 class="text-lg font-bold">Demographics</h2>
+
+          <div class="grid grid-cols-2 gap-2">
+            <section class="">
+              <p class="text-gray-500">Gender</p>
+              <input type="text" formControlName="gender" />
+            </section>
+
+            <section class="">
+              <p class="text-gray-500">Ethnicity</p>
+              <input type="text" formControlName="ethnicity" />
+            </section>
+
+            <section class="">
+              <p class="text-gray-500">Position</p>
+              <input type="text" formControlName="position" />
+            </section>
+
+            <section class="=">
+              <p class="text-gray-500">Institution</p>
+              <input type="text" formControlName="institution" />
+            </section>
+          </div>
+        </article>
+
+        <article class="col-span-3 p-8 border rounded shadow-sm">
+          <h2 class="text-lg font-bold">Projects</h2>
+
+          <section *ngFor="let project of personnel.assignedProjects">
+            <h3>{{ project.name }}</h3>
+          </section>
+        </article>
+
+        <article class="p-8 col-span-1 border rounded shadow-sm">
+          What happens if I have another div here
+        </article>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <ng-template #noPersonnel>
+    No personnel data found. Try going back and selecting a different personnel.
+  </ng-template>
+
 </div>

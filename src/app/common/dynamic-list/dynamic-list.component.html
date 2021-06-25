@@ -1,0 +1,34 @@
+<div class="dynamic-list">
+  <form [formGroup]="dynamicListForm">
+    <p class="text-gray-500">{{ topic }}</p>
+
+    <div *ngIf="items; else noItems">
+      <ul class="">
+        <li
+            class="flex gap-2 mb-1"
+            *ngFor="let item of items">
+          <button
+              class="flex justify-center items-center rounded-full border border-gray-900 h-6 w-6 hover:bg-gray-300 hover:cursor-pointer hover:shadow-sm"
+              (click)="removeItem(item.id)">
+            -
+          </button>
+          {{item.text}}
+        </li>
+        <span class="flex flex-col gap-2">
+          <button
+              *ngIf="!showInput; else show"
+              class="flex justify-center items-center rounded-full border border-gray-900 h-6 w-6 hover:bg-gray-300 hover:cursor-pointer hover:shadow-sm"
+              (click)="toggleInput()">
+            +
+          </button>
+          <ng-template #show>
+            <input formControlName="newItem" type="text" (blur)="onBlur()" (keyup)="onEnter($event)">
+          </ng-template>
+        </span>
+      </ul>
+    </div>
+    <ng-template #noItems>
+      <input formControlName="newItem" type="text" (blur)="onBlur()" (keyup)="onEnter($event)">
+    </ng-template>
+  </form>
+</div>
