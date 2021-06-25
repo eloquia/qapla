@@ -84,22 +84,22 @@
                 <input type="email" formControlName="email" />
               </section>
 
-              <section class="">
+              <section class="" *ngIf="personnel.isActive !== null && personnel.isActive !== undefined">
                 <label class="">
                   <input
                       type="radio"
-                      value="true"
+                      [value]="true"
                       formControlName="isActive"
-                      [checked]="editPersonnelForm.get('isActive')?.value === true"
+                      [checked]="personnel.isActive"
                       (change)="setActivity(true)">
                   Active
                 </label>
                 <label class="">
                   <input
                       type="radio"
-                      value="false"
+                      [value]="false"
                       formControlName="isActive"
-                      [checked]="editPersonnelForm.get('isActive')?.value === false"
+                      [checked]="!personnel.isActive"
                       (change)="setActivity(false)">
                   Inactive
                 </label>

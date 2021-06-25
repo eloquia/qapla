@@ -115,7 +115,9 @@ export class PersonnelDetailComponent implements OnInit {
   }
 
   public setActivity(isActive: boolean): void {
-    this.editPersonnelForm.get('isActive')?.setValue(isActive);
+    console.log('setting activity status', isActive);
+    this.personnelService.setActivity(isActive);
+    // this.editPersonnelForm.get('isActive')?.setValue(isActive);
   }
 
 }

@@ -31,7 +31,7 @@ export class PersonnelService {
         .concat(originalPersonnel.experiences, originalPersonnel.likes);
       return this.httpClient.put(`http://localhost:8080/personnel/${updateRequest.id}`, updateRequest);
     })
-  ).subscribe(x => console.log('update x', x));
+  ).subscribe();
 
   private addPersonnelGoalSubject_: Subject<PersonnelNote> = new Subject<PersonnelNote>();
   addGoalSub = this.addPersonnelGoalSubject_.asObservable().pipe(
@@ -105,6 +105,16 @@ export class PersonnelService {
     tap(([likeId, personnel]) => {
       const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
       updatedPersonnel.likes = updatedPersonnel.likes.filter(like => like.id !== likeId);
+      this.selectedPersonnelSubject_.next(updatedPersonnel);
+    })
+  ).subscribe();
+
+  private updatePersonnelActivitySubject_: Subject<boolean> = new Subject<boolean>();
+  activitySub = this.updatePersonnelActivitySubject_.asObservable().pipe(
+    withLatestFrom(this.selectedPersonnelSubject_),
+    tap(([isActive, personnel]) => {
+      const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
+      updatedPersonnel.isActive = isActive;
       this.selectedPersonnelSubject_.next(updatedPersonnel);
     })
   ).subscribe();
@@ -185,6 +195,10 @@ export class PersonnelService {
   }
   public removePersonnelLikeById(likeId: number): void {
     this.removePersonnelLikeSubject_.next(likeId);
+  }
+
+  public setActivity(isActive: boolean): void {
+    this.updatePersonnelActivitySubject_.next(isActive);
   }
 
 }
