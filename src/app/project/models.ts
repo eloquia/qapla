@@ -1,5 +1,11 @@
 import { Personnel } from "../personnel/models";
 
+export enum ProjectPriorityLevel {
+  LOW = 'Low',
+  MEDIUM = 'Medium',
+  HIGH = 'High',
+}
+
 export interface CreateProjectRequest {
   name: string;
   description: string;
@@ -9,6 +15,18 @@ export interface CreateProjectResponse {
 
 }
 
+export interface ProjectNote {
+  description: string;
+  priority: ProjectPriorityLevel;
+  assignees?: string[];
+}
+
+export const EMPTY_PROJECT_NOTE: ProjectNote = {
+  description: '',
+  priority: ProjectPriorityLevel.LOW,
+  assignees: []
+}
+
 export interface Project {
   id: number;
   name: string;
@@ -16,18 +34,14 @@ export interface Project {
   slug?: string;
   assignedPersonnel?: Personnel[];
   assignedPersonnelIDs?: number[];
+  // objectives: ProjectNote[];
 }
 
 export const EMPTY_PROJECT: Project = {
   id: 0,
   name: '',
   description: '',
-}
-
-export interface ProjectNote {
-  description: string;
-  isHighPriority: boolean;
-  assignees: string[];
+  // objectives: [EMPTY_PROJECT_NOTE],
 }
 
 export interface ProjectDetailView {

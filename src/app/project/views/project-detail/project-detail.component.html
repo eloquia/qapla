@@ -1,25 +1,56 @@
-<div id="project-detail-view" class="m-8 p-8 border rounded">
+<div id="project-detail-view" class="p-8">
   <button
       class="flex py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300"
       (click)="backToProjects()">
     All Projects
   </button>
 
-  <article *ngIf="project$ | async as project; else noProject">
-    <section class="my-4">
+  <article
+      class="mt-2 grid grid-cols-3 gap-4"
+      *ngIf="project$ | async as project; else noProject">
+
+    <!-- Basic information about project -->
+    <section class="p-4 col-span-1 flex flex-col gap-2 border rounded shadow-sm">
       <h1 class="text-xl my-2">{{ project.name }}</h1>
+
+      <div class="w-32 h-32 bg-gray-200 border rounded border-gray-300 shadow-sm"></div>
 
       <p>{{ project.description }}</p>
     </section>
 
-    <section class="my-4">
+    <!-- Project Objectives/Progress -->
+    <section class="p-4 col-span-2 border rounded shadow-sm">
+      <h2 class="font-bold">Objectives</h2>
+
+      <!-- <app-dynamic-list></app-dynamic-list> -->
+      <div class="w-full h-full flex justify-center items-center">
+        <p>
+          In progress--low priority
+        </p>
+      </div>
+    </section>
+
+    <!-- Project Successes/Failures -->
+    <section class="p-4 col-span-1 border rounded shadow-sm">
+      <h2 class="font-bold">Successes/Lessons Learned</h2>
+
+      <!-- <app-dynamic-list></app-dynamic-list> -->
+      <div class="w-full h-full flex justify-center items-center">
+        <p>
+          In progress--low priority
+        </p>
+      </div>
+    </section>
+
+    <!-- Assigned Personnel -->
+    <section class="p-4 border rounded shadow-sm">
       <p class="font-bold">Assigned Personnel</p>
 
       <!-- -- -- -- -- If there are people, show them -- -- -- -- -->
       <div
           class="flex flex-col gap-2"
           *ngIf="project.assignedPersonnel && project.assignedPersonnel.length; else noPersonnel">
-        <div id="assigned-personnel-table-controls" class="flex gap-2">
+        <div id="assigned-personnel-table-controls" class="flex gap-2 items-center">
           <button
               class="w-24 py-1 border rounded border-red-300 bg-red-200 shadow-sm hover:bg-red-300 hover:shadown-md"
               *ngIf="personnelRemovalForm.controls.removePersonnelArray.value.length; else invalidRemove"
@@ -55,7 +86,8 @@
 
     </section>
 
-    <section class="my-4 flex flex-col gap-2">
+    <section class="p-4 flex flex-col gap-2 border rounded shadow-sm">
+      <h2 class="font-bold">Add Personnel</h2>
       <form class="flex flex-col gap-2" [formGroup]="assignPersonnelForm">
         <span class="italic">(add multiple people with ⌘/CRTL or Shift)</span>
         <select multiple class="w-64" formControlName="personnels">
@@ -73,7 +105,9 @@
   </article>
 
   <ng-template #noProject>
-    No project found. Try going back and selecting a different project.
+    <div class="p-64">
+      No project found. Try going back and selecting a different project.
+    </div>
   </ng-template>
 
   <!-- <p>Notes/Objectives</p>
