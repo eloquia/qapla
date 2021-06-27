@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { DatePickerService } from '../date-picker/date-picker.service';
+import { MeetService } from '../meet.service';
 import { Meeting } from '../models';
 
 @Component({
@@ -16,11 +17,12 @@ export class MeetDateComponent implements OnInit {
   selectedYear: Observable<number> = this.datePickerService.displayedYear$;
   selectedMonth: Observable<string> = this.datePickerService.displayedMonth$;
   selectedDay: Observable<number> = this.datePickerService.displayedDay$;
-  meetings!: Meeting[]
+  meetings$: Observable<Meeting[]> = this.meetService.meetings$;
 
   constructor(
     private route: ActivatedRoute,
     private datePickerService: DatePickerService,
+    private meetService: MeetService,
   ) { }
 
   ngOnInit(): void {
@@ -31,7 +33,8 @@ export class MeetDateComponent implements OnInit {
         })
       )
       .subscribe(data => {
-        this.meetings = data.personnel;
+        // this.meetings = data.personnel;
+        this.meetService.setMeetings(data.meetings);
       });
   }
 

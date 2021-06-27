@@ -7,9 +7,11 @@ import { MeetComponent } from './meet.component';
 import { MeetRoutingModule } from './meet-routing.module';
 import { CreateMeetingComponent } from './create-meeting/create-meeting.component';
 import { MeetDateComponent } from './meet-date/meet-date.component';
-import { MeetDateResolverService } from './meet-date/meet-date-resolver.service';
 import { DatePickerComponent } from './date-picker/date-picker.component';
 import { DatePickerDayComponent } from './date-picker/date-picker-day/date-picker-day.component';
+import { CreateFreeFormMeetingComponent } from './create-meeting/create-free-form-meeting/create-free-form-meeting.component';
+import { CreateProjectMeetingComponent } from './create-meeting/create-project-meeting/create-project-meeting.component';
+import { CreateMeetingDirective } from './create-meeting/create-meeting.directive';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,10 @@ import { DatePickerDayComponent } from './date-picker/date-picker-day/date-picke
     CreateMeetingComponent,
     MeetDateComponent,
     DatePickerComponent,
-    DatePickerDayComponent
+    DatePickerDayComponent,
+    CreateFreeFormMeetingComponent,
+    CreateProjectMeetingComponent,
+    CreateMeetingDirective
   ],
   imports: [
     CommonModule,
@@ -29,8 +34,5 @@ import { DatePickerDayComponent } from './date-picker/date-picker-day/date-picke
     ReactiveFormsModule,
     HttpClientModule,
   ],
-  providers: [
-    MeetDateResolverService,
-  ]
 })
 export class MeetModule { }

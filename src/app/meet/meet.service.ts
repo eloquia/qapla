@@ -1,23 +1,86 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, Subject } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
+import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 
-import { Meeting } from './models';
+import { CreateMeetingRequest, Meeting } from './models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MeetService {
 
+  // -------------------- Data ----------------------
+
+  private meetingsSubject_: Subject<Meeting[]> = new Subject<Meeting[]>();
+  public meetings$: Observable<Meeting[]> = this.meetingsSubject_.asObservable();
+
+  // -------------------- Events ----------------------
+
+  private createMeetingEventSubject_: Subject<CreateMeetingRequest> = new Subject<CreateMeetingRequest>();
+  public createMeeting$: Observable<CreateMeetingRequest> = this.createMeetingEventSubject_.asObservable();
+  private createMeetingSub = this.createMeetingEventSubject_.asObservable().pipe(
+    switchMap(createMeetingRequest => {
+      return this.httpClient.post<Meeting>('http://localhost:8080/meeting', createMeetingRequest);
+    })
+  ).subscribe({
+    next: (v) => {
+      this.toasterService.success(
+        `Meeting Scheduled`,
+        `Success`,
+        SuccessToastConfig,
+      );
+      this.successCreateFormEventSubject_.next(null);
+    },
+    error: (e) => {
+      console.warn('Error scheduling meeting', e)
+      this.toasterService.warning(
+        `Something went wrong: ${e.status} ${e.statusText}`,
+        `Error`,
+        WarningToastConfig,
+      )
+    },
+  });
+
+  private successCreateFormEventSubject_: Subject<any> = new Subject<any>();
+  public successCreateFormEvent$: Observable<any> = this.successCreateFormEventSubject_.asObservable();
+
+  private fetchMeetingsEventSubject_: Subject<string> = new Subject<string>();
+  private fetchMeetingsSub = this.fetchMeetingsEventSubject_.asObservable().pipe(
+    switchMap(date => {
+      console.log('fetching meetings for', date);
+      const dateParts: string[] = date.split('-');
+      const year = dateParts[0];
+      const month = dateParts[1];
+      const day = dateParts[2];
+      return this.httpClient.get<Meeting[]>(`http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}`);
+    }),
+    tap(meetings => {
+      this.meetingsSubject_.next(meetings);
+    })
+  ).subscribe();
+
+  // -------------------- Constructors ----------------------
+
   constructor(
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private toasterService: ToastrService,
   ) { }
 
-  public getMeetingsByDate(date: string): Observable<Meeting[]> {
-    return this.httpClient.get<Meeting[]>(`http://localhost:8080/meeting/${date}`);
+  // -------------------- Functions ----------------------
+
+  public setMeetings(meetings: Meeting[]): void {
+    this.meetingsSubject_.next(meetings);
   }
 
-  public createMeeting(meetingDetails: Meeting): Observable<any> {
-    return this.httpClient.post<any>('http://localhost:8080/meeting', meetingDetails);
+  public getMeetingsByDate(date: string): void {
+    this.fetchMeetingsEventSubject_.next(date);
+    // return this.httpClient.get<Meeting[]>(`http://localhost:8080/meeting/${date}`);
+  }
+
+  public createMeeting(meetingDetails: CreateMeetingRequest): void {
+    this.createMeetingEventSubject_.next(meetingDetails);
   }
 }

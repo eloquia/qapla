@@ -1,3 +1,17 @@
 <div id="meeting-content">
   <h2>{{selectedMonth | async}} {{selectedDay | async}}, {{selectedYear | async}}</h2>
+
+  <div *ngIf="meetings$ | async as meetings; else noMeetings">
+    <div *ngFor="let meeting of meetings">
+      {{ meeting | json }}
+    </div>
+  </div>
+
+  <ng-template #noMeetings>
+    <div class="w-full h-64 flex flex-col items-center justify-center">
+      <p>
+        No meetings found for this day. Enjoy your empty schedule! =]
+      </p>
+    </div>
+  </ng-template>
 </div>

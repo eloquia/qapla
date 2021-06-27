@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, ComponentFactoryResolver, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Personnel } from 'src/app/personnel/models';
 
@@ -7,8 +6,14 @@ import { PersonnelService } from 'src/app/personnel/personnel.service';
 import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 
-import { MeetService } from '../meet.service';
+import { MeetingType } from '../models';
+import { CreateFreeFormMeetingComponent } from './create-free-form-meeting/create-free-form-meeting.component';
+import { CreateMeetingDirective } from './create-meeting.directive';
+import { CreateProjectMeetingComponent } from './create-project-meeting/create-project-meeting.component';
 
+/**
+ * https://github.com/danmt/dynamic-component-loader
+ */
 @Component({
   selector: 'app-create-meeting',
   templateUrl: './create-meeting.component.html',
@@ -16,62 +21,41 @@ import { MeetService } from '../meet.service';
 })
 export class CreateMeetingComponent implements OnInit {
 
-  meetingFrequencies = [
-    {
-      id: 1,
-      displayValue: 'Once',
-    },
-    {
-      id: 2,
-      displayValue: 'Daily',
-    },
-    {
-      id: 3,
-      displayValue: 'Weekly',
-    },
-    {
-      id: 4,
-      displayValue: 'Monthly',
-    },
-  ];
+  displayedCreateMeeting: MeetingType = MeetingType.ProjectMeeting;
 
-  meetingForm = this.formBuilder.group({
-    name: [''],
-    description: [''],
-    date: [''],
-    startTime: [''],
-    endTime: [''],
-    duration: [''],
-    scheduleFrequency: [''],
-    once: [''],
-    projects: [''],
-    personnel: [''],
-  });
+  @ViewChild(CreateMeetingDirective, {static: true})
+  createMeetingHost!: CreateMeetingDirective;
+
+  showForm: boolean = false;
 
   projects: Observable<Project[]> = this.projectService.projects$;
   personnels: Observable<Personnel[]> = this.personnelService.personnel$;
 
   constructor(
-    private formBuilder: FormBuilder,
-    private meetingService: MeetService,
     private personnelService: PersonnelService,
     private projectService: ProjectService,
-  ) {
-    this.meetingForm.get('scheduleFrequency')?.patchValue(this.meetingFrequencies[0].id)
-  }
+    private componentFactoryResolver: ComponentFactoryResolver,
+  ) { }
 
   ngOnInit(): void {
-    // this.projects = this.personnelService.getAllPersonnel();
+    this.toggleProjectMeeting();
   }
 
-  public createMeeting(): void {
-    console.log('Submit create meeting!', this.meetingForm);
+  public toggleFreeFormMeeting(): void {
+    this.displayedCreateMeeting = MeetingType.FreeFormMeeting;
+    this.projectService.getAllProjects();
+    this.personnelService.getAllPersonnel();
+    this.createMeetingHost.viewContainerRef.clear();
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(CreateFreeFormMeetingComponent)
+    this.createMeetingHost.viewContainerRef.createComponent(componentFactory);
   }
 
-  public resetForm(): void {
-    console.log('Clearing form');
-    this.meetingForm.reset();
-    this.meetingForm.get('scheduleFrequency')?.patchValue(this.meetingFrequencies[0].id)
+  public toggleProjectMeeting(): void {
+    this.displayedCreateMeeting = MeetingType.ProjectMeeting;
+    this.projectService.getAllProjects();
+    this.createMeetingHost.viewContainerRef.clear();
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(CreateProjectMeetingComponent)
+    this.createMeetingHost.viewContainerRef.createComponent(componentFactory);
   }
 
 }

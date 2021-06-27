@@ -76,6 +76,7 @@ export class ProjectService {
       this.toasterService.success(`Updated ${project.name}`, 'Success!', {
         progressBar: true,
         closeButton: true,
+        timeOut: 3000,
         });
       })
   ).subscribe();

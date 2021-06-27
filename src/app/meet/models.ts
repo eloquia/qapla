@@ -1,6 +1,17 @@
 import { Personnel } from "../personnel/models";
 import { Project } from "../project/models";
 
+import { Type } from '@angular/core';
+
+export class CreateMeetingItem {
+  constructor(public component: Type<any>, public data: any) {}
+}
+
+export enum MeetingType {
+  ProjectMeeting = 'Project Meeting',
+  FreeFormMeeting = 'Free Form Meeting',
+}
+
 export interface Meeting {
   id?: number;
   name: string;
@@ -13,6 +24,24 @@ export interface Meeting {
   plannedDurationMinutes: number;
   personnels?: Personnel[];
   projects?: Project[];
+}
+
+export interface CreateMeetingRequest {
+  year: number;
+  month: string;
+  day: string;
+  startHour: string;
+  startMinute: string;
+  endHour: string;
+  endMinute: string;
+}
+
+export interface CreateProjectMeetingRequest extends CreateMeetingRequest {
+  projectIds: number[];
+}
+
+export interface CreateFreeFormMeetingRequest extends CreateMeetingRequest {
+  personnelIds: number[];
 }
 
 export enum AttendanceStatus {
