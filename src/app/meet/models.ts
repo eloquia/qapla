@@ -1,7 +1,8 @@
-import { Personnel } from "../personnel/models";
-import { Project } from "../project/models";
+import { EMPTY_PERSONNEL, Personnel } from "../personnel/models";
+import { EMPTY_PROJECT, Project } from "../project/models";
 
 import { Type } from '@angular/core';
+import { DateTime } from "luxon";
 
 export class CreateMeetingItem {
   constructor(public component: Type<any>, public data: any) {}
@@ -15,18 +16,20 @@ export enum MeetingType {
 export interface Meeting {
   id?: number;
   name: string;
-  description: string;
-  scheduledYear: number;
-  scheduledMonth: number;
-  scheduledDay: number;
-  scheduledHour: number;
-  scheduledMinute: number;
-  plannedDurationMinutes: number;
-  personnels?: Personnel[];
-  projects?: Project[];
+  year: number;
+  month: string;
+  day: string;
+  startHour: string;
+  startMinute: string;
+  endHour: string;
+  endMinute: string;
+  // personnels?: Personnel[];
+  // projects?: Project[];
+  meetingItems?: MeetingItem[];
 }
 
 export interface CreateMeetingRequest {
+  name: string;
   year: number;
   month: string;
   day: string;
@@ -44,13 +47,7 @@ export interface CreateFreeFormMeetingRequest extends CreateMeetingRequest {
   personnelIds: number[];
 }
 
-export enum AttendanceStatus {
-  NO_SHOW = 'No Show',
-  LEAVE_EARLY = 'Leave Early',
-  JOIN_LATE = 'Join Late',
-  NOT_ATTENDING = 'Not Attending',
-  ATTENDING = 'Attending',
-}
+export type AttendanceStatus = 'No Show' | 'Leave Early' | 'Join Late' | 'Not Attending' | 'Attending';
 
 export interface MeetingAttendance {
   id?: number;
@@ -63,9 +60,6 @@ export interface MeetingAttendance {
 
 export interface MeetingNote {
   id?: number;
-  meeting: Meeting;
-  personnel: Personnel;
-  project: Project;
   text: string;
 }
 
@@ -75,14 +69,6 @@ export interface DatePickerDay {
   isToday: boolean;
   isSelectedDay: boolean;
 }
-
-// export const days: Day[] = [
-//   {
-//     displayValue: '',
-//     value: 1,
-//     fullName
-//   }
-// ]
 
 export interface Month {
   displayValue: string;
@@ -139,3 +125,105 @@ export const months: Month[] = [
     value: 12,
   },
 ]
+
+/* ---------- Meeting View Models ---------- */
+export enum MeetingViewType {
+  PAST = 'Past',
+  PRESENT = 'Present',
+  FUTURE = 'Future',
+}
+
+/**
+ * Describes everything that
+ */
+export interface MeetingItem {
+  id: number;
+  personnel: Personnel;
+  project: Project;
+  plannedAttendanceStatus: AttendanceStatus;
+  actualAttendanceStatus: AttendanceStatus;
+  attendanceReason?: string;
+  notes?: MeetingNote[];
+}
+
+export interface PresentMeetingItem {
+  id: number;
+  personnel: Personnel;
+  project: Project;
+  plannedAttendanceStatus: AttendanceStatus;
+  actualAttendanceStatus: AttendanceStatus;
+  attendanceReason?: string;
+  notes?: MeetingNote[];
+}
+
+export const EMPTY_PRESENT_MEETING_ITEM: PresentMeetingItem = {
+  id: 0,
+  personnel: EMPTY_PERSONNEL,
+  project: EMPTY_PROJECT,
+  plannedAttendanceStatus: 'Attending',
+  actualAttendanceStatus: 'Attending',
+  attendanceReason: '',
+}
+
+export interface BaseMeetingView {
+  name: string;
+  year: number;
+  month: string;
+  day: string;
+  startHour: string;
+  startMinute: string;
+  endHour: string;
+  endMinute: string;
+}
+
+/**
+ * For meetings that happen in the future,
+ */
+export interface FutureMeetingView extends BaseMeetingView {
+  items: MeetingItem[];
+}
+
+export interface PresentMeetingView extends BaseMeetingView {
+  meetingItems?: PresentMeetingItem[];
+}
+
+export const EMPTY_PRESENT_MEETING: PresentMeetingView = {
+  name: '',
+  year: DateTime.now().year,
+  month: DateTime.now().toFormat('MM'),
+  day: DateTime.now().toFormat('dd'),
+  startHour: DateTime.now().toFormat('hh'),
+  startMinute: DateTime.now().toFormat('mm'),
+  endHour: DateTime.now().toFormat('hh'),
+  endMinute: DateTime.now().toFormat('mm'),
+  meetingItems: [
+    {
+      id: 0,
+      personnel: EMPTY_PERSONNEL,
+      project: EMPTY_PROJECT,
+      plannedAttendanceStatus: 'Attending',
+      actualAttendanceStatus: 'Attending',
+      attendanceReason: '',
+      notes: [
+        {
+          text: '',
+        },
+      ]
+    }
+  ]
+}
+
+export interface PastMeetingView extends BaseMeetingView {
+
+}
+
+export interface UpdateMeetingNoteRequest {
+  id: number;
+  plannedAttendanceStatus: AttendanceStatus;
+  actualAttendanceStatus: AttendanceStatus;
+  attendanceReason: string;
+}
+
+export interface UpdateMeetingNoteResponse {
+  id: number;
+}

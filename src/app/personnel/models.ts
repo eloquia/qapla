@@ -43,7 +43,7 @@ export interface Personnel {
   institution?: string;
   isActive?: boolean;
   assignedProjects: Project[];
-  notes: PersonnelNote[];
+  notes?: PersonnelNote[];
 }
 
 export const EMPTY_PERSONNEL: DisplayedPersonnel = {

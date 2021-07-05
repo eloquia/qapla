@@ -102,6 +102,7 @@ export class DatePickerService {
     withLatestFrom(this.monthYear)
   ).subscribe(dates => {
     const day = dates[0];
+    const dayNumber: string = `${DateTime.fromFormat(`${day}`, 'd').toFormat('dd')}`;
     const month = dates[1][0]
     const monthNumber: string = `${DateTime.fromFormat(`${month}`, 'MMM').toFormat('MM')}`;
     const year = dates[1][1]
@@ -109,7 +110,7 @@ export class DatePickerService {
     this.displayedMonthSubject_.next(month);
     this.displayedDaySubject_.next(day);
 
-    const dateString = `${year}-${monthNumber}-${day}`;
+    const dateString = `${year}-${monthNumber}-${dayNumber}`;
     this.router.navigate([`/meet/${dateString}`])
 
     const calendarDays: DatePickerDay[] = this.computeCalendarDays(year, month, day);

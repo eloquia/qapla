@@ -1,15 +1,29 @@
-<div id="meeting-content">
+<div id="meeting-content" [@openClose]="openCloseTrigger">
   <h2>{{selectedMonth | async}} {{selectedDay | async}}, {{selectedYear | async}}</h2>
 
   <div *ngIf="meetings$ | async as meetings; else noMeetings">
-    <div *ngFor="let meeting of meetings">
-      {{ meeting | json }}
-    </div>
+    <ng-container [ngSwitch]="meetingViewType$ | async">
+      <ng-container *ngSwitchCase="'Future'">
+        <app-future-meeting
+            *ngFor="let meeting of meetings"></app-future-meeting>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'Past'">
+        <app-past-meeting
+            *ngFor="let meeting of meetings"></app-past-meeting>
+      </ng-container>
+
+      <ng-container *ngSwitchDefault>
+        <app-present-meeting
+            *ngFor="let meeting of meetings"
+            [meeting]="meeting"></app-present-meeting>
+      </ng-container>
+    </ng-container>
   </div>
 
   <ng-template #noMeetings>
     <div class="w-full h-64 flex flex-col items-center justify-center">
-      <p>
+      <p class="transition-colors duration-500 ease-in transform">
         No meetings found for this day. Enjoy your empty schedule! =]
       </p>
     </div>

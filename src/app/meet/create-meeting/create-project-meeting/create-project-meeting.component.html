@@ -3,7 +3,7 @@
   <label class="flex flex-col">
     Projects
     <select multiple formControlName="projects">
-      <option *ngFor="let project of projects$ | async" [ngValue]="project.id">{{ project.name }}</option>
+      <option *ngFor="let project of projects$ | async" [ngValue]="project">{{ project.name }}</option>
     </select>
   </label>
 

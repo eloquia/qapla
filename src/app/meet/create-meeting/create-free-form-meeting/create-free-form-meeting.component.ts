@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { WarningToastConfig } from 'src/app/core/models';
 import { Personnel } from 'src/app/personnel/models';
 import { PersonnelService } from 'src/app/personnel/personnel.service';
+import { MeetService } from '../../meet.service';
+import { MeetingNameService } from '../../meeting-name.service';
 import { CreateFreeFormMeetingRequest } from '../../models';
 
 @Component({
@@ -17,6 +19,7 @@ export class CreateFreeFormMeetingComponent implements OnInit {
 
   public isValid: boolean = false;
   createFreeFormMeetingForm = this.formBuilder.group({
+    name: [''],
     personnel: [''],
     date: [''],
     startTime: [''],
@@ -29,6 +32,8 @@ export class CreateFreeFormMeetingComponent implements OnInit {
     private formBuilder: FormBuilder,
     private personnelService: PersonnelService,
     private toasterService: ToastrService,
+    private meetingNameService: MeetingNameService,
+    private meetingService: MeetService,
   ) { }
 
   ngOnInit(): void {
@@ -76,6 +81,9 @@ export class CreateFreeFormMeetingComponent implements OnInit {
       const personnel = this.createFreeFormMeetingForm.get('personnel')?.value;
 
       const createFreeFormMeetingRequest: CreateFreeFormMeetingRequest = {
+        name: this.meetingNameService.createName({
+          customName: this.createFreeFormMeetingForm.get('name')?.value,
+        }),
         year,
         month,
         day,
@@ -86,7 +94,9 @@ export class CreateFreeFormMeetingComponent implements OnInit {
         personnelIds: personnel,
       }
 
-      console.log('createFreeFormMeetingRequest', )
+      console.log('createFreeFormMeetingRequest', createFreeFormMeetingRequest);
+
+      this.meetingService.createMeeting(createFreeFormMeetingRequest);
     }
   }
 

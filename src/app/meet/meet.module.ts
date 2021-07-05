@@ -12,6 +12,12 @@ import { DatePickerDayComponent } from './date-picker/date-picker-day/date-picke
 import { CreateFreeFormMeetingComponent } from './create-meeting/create-free-form-meeting/create-free-form-meeting.component';
 import { CreateProjectMeetingComponent } from './create-meeting/create-project-meeting/create-project-meeting.component';
 import { CreateMeetingDirective } from './create-meeting/create-meeting.directive';
+import { FutureMeetingComponent } from './future-meeting/future-meeting.component';
+import { PresentMeetingComponent } from './present-meeting/present-meeting.component';
+import { PastMeetingComponent } from './past-meeting/past-meeting.component';
+import { IconModule } from '../core/icon/icon.module';
+import { AttendanceSelectorComponent } from './attendance-selector/attendance-selector.component';
+import { PresentMeetingItemComponent } from './present-meeting/present-meeting-item/present-meeting-item.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +28,15 @@ import { CreateMeetingDirective } from './create-meeting/create-meeting.directiv
     DatePickerDayComponent,
     CreateFreeFormMeetingComponent,
     CreateProjectMeetingComponent,
-    CreateMeetingDirective
+    CreateMeetingDirective,
+    FutureMeetingComponent,
+    PresentMeetingComponent,
+    PastMeetingComponent,
+    AttendanceSelectorComponent,
+    PresentMeetingItemComponent
   ],
   imports: [
+    IconModule,
     CommonModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -33,6 +45,6 @@ import { CreateMeetingDirective } from './create-meeting/create-meeting.directiv
   exports: [
     ReactiveFormsModule,
     HttpClientModule,
-  ],
+  ]
 })
 export class MeetModule { }

@@ -1,0 +1,44 @@
+<div class="present-meeting my-4">
+  <!-- Summary view -->
+  <div *ngIf="meeting; else noMeeting">
+    <div class="pl-32 flex gap-6 items-center cursor-pointer" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" (click)="toggleShowDetail()">
+      <app-chevron-down *ngIf="showDetail; else hideDetail"></app-chevron-down>
+      <ng-template #hideDetail>
+        <app-chevron-right></app-chevron-right>
+      </ng-template>
+
+      <div class="text-2xl" [class]="{'italic': isMouseIn}" *ngIf="meetingStartTime">
+        {{ meetingStartTime }}
+      </div>
+
+      <div class="text-2xl" [class]="{'italic': isMouseIn}" *ngIf="meeting.name; else unnamedMeeting">
+        {{ meeting.name }}
+      </div>
+      <ng-template #unnamedMeeting>
+        <div [class]="{'italic': isMouseIn}">
+          Unnamed Meeting
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Detail View -->
+    <div class="p-4" *ngIf="showDetail">
+      <div *ngIf="meeting.meetingItems; else noMeetingItems">
+        <app-present-meeting-item
+            *ngFor="let meetingItem of meeting.meetingItems"
+            [meetingItem]="meetingItem"></app-present-meeting-item>
+      </div>
+      <ng-template #noMeetingItems>
+        <div>
+          No details to display
+        </div>
+      </ng-template>
+    </div>
+    <!-- End Detail View -->
+
+  </div>
+
+  <ng-template #noMeeting>
+    No meeting
+  </ng-template>
+</div>

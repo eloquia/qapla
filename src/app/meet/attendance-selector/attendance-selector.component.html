@@ -1,0 +1,24 @@
+<form [formGroup]="attendanceForm">
+  <div class="attendance-options grid grid-cols-5 gap-2">
+    <label class="flex gap-2 items-center">
+      <input type="radio" [value]="'Attending'" formControlName="attendanceStatus">
+      Attending
+    </label>
+    <label class="flex gap-2 items-center">
+      <input type="radio" [value]="'Leave Early'" formControlName="attendanceStatus">
+      Leave Early
+    </label>
+    <label class="flex gap-2 items-center">
+      <input type="radio" [value]="'Joining Late'" formControlName="attendanceStatus">
+      Joining Late
+    </label>
+    <label class="flex gap-2 items-center">
+      <input type="radio" [value]="'Not Attending'" formControlName="attendanceStatus">
+      Not Attending
+    </label>
+    <label *ngIf="enableNoShow" class="flex gap-2 items-center">
+      <input type="radio" [value]="'No Show'" formControlName="attendanceStatus">
+      No Show
+    </label>
+  </div>
+</form>

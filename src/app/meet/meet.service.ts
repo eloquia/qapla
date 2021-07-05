@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import { mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 
-import { CreateMeetingRequest, Meeting } from './models';
+import { CreateMeetingRequest, Meeting, MeetingViewType, UpdateMeetingNoteRequest, UpdateMeetingNoteResponse } from './models';
 
 @Injectable({
   providedIn: 'root',
@@ -16,6 +16,9 @@ export class MeetService {
 
   private meetingsSubject_: Subject<Meeting[]> = new Subject<Meeting[]>();
   public meetings$: Observable<Meeting[]> = this.meetingsSubject_.asObservable();
+
+  private dateTypeSubject_: Subject<MeetingViewType> = new BehaviorSubject<MeetingViewType>(MeetingViewType.PRESENT);
+  public dateType$: Observable<MeetingViewType> = this.dateTypeSubject_.asObservable();
 
   // -------------------- Events ----------------------
 
@@ -50,7 +53,6 @@ export class MeetService {
   private fetchMeetingsEventSubject_: Subject<string> = new Subject<string>();
   private fetchMeetingsSub = this.fetchMeetingsEventSubject_.asObservable().pipe(
     switchMap(date => {
-      console.log('fetching meetings for', date);
       const dateParts: string[] = date.split('-');
       const year = dateParts[0];
       const month = dateParts[1];
@@ -58,9 +60,29 @@ export class MeetService {
       return this.httpClient.get<Meeting[]>(`http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}`);
     }),
     tap(meetings => {
+      console.log('meetings fetched', meetings)
       this.meetingsSubject_.next(meetings);
     })
   ).subscribe();
+
+  // ---------- Update Meeting Note Event ----------
+
+  private updateMeetingNoteEventSubject_: Subject<UpdateMeetingNoteRequest> = new Subject();
+  updateMeetingNoteSub$: Subscription = this.updateMeetingNoteEventSubject_
+    .asObservable()
+    .pipe(
+      mergeMap(updateRequest => {
+        return this.httpClient.put<UpdateMeetingNoteResponse>(`http://localhost:8080/meeting_note/${updateRequest.id}`, updateRequest)
+      })
+    )
+    .subscribe({
+      next: (request) => {
+
+      },
+      error: (e) => {
+        console.warn('Error updating meeting note:', e)
+      },
+    })
 
   // -------------------- Constructors ----------------------
 
@@ -82,5 +104,9 @@ export class MeetService {
 
   public createMeeting(meetingDetails: CreateMeetingRequest): void {
     this.createMeetingEventSubject_.next(meetingDetails);
+  }
+
+  public updateMeetingNote(updateRequest: UpdateMeetingNoteRequest): void {
+    this.updateMeetingNoteEventSubject_.next(updateRequest);
   }
 }

@@ -8,6 +8,7 @@ import { WarningToastConfig } from 'src/app/core/models';
 import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 import { MeetService } from '../../meet.service';
+import { MeetingNameService } from '../../meeting-name.service';
 import { CreateProjectMeetingRequest } from '../../models';
 
 @Component({
@@ -37,6 +38,7 @@ export class CreateProjectMeetingComponent implements OnInit {
     private formBuilder: FormBuilder,
     private meetingService: MeetService,
     private toasterService: ToastrService,
+    private meetingNameService: MeetingNameService,
   ) { }
 
   ngOnInit(): void {
@@ -83,9 +85,13 @@ export class CreateProjectMeetingComponent implements OnInit {
         return
       }
 
-      const projectIds = this.createProjectMeetingForm.get('projects')?.value;
+      const projects = this.createProjectMeetingForm.get('projects')?.value;
+      const projectIds = this.createProjectMeetingForm.get('projects')?.value.map((project: Project) => project.id);
 
       const createMeetingRequest: CreateProjectMeetingRequest = {
+        name: this.meetingNameService.createName({
+          selectedProjects: projects,
+        }),
         year,
         month,
         day,

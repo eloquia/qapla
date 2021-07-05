@@ -1,0 +1,67 @@
+<form [formGroup]="itemForm" class="p-4 flex flex-colgap-2">
+  <div class="meeting-item">
+
+    <div class="attendance-container flex flex-col gap-2">
+      <section class="flex gap-6">
+        <p class="font-bold text-xl">
+          {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
+        </p>
+        <span *ngIf="showProjectName">|</span>
+        <p class="italic font-bold" *ngIf="showProjectName">
+          {{ meetingItem.project.name }}
+        </p>
+      </section>
+
+      <section class="flex flex-row">
+        <span class="w-48">Expected: </span>
+        <app-attendance-selector
+            [initialOption]="meetingItem.plannedAttendanceStatus"
+            (attendanceSelectEvent)="handlePlannedAttendanceStatusChange($event)">
+        </app-attendance-selector>
+      </section>
+
+      <section class="flex flex-row">
+        <span class="w-48">Actual: </span>
+        <app-attendance-selector
+            [enableNoShow]="true"
+            [initialOption]="meetingItem.actualAttendanceStatus"
+            (attendanceSelectEvent)="handleActualAttendanceStatusChange($event)">
+        </app-attendance-selector>
+      </section>
+
+      <section class="flex flex-col">
+        <p class="flex">
+          <label class="w-48 flex">
+            Attendance Reason
+          </label>
+          <textarea [value]="reason" (change)="handleReasonChange($event)"></textarea>
+        </p>
+      </section>
+
+      <section class="flex items-center">
+        <label class="w-48 flex">
+          Notes
+        </label>
+        <div class="notes-container mt-2 flex flex-col gap-2" formArrayName="notes">
+          <button
+              class="py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300 hover:shadow-md"
+              (click)="addNoteFormControl()">
+            + Add another note
+          </button>
+
+          <div class="notes-list flex flex-col gap-2">
+            <div class="flex gap-3 items-center" *ngFor="let note of notes.controls; let i=index">
+              <label>Note:</label>
+              <textarea [formControlName]="i"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="finish-container ml-8" (click)="finish()">
+          <button>Finished</button>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</form>

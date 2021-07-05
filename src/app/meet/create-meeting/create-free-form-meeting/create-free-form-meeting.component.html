@@ -1,5 +1,10 @@
 <form [formGroup]="createFreeFormMeetingForm" class="flex flex-col gap-2 mt-2">
   <label class="flex flex-col">
+    Meeting Name
+    <input type="text" formControlName="name">
+  </label>
+
+  <label class="flex flex-col">
     Personnel
     <select multiple formControlName="personnel">
       <option *ngFor="let personnel of personnel$ | async" [ngValue]="personnel.id">
