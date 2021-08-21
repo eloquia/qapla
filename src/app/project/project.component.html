@@ -1,60 +1,66 @@
-<div id="project-dashboard" class="m-8 p-8 border rounded">
-  <h1 class="text-xl">Projects!</h1>
+<div id="project-dashboard" class="">
 
-  <!-- Create Project Action -->
-  <button
-      id="create-project-toggle"
-      class="button py-1 px-2 border border rounded border-blue-300 bg-blue-200 hover:bg-blue-300"
-      (click)="toggleShowForm()">Toggle Form</button>
-  <form
-      id="create-project-form"
-      class="flex flex-col gap-2 w-64"
-      [formGroup]="projectForm"
-      *ngIf="showForm">
-    <label class="flex flex-col">
-      Name:
-      <input type="text" formControlName="name">
-    </label>
+  <!-- Project Header -->
+  <div class="project-header p-d-flex">
+    <!-- Create Project Button -->
+    <p-button (click)="showCreate()" label="Create"></p-button>
+  </div>
 
-    <label class="flex flex-col">
-      Description:
-      <textarea formControlName="description"></textarea>
-    </label>
-
-    <button class="bg-green-200 border border-green-300 hover:bg-green-300" (click)="createProject()">Create</button>
-  </form>
-
+  <!-- Projects Table -->
+  <div *ngIf="projects$ | async as projects; else noProjects">
+    <div>
+      {{ projects | json }}
+    </div>
+    <p-table [value]="projects" styleClass="p-datatable-striped">
+      <ng-template pTemplate="header">
+        <tr>
+          <!-- <th>Code</th> -->
+          <th>Name</th>
+          <!-- <th>Category</th>
+          <th>Quantity</th> -->
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-project>
+        <tr class="project-row">
+          <!-- <td>{{project.code}}</td> -->
+          <td class="project-cell-clickable" (click)="goToProject(project.slug)">{{project.name}}</td>
+          <!-- <td>{{project.category}}</td>
+          <td>{{project.quantity}}</td> -->
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <ng-template #noProjects>
+    <div class="">
+      No projects found. Try creating one?
+    </div>
+  </ng-template>
 
   <!-- List Projects -->
-  <section id="project-list" class="m-2 p-2">
+  <!-- <section id="project-list" class="m-2 p-2">
     <h1 class="text-xl mb-2">Existing Projects</h1>
 
-    <div
-        id="project-table"
-        class="flex flex-col gap-2">
-      <div
-          id="project-table-header"
-          class="flex gap-2">
+    <div id="project-table" class="flex flex-col gap-2">
+      <div id="project-table-header" class="flex gap-2">
         <span class="w-32 font-bold">Name</span>
-        <span class="w-64 font-bold">Description</span>
+        <span class="w-3/4 font-bold">Description</span>
       </div>
-      <div
-          class="flex gap-2"
-          *ngFor="let project of projects | async; index as i">
+      <div class="flex gap-2" *ngFor="let project of projects | async; index as i">
 
         <a class="w-32 hover:underline" [routerLink]="['/project', project.slug]">
           <span class="">
             {{ project.name }}
           </span>
         </a>
-        <a class="w-64 hover:underline" [routerLink]="['/project', project.slug]">
+        <a class="w-3/4 hover:underline" [routerLink]="['/project', project.slug]">
           <span class="">
             {{ project.description }}
           </span>
         </a>
-        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2" (click)="deleteProject(project.id, project.name)">Delete</button>
+        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2"
+          (click)="deleteProject(project.id, project.name)">Delete</button>
       </div>
     </div>
-  </section>
+  </section> -->
 
 </div>

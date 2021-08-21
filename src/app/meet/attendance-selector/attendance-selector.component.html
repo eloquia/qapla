@@ -1,6 +1,6 @@
 <form [formGroup]="attendanceForm">
-  <div class="attendance-options grid grid-cols-5 gap-2">
-    <label class="flex gap-2 items-center">
+  <div class="attendance-options flex flex-col gap-2">
+    <!-- <label class="flex gap-2 items-center">
       <input type="radio" [value]="'Attending'" formControlName="attendanceStatus">
       Attending
     </label>
@@ -19,6 +19,10 @@
     <label *ngIf="enableNoShow" class="flex gap-2 items-center">
       <input type="radio" [value]="'No Show'" formControlName="attendanceStatus">
       No Show
-    </label>
+    </label> -->
+
+    <select formcontrolname="attendanceStatus" (change)="handleChange($event)">
+      <option *ngFor="let option of options" [value]="option">{{ option }}</option>
+    </select>
   </div>
 </form>

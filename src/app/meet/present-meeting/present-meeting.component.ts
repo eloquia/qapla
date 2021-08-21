@@ -1,43 +1,40 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { DateTime } from 'luxon';
-
-import { EMPTY_PRESENT_MEETING, PresentMeetingView } from '../models';
+import { ProfileService } from 'src/app/profile.service';
+import { MeetService } from '../meet.service';
+import { EMPTY_MEETING, Meeting, MeetingItem, MeetingNote } from '../models/common';
+import { UpdateMeetingRequest } from '../models/requests';
 
 @Component({
   selector: 'app-present-meeting',
   templateUrl: './present-meeting.component.html',
-  styleUrls: ['./present-meeting.component.scss']
+  styleUrls: ['./present-meeting.component.scss'],
 })
 export class PresentMeetingComponent implements OnInit, OnDestroy {
-
-  presentMeetingForm = this.formBuilder.group({
-
-  });
+  presentMeetingForm = this.formBuilder.group({});
 
   isMouseIn: boolean = false;
 
-  @Input() meeting: PresentMeetingView = EMPTY_PRESENT_MEETING;
+  @Input() meeting: Meeting = EMPTY_MEETING;
   meetingStartTime: string = '';
 
   showDetail: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
-  ) { }
+    private meetingService: MeetService,
+    private profileService: ProfileService,
+  ) {}
 
   ngOnInit(): void {
-    const meetingTime = DateTime
-      .fromObject({
-        hour: parseInt(this.meeting.startHour),
-        minute: parseInt(this.meeting.startMinute),
-      })
+    const meetingTime = DateTime.fromISO(this.meeting.startDate);
 
     this.meetingStartTime = meetingTime.toFormat('h:mm a');
   }
 
   ngOnDestroy(): void {
-    console.log('onDestroy!')
+    this.saveMeeting();
   }
 
   public toggleShowDetail(): void {
@@ -51,4 +48,57 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
     this.isMouseIn = false;
   }
 
+  /*
+    Event handler for detecting when the "save" hotkeys are pressed
+  */
+
+  onKeyDown($event: any): void {
+    // Detect platform
+    if(navigator.platform.match('Mac')){
+        this.handleMacKeyEvents($event);
+    }
+    else {
+        this.handleWindowsKeyEvents($event); 
+    }
+  }
+
+  handleMacKeyEvents($event: any) {
+    // MetaKey documentation
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
+    let charCode = String.fromCharCode($event.which).toLowerCase();
+    if ($event.metaKey && charCode === 's') {
+        // Action on Cmd + S
+        $event.preventDefault();
+        this.saveMeeting();
+    } 
+  }
+
+  handleWindowsKeyEvents($event: any) {
+    let charCode = String.fromCharCode($event.which).toLowerCase();
+    if ($event.ctrlKey && charCode === 's') {
+        // Action on Ctrl + S
+        $event.preventDefault();
+        this.saveMeeting();
+    } 
+  }
+
+  saveMeeting(): void {
+    // update meeting
+    const updateRequest: UpdateMeetingRequest = {
+      id: this.meeting.id,
+      meetingItems: this.meeting.meetingItems?.map((meetingItem: MeetingItem) => {
+        return {
+          ...meetingItem,
+          notes: meetingItem.notes?.map((note: MeetingNote) => {
+            return {
+              ...note,
+              authorId: this.profileService.getUserId(),
+            }
+          })
+        };
+      }),
+    };
+    console.log('onDestroy!', updateRequest);
+    this.meetingService.updateMeeting(updateRequest);
+  }
 }

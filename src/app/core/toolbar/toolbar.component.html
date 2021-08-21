@@ -1,16 +1,5 @@
-<!-- <header class="flex bg-blue-300 p-4"> -->
-<nav class="flex justify-between bg-blue-300 p-4">
-  <span>MIND Lab Admin</span>
-
-  <div class="flex gap-4">
-    <a class="hover:underline cursor-pointer" routerLink="/meet" (click)="nav('meet')">Meet</a>
-    <a class="hover:underline cursor-pointer" routerLink="/project" (click)="nav('project')">Projects</a>
-    <a class="hover:underline cursor-pointer" routerLink="/personnel" (click)="nav('personnel')">Personnel</a>
-    <div class="w-6 hover:text-red-500 cursor-pointer" (click)="logOut()">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg>
-    </div>
-  </div>
+<nav>
+  <p-menubar [model]="items">
+    <button pButton type="button" label="Sign Out" icon="pi pi-sign-out" iconPos="right" (click)="logOut()"></button>
+  </p-menubar>
 </nav>
-<!-- </header> -->

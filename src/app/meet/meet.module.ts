@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { MeetComponent } from './meet.component';
@@ -18,6 +18,7 @@ import { PastMeetingComponent } from './past-meeting/past-meeting.component';
 import { IconModule } from '../core/icon/icon.module';
 import { AttendanceSelectorComponent } from './attendance-selector/attendance-selector.component';
 import { PresentMeetingItemComponent } from './present-meeting/present-meeting-item/present-meeting-item.component';
+import { CommonComponentsModule } from '../common/common.module';
 
 @NgModule({
   declarations: [
@@ -33,18 +34,17 @@ import { PresentMeetingItemComponent } from './present-meeting/present-meeting-i
     PresentMeetingComponent,
     PastMeetingComponent,
     AttendanceSelectorComponent,
-    PresentMeetingItemComponent
+    PresentMeetingItemComponent,
   ],
   imports: [
     IconModule,
     CommonModule,
+    CommonComponentsModule,
+    FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     MeetRoutingModule,
   ],
-  exports: [
-    ReactiveFormsModule,
-    HttpClientModule,
-  ]
+  exports: [CommonComponentsModule, ReactiveFormsModule, HttpClientModule],
 })
-export class MeetModule { }
+export class MeetModule {}

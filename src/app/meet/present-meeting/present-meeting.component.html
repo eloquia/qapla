@@ -1,7 +1,8 @@
-<div class="present-meeting my-4">
+<div class="present-meeting my-4" (keydown)="onKeyDown($event)" tabindex="0">
   <!-- Summary view -->
   <div *ngIf="meeting; else noMeeting">
-    <div class="pl-32 flex gap-6 items-center cursor-pointer" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" (click)="toggleShowDetail()">
+    <div class="pl-32 flex gap-6 items-center cursor-pointer" (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()" (click)="toggleShowDetail()">
       <app-chevron-down *ngIf="showDetail; else hideDetail"></app-chevron-down>
       <ng-template #hideDetail>
         <app-chevron-right></app-chevron-right>
@@ -22,11 +23,11 @@
     </div>
 
     <!-- Detail View -->
-    <div class="p-4" *ngIf="showDetail">
+    <div class="p-4" [ngClass]="{ 'mb-4 border-b border-gray-500': showDetail }" *ngIf="showDetail">
       <div *ngIf="meeting.meetingItems; else noMeetingItems">
-        <app-present-meeting-item
-            *ngFor="let meetingItem of meeting.meetingItems"
-            [meetingItem]="meetingItem"></app-present-meeting-item>
+        <app-present-meeting-item *ngFor="let meetingItem of meeting.meetingItems" [meetingItem]="meetingItem"
+          [attr.id]="meetingItem.id">
+        </app-present-meeting-item>
       </div>
       <ng-template #noMeetingItems>
         <div>

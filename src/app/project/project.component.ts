@@ -1,51 +1,50 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { Project } from './models';
+import { DialogService } from 'primeng/dynamicdialog';
+import { CreateProjectMeetingComponent } from '../meet/create-meeting/create-project-meeting/create-project-meeting.component';
 
+import { Project } from './models';
 import { ProjectService } from './project.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss']
+  styleUrls: ['./project.component.scss'],
+  providers: [DialogService],
 })
 export class ProjectComponent implements OnInit {
 
-  projectForm = this.formBuilder.group({
-    name: [''],
-    description: [''],
-  });
-
-  projects: Observable<Project[]> = this.projectService.projects$;
-  showForm: boolean = false;
+  projects$: Observable<Project[]> = this.projectService.projects$;
 
   constructor(
-    private formBuilder: FormBuilder,
     private projectService: ProjectService,
+    private dialogService: DialogService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.fetchProjects();
   }
 
-  public toggleShowForm(): void {
-    this.showForm = !this.showForm;
-  }
-
-  public createProject(): void {
-    this.projectService.createProject({
-      name: this.projectForm.get('name')?.value,
-      description: this.projectForm.get('description')?.value,
-    });
-  }
-
   public fetchProjects() {
     return this.projectService.getAllProjects();
   }
 
+  public goToProject(slug: any) {
+    console.log('Going to project', slug)
+    this.router.navigate([`/project/${slug}`])
+  }
+
   public deleteProject(id: number, name: string) {
     this.projectService.deleteProjectById(id, name);
+  }
+
+  public showCreate() {
+    this.dialogService.open(CreateProjectMeetingComponent, {
+      header: 'Create a Project',
+      width: '70%'
+    });
   }
 
 }

@@ -6,6 +6,7 @@ import { LeftArrowComponent } from './left-arrow/left-arrow.component';
 import { PlusCircleComponent } from './plus-circle/plus-circle.component';
 import { ChevronDownComponent } from './chevron-down/chevron-down.component';
 import { ChevronRightComponent } from './chevron-right/chevron-right.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ChevronRightComponent } from './chevron-right/chevron-right.component';
     PlusCircleComponent,
     ChevronDownComponent,
     ChevronRightComponent,
+    SearchComponent,
   ],
   exports: [
     XComponent,
@@ -21,10 +23,9 @@ import { ChevronRightComponent } from './chevron-right/chevron-right.component';
     PlusCircleComponent,
     ChevronDownComponent,
     ChevronRightComponent,
+    SearchComponent,
     CommonModule,
   ],
-  imports: [
-    CommonModule
-  ]
+  imports: [CommonModule],
 })
-export class IconModule { }
+export class IconModule {}

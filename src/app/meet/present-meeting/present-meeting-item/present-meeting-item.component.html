@@ -1,67 +1,116 @@
-<form [formGroup]="itemForm" class="p-4 flex flex-colgap-2">
-  <div class="meeting-item">
+<div class="meeting-item mb-4">
 
-    <div class="attendance-container flex flex-col gap-2">
-      <section class="flex gap-6">
-        <p class="font-bold text-xl">
-          {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
-        </p>
-        <span *ngIf="showProjectName">|</span>
-        <p class="italic font-bold" *ngIf="showProjectName">
-          {{ meetingItem.project.name }}
-        </p>
-      </section>
+  <div class="attendance-container gap-2">
+    <section class="attendee-name mb-4 flex gap-6">
+      <h2 class="font-bold text-lg">
+        {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
+      </h2>
+      <span *ngIf="showProjectName">|</span>
+      <h3 class="italic font-bold" *ngIf="showProjectName">
+        {{ meetingItem.project.name }}
+      </h3>
+    </section>
 
-      <section class="flex flex-row">
-        <span class="w-48">Expected: </span>
-        <app-attendance-selector
-            [initialOption]="meetingItem.plannedAttendanceStatus"
-            (attendanceSelectEvent)="handlePlannedAttendanceStatusChange($event)">
-        </app-attendance-selector>
-      </section>
+    <article class="grid grid-cols-2 gap-4">
+      <!-- Tracks basic attendance -->
+      <section class="attendance-section flex gap-16">
+        <div class="flex flex-col gap-2">
+          <div class="form-item flex items-center">
+            <span class="w-28">Expected</span>
+            <select [(ngModel)]="meetingItem.plannedAttendanceStatus">
+              <option *ngFor="let option of plannedAttendanceOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
 
-      <section class="flex flex-row">
-        <span class="w-48">Actual: </span>
-        <app-attendance-selector
-            [enableNoShow]="true"
-            [initialOption]="meetingItem.actualAttendanceStatus"
-            (attendanceSelectEvent)="handleActualAttendanceStatusChange($event)">
-        </app-attendance-selector>
-      </section>
-
-      <section class="flex flex-col">
-        <p class="flex">
-          <label class="w-48 flex">
-            Attendance Reason
-          </label>
-          <textarea [value]="reason" (change)="handleReasonChange($event)"></textarea>
-        </p>
-      </section>
-
-      <section class="flex items-center">
-        <label class="w-48 flex">
-          Notes
-        </label>
-        <div class="notes-container mt-2 flex flex-col gap-2" formArrayName="notes">
-          <button
-              class="py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300 hover:shadow-md"
-              (click)="addNoteFormControl()">
-            + Add another note
-          </button>
-
-          <div class="notes-list flex flex-col gap-2">
-            <div class="flex gap-3 items-center" *ngFor="let note of notes.controls; let i=index">
-              <label>Note:</label>
-              <textarea [formControlName]="i"></textarea>
-            </div>
+          <div class="form-item flex items-center">
+            <span class="w-28">Actual</span>
+            <select [(ngModel)]="meetingItem.actualAttendanceStatus">
+              <option *ngFor="let option of actualAttendanceOptions" [ngValue]="option">{{ option }}</option>
+            </select>
           </div>
         </div>
+      </section>
 
-        <div class="finish-container ml-8" (click)="finish()">
-          <button>Finished</button>
+      <!-- Tracks attendance reason -->
+      <section>
+        <div class="form-item flex flex-col">
+          <p class="flex">
+            <label class="w-40 mb-2 flex">
+              Attendance Reason
+            </label>
+            <textarea placeholder="Neuroscience conference" [(ngModel)]="meetingItem.attendanceReason"></textarea>
+          </p>
         </div>
       </section>
-    </div>
+
+      <!-- Tracks meeting notes -->
+      <section class="track-notes flex flex-col">
+        <div class="track-notes-header flex justify-between">
+          <label class="w-28 flex">
+            Your Thoughts?
+          </label>
+        </div>
+
+        <div class="notes-container mt-2 flex flex-col gap-2">
+          <div class="notes-list flex flex-col gap-2">
+            <div class="flex gap-3" *ngFor="let note of meetingItem.notes; let i=index">
+              <textarea placeholder="Today this intern..." [(ngModel)]="note.text"></textarea>
+              <!-- <app-searchbar-dropdown
+                  [placeholder]="'Tag'"
+                  (searchEvent)="handleSearchEvent($event)"
+                  (selectEvent)="handleSelectEvent($event)">
+              </app-searchbar-dropdown> -->
+              <div class="searchbar-dropdown">
+                <div class="input-wrapper relative">
+                  <input #searchbar type="text" placeholder="Tag text" [(ngModel)]="note.meetingNoteTag.text"
+                    (keyup)="fetchResults(searchbar.value)" />
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute right-2 top-2" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" (click)="fetchResults(searchbar.value)">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+
+                <ul class="input-search-results">
+                  <li class="flex justify-between" *ngFor="let searchResult of searchResults | async"
+                    (click)="handleSelect(searchResult)">
+                    <span>{{ searchResult.text }}</span>
+                    <span class="italic text-gray-500 ">{{ searchResult.count }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <button class="mt-4 py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300 hover:shadow-md"
+            (click)="addNoteFormControl()">
+            + Add another note
+          </button>
+        </div>
+      </section>
+
+      <!-- Displays others' meeting notes -->
+      <section>
+        <h3>Others said</h3>
+
+        <div *ngIf="meetingItem.othersNotes && meetingItem.othersNotes.length; else noNotes"
+          class="meeting-notes-others">
+          <div *ngFor="let otherNote of meetingItem.othersNotes" class="meeting-notes-other p-4 flex justify-between">
+            <div class="meeting-notes-other-content flex flex-col">
+              <span class="text-gray-500 italic">{{ otherNote.text }}</span>
+              <span class="text-gray-500 font-bold italic">{{ otherNote.meetingNoteTag.text }}</span>
+            </div>
+            <span class="text-gray-500 italic">{{ otherNote.authorName }}</span>
+          </div>
+        </div>
+        <ng-template #noNotes>
+          <div class="no-meeting-notes h-32 flex justify-center items-center">
+            <p class="text-gray-500 italic">No one's said anything yet</p>
+          </div>
+        </ng-template>
+      </section>
+    </article>
 
   </div>
-</form>
+
+</div>

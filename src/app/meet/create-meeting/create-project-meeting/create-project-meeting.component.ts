@@ -4,20 +4,21 @@ import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { WarningToastConfig } from 'src/app/core/models';
+import { ProfileService } from 'src/app/profile.service';
 
 import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 import { MeetService } from '../../meet.service';
 import { MeetingNameService } from '../../meeting-name.service';
-import { CreateProjectMeetingRequest } from '../../models';
+import { GOLANG_MEETING_FORMAT } from '../../models/common';
+import { CreateProjectMeetingRequest } from '../../models/requests';
 
 @Component({
   selector: 'app-create-project-meeting',
   templateUrl: './create-project-meeting.component.html',
-  styleUrls: ['./create-project-meeting.component.scss']
+  styleUrls: ['./create-project-meeting.component.scss'],
 })
 export class CreateProjectMeetingComponent implements OnInit {
-
   public isFormValid: boolean = false;
   projects$: Observable<Project[]> = this.projectService.projects$;
 
@@ -28,8 +29,8 @@ export class CreateProjectMeetingComponent implements OnInit {
     duration: [''],
   });
 
-  createFormSub: Subscription = this.meetingService.successCreateFormEvent$
-    .subscribe(() => {
+  createFormSub: Subscription =
+    this.meetingService.successCreateFormEvent$.subscribe(() => {
       this.resetForm();
     });
 
@@ -39,7 +40,8 @@ export class CreateProjectMeetingComponent implements OnInit {
     private meetingService: MeetService,
     private toasterService: ToastrService,
     private meetingNameService: MeetingNameService,
-  ) { }
+    private profileService: ProfileService
+  ) {}
 
   ngOnInit(): void {
     this.projectService.getAllProjects();
@@ -58,50 +60,59 @@ export class CreateProjectMeetingComponent implements OnInit {
         }
       );
     } else {
-      const date = this.createProjectMeetingForm.get('date')?.value;
-      const dateParts = date.split('-');
-      const year = dateParts[0];
-      const month = dateParts[1];
-      const day = dateParts[2];
+      const date: string = this.createProjectMeetingForm.get('date')?.value;
+      const dateParts: string[] = date.split('-');
+      const year: string = dateParts[0];
+      const month: string = dateParts[1];
+      const day: string = dateParts[2];
 
-      const startTime = this.createProjectMeetingForm.get('startTime')?.value;
-      const startTimeParts = startTime.split(':')
-      const startHour = startTimeParts[0];
-      const startMinute = startTimeParts[1];
+      const startTime: string =
+        this.createProjectMeetingForm.get('startTime')?.value;
+      const startTimeParts: string[] = startTime.split(':');
+      const startHour: string = startTimeParts[0];
+      const startMinute: string = startTimeParts[1];
 
       // duration is either 15, 30, 45, or 60
       const duration = this.createProjectMeetingForm.get('duration')?.value;
-      const endDate = DateTime.fromFormat(`${year}-${month}-${day} ${startHour}:${startMinute}`, 'yyyy-MM-dd HH:mm')
-        .plus({ minute: duration });
-      const endHour = endDate.toFormat('HH');
-      const endMinute = endDate.toFormat('mm');
+      const startDate = DateTime.fromFormat(
+        `${year}-${month}-${day} ${startHour}:${startMinute}:00`,
+        'yyyy-MM-dd HH:mm:ss'
+      );
+      const endDate = DateTime.fromFormat(
+        `${year}-${month}-${day} ${startHour}:${startMinute}:00`,
+        'yyyy-MM-dd HH:mm:ss'
+      ).plus({ minute: duration });
+
+      console.log('startDate ISO', startDate.toISO());
+      console.log('endDate ISO', endDate.toISO());
 
       if (parseInt(endDate.toFormat('dd')) > parseInt(day)) {
         this.toasterService.warning(
           `Meetings must start and end on the same day`,
           `Cannot Schedule Meeting`,
-          WarningToastConfig,
+          WarningToastConfig
         );
-        return
+        return;
       }
 
       const projects = this.createProjectMeetingForm.get('projects')?.value;
-      const projectIds = this.createProjectMeetingForm.get('projects')?.value.map((project: Project) => project.id);
+      const projectIds = this.createProjectMeetingForm
+        .get('projects')
+        ?.value.map((project: Project) => project.id);
+
+      const createdBy = this.profileService.getUserId();
+      console.log('createdBy', createdBy);
 
       const createMeetingRequest: CreateProjectMeetingRequest = {
         name: this.meetingNameService.createName({
           selectedProjects: projects,
         }),
-        year,
-        month,
-        day,
-        startHour,
-        startMinute,
-        endHour,
-        endMinute,
+        startDate: startDate.toISO(),
+        endDate: endDate.toISO(),
+        createdBy,
         projectIds,
-      }
-      console.log('createMeetingRequest', createMeetingRequest)
+      };
+
       this.meetingService.createMeeting(createMeetingRequest);
     }
   }
@@ -111,10 +122,11 @@ export class CreateProjectMeetingComponent implements OnInit {
   }
 
   private validateForm(): boolean {
-    return !!this.createProjectMeetingForm.get('date')?.value
-      && !!this.createProjectMeetingForm.get('projects')?.value
-      && this.createProjectMeetingForm.get('startTime')?.value
-      && this.createProjectMeetingForm.get('duration')?.value;
+    return (
+      !!this.createProjectMeetingForm.get('date')?.value &&
+      !!this.createProjectMeetingForm.get('projects')?.value &&
+      this.createProjectMeetingForm.get('startTime')?.value &&
+      this.createProjectMeetingForm.get('duration')?.value
+    );
   }
-
 }

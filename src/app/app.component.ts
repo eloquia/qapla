@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'qapla-ui';
+
+  loggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
+
+  constructor(
+    private authService: AuthService,
+  ) {
+
+  }
 }

@@ -1,0 +1,32 @@
+<div class="p-d-flex">
+  <p-card header="Login">
+    <ng-template pTemplate="content">
+      <div class="p-field p-grid">
+        <label for="email" class="p-col-fixed" style="width:100px">Email</label>
+        <div class="p-col">
+          <span class="p-input-icon-right">
+            <input type="email" pInputText class="p-inputtext-lg" [(ngModel)]="email" />
+          </span>
+        </div>
+      </div>
+      <div class="">
+        <label for="password" class="p-col-fixed" style="width:100px">Password</label>
+        <div class="p-col">
+          <span class="p-input-icon-right">
+            <i id="login-icon" class="pi pi-eye-slash" (click)="togglePasswordVisibility()"></i>
+            <input type="password" pInputText class="p-inputtext-lg" [(ngModel)]="password" />
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="">{{errorMessage}}</div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p-button (click)="onSubmit()" label="Login" [disabled]="loading" class="">
+        <span *ngIf="loading" class=""></span>
+      </p-button>
+    </ng-template>
+  </p-card>
+</div>
