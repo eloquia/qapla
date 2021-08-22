@@ -15,31 +15,34 @@ export class PersonnelDetailComponent implements OnInit {
 
   personnel$: Observable<DisplayedPersonnel> = this.personnelService.selectedPersonnel$.pipe(
     tap(personnel => {
-      this.editPersonnelForm.setControl('firstName', new FormControl(personnel.firstName));
-      this.editPersonnelForm.setControl('lastName', new FormControl(personnel.lastName));
-      this.editPersonnelForm.setControl('goesBy', new FormControl(personnel.goesBy));
-      this.editPersonnelForm.setControl('middleName', new FormControl(personnel.middleName));
-      this.editPersonnelForm.setControl('email', new FormControl(personnel.email));
-      this.editPersonnelForm.setControl('gender', new FormControl(personnel.gender));
-      this.editPersonnelForm.setControl('position', new FormControl(personnel.position));
-      this.editPersonnelForm.setControl('institution', new FormControl(personnel.institution));
+      this.personnelOverviewForm.setControl('firstName', new FormControl(personnel.firstName));
+      this.personnelOverviewForm.setControl('lastName', new FormControl(personnel.lastName));
+      this.personnelOverviewForm.setControl('goesBy', new FormControl(personnel.goesBy));
+      this.personnelOverviewForm.setControl('middleName', new FormControl(personnel.middleName));
+      this.personnelOverviewForm.setControl('email', new FormControl(personnel.email));
+      this.personnelDemographicsForm.setControl('gender', new FormControl(personnel.gender));
+      this.personnelDemographicsForm.setControl('position', new FormControl(personnel.position));
+      this.personnelDemographicsForm.setControl('institution', new FormControl(personnel.institution));
 
-      this.editPersonnelForm.setControl('isActive', new FormControl(personnel.isActive));
+      this.personnelOverviewForm.setControl('isActive', new FormControl(personnel.isActive));
     })
   );
 
-  editPersonnelForm = this.formBuilder.group({
+  personnelOverviewForm = this.formBuilder.group({
     firstName: [''],
     lastName: [''],
     goesBy: [''],
     middleName: [''],
     email: [''],
+    isActive: [''],
+  });
+
+  personnelDemographicsForm = this.formBuilder.group({
     gender: [''],
     ethnicity: [''],
     position: [''],
     institution: [''],
-    isActive: [''],
-  });
+  })
 
   id: number = 0;
 
@@ -100,16 +103,16 @@ export class PersonnelDetailComponent implements OnInit {
     // create the updateRequest from from values
     const updatePersonnelRequest: UpdatePersonnelRequest = {
       id: this.id,
-      firstName: this.editPersonnelForm.get('firstName')?.value,
-      lastName: this.editPersonnelForm.get('lastName')?.value,
-      middleName: this.editPersonnelForm.get('middleName')?.value,
-      goesBy: this.editPersonnelForm.get('goesBy')?.value,
-      email: this.editPersonnelForm.get('email')?.value,
-      gender: this.editPersonnelForm.get('gender')?.value,
-      ethnicity: this.editPersonnelForm.get('ethnicity')?.value,
-      position: this.editPersonnelForm.get('position')?.value,
-      institution: this.editPersonnelForm.get('institution')?.value,
-      isActive: this.editPersonnelForm.get('isActive')?.value,
+      firstName: this.personnelOverviewForm.get('firstName')?.value,
+      lastName: this.personnelOverviewForm.get('lastName')?.value,
+      middleName: this.personnelOverviewForm.get('middleName')?.value,
+      goesBy: this.personnelOverviewForm.get('goesBy')?.value,
+      email: this.personnelOverviewForm.get('email')?.value,
+      gender: this.personnelDemographicsForm.get('gender')?.value,
+      ethnicity: this.personnelDemographicsForm.get('ethnicity')?.value,
+      position: this.personnelDemographicsForm.get('position')?.value,
+      institution: this.personnelDemographicsForm.get('institution')?.value,
+      isActive: this.personnelOverviewForm.get('isActive')?.value,
     };
     this.personnelService.updatePersonnel(updatePersonnelRequest);
   }

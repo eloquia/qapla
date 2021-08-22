@@ -8,24 +8,23 @@
 
   <!-- Projects Table -->
   <div *ngIf="projects$ | async as projects; else noProjects">
-    <div>
+
+    <!-- <div>
       {{ projects | json }}
-    </div>
-    <p-table [value]="projects" styleClass="p-datatable-striped">
+    </div> -->
+
+    <p-table [value]="projects" styleClass="p-datatable">
       <ng-template pTemplate="header">
         <tr>
-          <!-- <th>Code</th> -->
           <th>Name</th>
-          <!-- <th>Category</th>
-          <th>Quantity</th> -->
+          <th># Assigned People</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-project>
         <tr class="project-row">
-          <!-- <td>{{project.code}}</td> -->
           <td class="project-cell-clickable" (click)="goToProject(project.slug)">{{project.name}}</td>
-          <!-- <td>{{project.category}}</td>
-          <td>{{project.quantity}}</td> -->
+          <td>{{project.numPersonnel}}</td>
+          <!-- <td>{{project.quantity}}</td> -->
         </tr>
       </ng-template>
     </p-table>
@@ -35,32 +34,5 @@
       No projects found. Try creating one?
     </div>
   </ng-template>
-
-  <!-- List Projects -->
-  <!-- <section id="project-list" class="m-2 p-2">
-    <h1 class="text-xl mb-2">Existing Projects</h1>
-
-    <div id="project-table" class="flex flex-col gap-2">
-      <div id="project-table-header" class="flex gap-2">
-        <span class="w-32 font-bold">Name</span>
-        <span class="w-3/4 font-bold">Description</span>
-      </div>
-      <div class="flex gap-2" *ngFor="let project of projects | async; index as i">
-
-        <a class="w-32 hover:underline" [routerLink]="['/project', project.slug]">
-          <span class="">
-            {{ project.name }}
-          </span>
-        </a>
-        <a class="w-3/4 hover:underline" [routerLink]="['/project', project.slug]">
-          <span class="">
-            {{ project.description }}
-          </span>
-        </a>
-        <button class="border border-red-300 bg-red-200 hover:bg-red-300 px-2"
-          (click)="deleteProject(project.id, project.name)">Delete</button>
-      </div>
-    </div>
-  </section> -->
 
 </div>

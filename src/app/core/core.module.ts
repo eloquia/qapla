@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { TableModule } from 'primeng/table';
+import { PanelModule } from 'primeng/panel';
 
 import { ToastrModule } from 'ngx-toastr';
 
@@ -28,6 +29,7 @@ import { IconModule } from './icon/icon.module';
     ButtonModule,
     DynamicDialogModule,
     TableModule,
+    PanelModule,
     ToastrModule.forRoot(), // ToastrModule added
   ],
   exports: [
@@ -40,6 +42,7 @@ import { IconModule } from './icon/icon.module';
     ButtonModule,
     DynamicDialogModule,
     TableModule,
+    PanelModule,
   ],
   providers: []
 })

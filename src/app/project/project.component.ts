@@ -6,6 +6,13 @@ import { CreateProjectMeetingComponent } from '../meet/create-meeting/create-pro
 import { Project } from './models';
 import { ProjectService } from './project.service';
 import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
+
+interface DisplayedProject {
+  name: string;
+  numPersonnel: number;
+  slug: string;
+}
 
 @Component({
   selector: 'app-project',
@@ -15,7 +22,16 @@ import { Router } from '@angular/router';
 })
 export class ProjectComponent implements OnInit {
 
-  projects$: Observable<Project[]> = this.projectService.projects$;
+  projects$: Observable<DisplayedProject[]> = this.projectService.projects$
+    .pipe(
+      map<Project[], DisplayedProject[]>(projects => projects.map(project => {
+        return {
+          name: project.name,
+          slug: project.slug ? project.slug : '',
+          numPersonnel: project.assignedPersonnel ? project.assignedPersonnel.length : 0,
+        }
+      }))
+    );
 
   constructor(
     private projectService: ProjectService,

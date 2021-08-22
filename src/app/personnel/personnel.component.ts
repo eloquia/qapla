@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { CreatePersonnelRequest, Personnel } from './models';
+import { Personnel } from './models';
 import { PersonnelService } from './personnel.service';
-
-import { Project } from '../project/models';
-import { ProjectService } from '../project/project.service';
 
 @Component({
   selector: 'app-personnel',
@@ -15,73 +12,29 @@ import { ProjectService } from '../project/project.service';
 })
 export class PersonnelComponent implements OnInit {
 
-  personnelForm = this.formBuilder.group({
-    firstName: ['', [ Validators.required ]],
-    lastName: ['', [ Validators.required ]],
-    goesBy: [''],
-    middleName: [''],
-    email: [''],
-    gender: [''],
-    ethnicity: [''],
-    position: [''],
-    institution: [''],
-    assignedProjects: [''],
-  });
   showForm: boolean = false;
-  showErrors: boolean = false;
 
-  personnel: Observable<Personnel[]> = this.personnelService.personnel$;
-  projects: Observable<Project[]> = this.projectService.projects$;
+  personnel$: Observable<Personnel[]> = this.personnelService.personnel$;
 
   constructor(
-    private formBuilder: FormBuilder,
     private personnelService: PersonnelService,
-    private projectService: ProjectService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.fetchPersonnel();
-    this.projectService.getAllProjects();
   }
 
   public toggleShowForm(): void {
     this.showForm = !this.showForm;
   }
 
-  public createPersonnel(): void {
-    if (this.personnelForm.invalid) {
-      this.showErrors = true;
-      console.log('errors in form!', this.personnelForm)
-    } else {
-      this.showErrors = false;
-      const createPersonnelRequest: CreatePersonnelRequest = {
-        // required properties
-        firstName: this.personnelForm.get('firstName')?.value,
-        lastName: this.personnelForm.get('lastName')?.value,
-
-        // optional properties
-        email: this.personnelForm.get('email')?.value ? this.personnelForm.get('email')?.value : '',
-        middleName: this.personnelForm.get('middleName')?.value ? this.personnelForm.get('middleName')?.value : '',
-        goesBy: this.personnelForm.get('goesBy')?.value ? this.personnelForm.get('goesBy')?.value : '',
-        gender: this.personnelForm.get('gender')?.value ? this.personnelForm.get('gender')?.value : '',
-        ethnicity: this.personnelForm.get('ethnicity')?.value ? this.personnelForm.get('ethnicity')?.value : '',
-        position: this.personnelForm.get('position')?.value ? this.personnelForm.get('position')?.value : '',
-        institution: this.personnelForm.get('institution')?.value ? this.personnelForm.get('institution')?.value : '',
-        assignedProjectIDs: this.personnelForm.get('assignedProjects')?.value ? this.personnelForm.get('assignedProjects')?.value : [],
-      }
-      this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
-        this.clearForm();
-        this.showForm = false;
-      });
-    }
-  }
-
   public fetchPersonnel(): void {
     this.personnelService.getAllPersonnel();
   }
 
-  public clearForm(): void {
-    this.personnelForm.reset();
+  public goToPersonnel(id: number): void {
+    this.router.navigate([`/personnel/${id}`])
   }
 
 }

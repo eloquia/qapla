@@ -1,0 +1,76 @@
+<form id="create-personnel-form" class="" [formGroup]="personnelForm">
+
+  <div id="create-personnel-form-contents" class="">
+    <label class="">
+      First Name:
+      <input type="text" formControlName="firstName" required>
+      <span *ngIf="showErrors && personnelForm.controls.firstName.invalid" class="">
+        First Name is required.
+      </span>
+    </label>
+
+    <label class="">
+      Last Name:
+      <input type="text" formControlName="lastName" required>
+      <span *ngIf="showErrors && personnelForm.controls.lastName.invalid" class="">
+        Last Name is required.
+      </span>
+    </label>
+
+    <label class="">
+      Middle Name:
+      <input type="text" formControlName="middleName">
+    </label>
+
+    <label class="">
+      Goes By:
+      <input type="text" formControlName="goesBy">
+    </label>
+
+    <label class="">
+      Email:
+      <input type="email" formControlName="email">
+    </label>
+
+    <!-- <div *ngIf="email.invalid && userForm.dirty" class="error">
+      Technologies required.
+    </div>  -->
+
+    <label class="">
+      Gender:
+      <input type="text" formControlName="gender">
+    </label>
+
+    <label class="">
+      Ethnicity:
+      <input type="text" formControlName="ethnicity">
+    </label>
+
+    <label class="">
+      Position:
+      <input type="text" formControlName="position">
+    </label>
+
+    <label class="">
+      Institution:
+      <input type="text" formControlName="institution">
+    </label>
+
+    <label class="">
+      Project(s):
+      <div *ngIf="projects$ | async as projects; else noProjects">
+        <select multiple formControlName="assignedProjects">
+          <option [ngValue]="null" disabled>Assign to a Project?</option>
+          <option *ngFor="let project of projects" [ngValue]="project.id">
+            {{ project.name }}
+          </option>
+        </select>
+      </div>
+      <ng-template #noProjects>
+        No projects found
+      </ng-template>
+    </label>
+  </div>
+
+  <button class="" (click)="createPersonnel()">Create</button>
+</form>
