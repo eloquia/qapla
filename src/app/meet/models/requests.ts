@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { AttendanceStatus, MeetingItem, MeetingNote } from './common';
+import { MeetingItem, MeetingNote } from './common';
 
 /* ---------- Create Meeting ---------- */
 
@@ -18,7 +18,7 @@ export interface CreateProjectMeetingRequest extends CreateMeetingRequest {
   projectIds: number[];
 }
 
-export interface CreateFreeFormMeetingRequest extends CreateMeetingRequest {
+export interface CreatePeopleMeetingRequest extends CreateMeetingRequest {
   personnelIds: number[];
 }
 

@@ -1,6 +1,6 @@
 <div class="meeting-item mb-4">
 
-  <div class="attendance-container gap-2">
+  <div class="attendance-container gap-2" *ngIf="!!meetingItem; else noMeetingItem">
     <section class="attendee-name mb-4 flex gap-6">
       <h2 class="font-bold text-lg">
         {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
@@ -12,73 +12,70 @@
     </section>
 
     <article class="grid grid-cols-2 gap-4">
-      <!-- Tracks basic attendance -->
-      <section class="attendance-section flex gap-16">
-        <div class="flex flex-col gap-2">
-          <div class="form-item flex items-center">
-            <span class="w-28">Expected</span>
-            <select [(ngModel)]="meetingItem.plannedAttendanceStatus">
-              <option *ngFor="let option of plannedAttendanceOptions" [value]="option">{{ option }}</option>
-            </select>
-          </div>
+      <!-- Planned Attendance -->
+      <section class="col-span-2">
+        <div class="flex items-center">
+          <label style="width:150px">Expected</label>
+          <mat-button-toggle-group name="plannedAttendanceStatus" aria-label="Planned Attendance Status"
+            (change)="handlePlannedStatusChange($event)">
+            <mat-button-toggle *ngFor="let option of plannedAttendanceOptions" value="option">{{ option }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </section>
 
-          <div class="form-item flex items-center">
-            <span class="w-28">Actual</span>
-            <select [(ngModel)]="meetingItem.actualAttendanceStatus">
-              <option *ngFor="let option of actualAttendanceOptions" [ngValue]="option">{{ option }}</option>
-            </select>
-          </div>
+      <!-- Actual Attendance -->
+      <section class="col-span-2">
+        <div class="flex items-center">
+          <label style="width:150px">Actual</label>
+          <mat-button-toggle-group name="actualAttendanceStatus" aria-label="Actual Attendance Status"
+            (change)="handleActualStatusChange($event)">
+            <mat-button-toggle *ngFor="let option of actualAttendanceOptions" value="option">{{ option }}
+            </mat-button-toggle>
+          </mat-button-toggle-group>
         </div>
       </section>
 
       <!-- Tracks attendance reason -->
-      <section>
-        <div class="form-item flex flex-col">
-          <p class="flex">
-            <label class="w-40 mb-2 flex">
-              Attendance Reason
-            </label>
-            <textarea placeholder="Neuroscience conference" [(ngModel)]="meetingItem.attendanceReason"></textarea>
-          </p>
+      <section class="col-span-2">
+        <div class="flex items-center">
+          <label style="width:150px">Attendance Reason</label>
+          <textarea matInput id="attendance-reason" [(ngModel)]="meetingItem.attendanceReason"
+            placeholder="Neuroscience conference..."></textarea>
         </div>
       </section>
 
       <!-- Tracks meeting notes -->
-      <section class="track-notes flex flex-col">
-        <div class="track-notes-header flex justify-between">
-          <label class="w-28 flex">
-            Your Thoughts?
-          </label>
+      <section class="track-notes col-span-1">
+        <div class="track-notes-header">
+          <h3 class="">Your Thoughts?</h3>
         </div>
 
-        <div class="notes-container mt-2 flex flex-col gap-2">
+        <div class="notes-container mt-2 flex flex-col">
           <div class="notes-list flex flex-col gap-2">
-            <div class="flex gap-3" *ngFor="let note of meetingItem.notes; let i=index">
+            <div class="flex gap-2" *ngFor="let note of meetingItem.notes; let i=index">
+              <!-- Note -->
               <textarea placeholder="Today this intern..." [(ngModel)]="note.text"></textarea>
-              <!-- <app-searchbar-dropdown
-                  [placeholder]="'Tag'"
-                  (searchEvent)="handleSearchEvent($event)"
-                  (selectEvent)="handleSelectEvent($event)">
-              </app-searchbar-dropdown> -->
-              <div class="searchbar-dropdown">
-                <div class="input-wrapper relative">
-                  <input #searchbar type="text" placeholder="Tag text" [(ngModel)]="note.meetingNoteTag.text"
-                    (keyup)="fetchResults(searchbar.value)" />
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 absolute right-2 top-2" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor" (click)="fetchResults(searchbar.value)">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
 
-                <ul class="input-search-results">
-                  <li class="flex justify-between" *ngFor="let searchResult of searchResults | async"
-                    (click)="handleSelect(searchResult)">
-                    <span>{{ searchResult.text }}</span>
-                    <span class="italic text-gray-500 ">{{ searchResult.count }}</span>
-                  </li>
-                </ul>
-              </div>
+              <!-- Note Tag -->
+              <mat-form-field appearance="fill">
+                <mat-label>Tags</mat-label>
+                <mat-chip-list #chipList aria-label="Note tags">
+                  <mat-chip *ngFor="let tag of note.tags" [selectable]="selectable" [removable]="removable"
+                    (removed)="removeTag(tag)">
+                    {{tag}}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                  </mat-chip>
+                  <input placeholder="New tag..." #tagInput [formControl]="tagCtrl" [matAutocomplete]="auto"
+                    [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="addTag($event)">
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                  <mat-option *ngFor="let tag of filteredTags | async" [value]="tag">
+                    {{tag}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
             </div>
           </div>
 
@@ -90,7 +87,7 @@
       </section>
 
       <!-- Displays others' meeting notes -->
-      <section>
+      <section class="col-span-1">
         <h3>Others said</h3>
 
         <div *ngIf="meetingItem.othersNotes && meetingItem.othersNotes.length; else noNotes"
@@ -112,5 +109,9 @@
     </article>
 
   </div>
+
+  <ng-template #noMeetingItem>
+    No Meeting Item details to display. Does it exist?
+  </ng-template>
 
 </div>

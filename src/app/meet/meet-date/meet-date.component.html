@@ -1,31 +1,36 @@
-<div id="meeting-content" [@openClose]="openCloseTrigger">
-  <h2>{{selectedMonth | async}} {{selectedDay | async}}, {{selectedYear | async}}</h2>
-
+<div id="meeting-content" *ngIf="date$ | async as date; else noDate">
+  <h2>{{ date$ | async | date:'longDate' }}</h2>
   <div *ngIf="meetings$ | async as meetings; else noMeetings">
-    <ng-container [ngSwitch]="meetingViewType$ | async">
-      <ng-container *ngSwitchCase="'Future'">
-        <app-future-meeting
-            *ngFor="let meeting of meetings"></app-future-meeting>
-      </ng-container>
+    <mat-accordion class="" multi>
+      <mat-expansion-panel *ngFor="let meeting of meetings">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Time of meeting
+          </mat-panel-title>
+          <mat-panel-description>
+            Meeting Name
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-      <ng-container *ngSwitchCase="'Past'">
-        <app-past-meeting
-            *ngFor="let meeting of meetings"></app-past-meeting>
-      </ng-container>
+        <!-- <app-editable-meeting [meetingData]="meeting">
+        </app-editable-meeting> -->
 
-      <ng-container *ngSwitchDefault>
-        <app-present-meeting
-            *ngFor="let meeting of meetings"
-            [meeting]="meeting"></app-present-meeting>
-      </ng-container>
-    </ng-container>
+        {{ meeting | json }}
+
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
 
   <ng-template #noMeetings>
-    <div class="w-full h-64 flex flex-col items-center justify-center">
-      <p class="transition-colors duration-500 ease-in transform">
+    <div class="flex flex-column align-items-center">
+      <i class="pi pi-heart" style="font-size: 12rem"></i>
+      <p class="mt-4">
         No meetings found for this day. Enjoy your empty schedule! =]
       </p>
     </div>
   </ng-template>
 </div>
+
+<ng-template #noDate>
+  <p>No date selected. Pick a date to the right to get started!</p>
+</ng-template>

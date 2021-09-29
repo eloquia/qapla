@@ -1,141 +1,136 @@
-<div id="personnel-detail">
-  <div *ngIf="personnel$ | async as personnel; else noPersonnel">
-    <!-- Actions -->
-    <div class="p-d-flex">
-      <button class="" (click)="backToPersonnel()">
-        <!-- <app-left-arrow></app-left-arrow> -->
-        All Personnel
-      </button>
+<div *ngIf="personnel$ | async as personnel; else noPersonnel">
 
-      <button class="" (click)="updatePersonnel()">
-        Update
-      </button>
-    </div>
+  <div class="grid grid-cols-3 gap-8">
+    <!-- Summary Overview -->
+    <mat-card class="col-span-1 row-span-2">
+      <h2>Summary</h2>
+      <div id="profile-picture" class="">
 
-    <div class="grid">
-      <!-- Summary Overview -->
-      <p-panel class="col-4" header="Overview">
-        <div id="profile-picture" class="">
+      </div>
 
-        </div>
+      <!-- <section class="">
+        <app-dynamic-list [topic]="'Goals'" [items]="personnel.goals" (addItemEvent)="handleAddGoal($event, 'goal')"
+          (removeItemEvent)="handleRemoveGoal($event)">
+        </app-dynamic-list>
+      </section>
 
-        <section class="">
-          <app-dynamic-list [topic]="'Goals'" [items]="personnel.goals" (addItemEvent)="handleAddGoal($event, 'goal')"
-            (removeItemEvent)="handleRemoveGoal($event)">
-          </app-dynamic-list>
-        </section>
+      <section class="">
+        <app-dynamic-list [topic]="'Experiences'" [items]="personnel.experiences"
+          (addItemEvent)="handleAddExperience($event, 'experience')" (removeItemEvent)="handleRemoveExperience($event)">
+        </app-dynamic-list>
+      </section>
 
-        <section class="">
-          <app-dynamic-list [topic]="'Experiences'" [items]="personnel.experiences"
-            (addItemEvent)="handleAddExperience($event, 'experience')"
-            (removeItemEvent)="handleRemoveExperience($event)"></app-dynamic-list>
-        </section>
+      <section class="">
+        <app-dynamic-list [topic]="'Likes'" [items]="personnel.likes" (addItemEvent)="handleAddLike($event, 'like')"
+          (removeItemEvent)="handleRemoveLike($event)">
+        </app-dynamic-list>
+      </section> -->
+    </mat-card>
 
-        <section class="">
-          <app-dynamic-list [topic]="'Likes'" [items]="personnel.likes" (addItemEvent)="handleAddLike($event, 'like')"
-            (removeItemEvent)="handleRemoveLike($event)">
-          </app-dynamic-list>
-        </section>
-      </p-panel>
+    <!-- Recent Notes -->
+    <mat-card class="col-span-1">
+      <h2>Recent Notes</h2>
+      <p>TBD</p>
+    </mat-card>
 
-      <!-- Recent Notes -->
-      <p-panel class="col-4" header="Recent Notes">
-        <p>TBD</p>
-      </p-panel>
+    <!-- Recent Notes -->
+    <mat-card class="col-span-1">
+      <h2>Performance</h2>
+      <p>TBD</p>
+    </mat-card>
 
-      <!-- Recent Notes -->
-      <p-panel class="col-4" header="Performance">
-        <p>TBD</p>
-      </p-panel>
+    <!-- Basics -->
+    <mat-card class="col-span-1">
+      <h2>Overview</h2>
+      <article class="">
+        <form [formGroup]="personnelOverviewForm" id="personnel-detail-content">
+          <h2 class="">Basics</h2>
 
-      <!-- Basics -->
-      <p-panel class="col-4" header="Overview">
-        <article class="">
-          <form [formGroup]="personnelOverviewForm" id="personnel-detail-content">
-            <h2 class="">Basics</h2>
+          <div class="">
+            <section class="">
+              <p class="">First Name</p>
+              <input type="text" formControlName="firstName" />
+            </section>
 
-            <div class="">
-              <section class="">
-                <p class="">First Name</p>
-                <input type="text" formControlName="firstName" />
-              </section>
+            <section class="">
+              <p class="">Last Name</p>
+              <input type="text" formControlName="lastName" />
+            </section>
 
-              <section class="">
-                <p class="">Last Name</p>
-                <input type="text" formControlName="lastName" />
-              </section>
+            <section class="">
+              <p class="">Goes By</p>
+              <input type="text" formControlName="goesBy" />
+            </section>
 
-              <section class="">
-                <p class="">Goes By</p>
-                <input type="text" formControlName="goesBy" />
-              </section>
+            <section class="">
+              <p class="">Middle Name</p>
+              <input type="text" formControlName="middleName" />
+            </section>
 
-              <section class="">
-                <p class="">Middle Name</p>
-                <input type="text" formControlName="middleName" />
-              </section>
+            <section class="">
+              <p class="">Email</p>
+              <input type="email" formControlName="email" />
+            </section>
 
-              <section class="">
-                <p class="">Email</p>
-                <input type="email" formControlName="email" />
-              </section>
-
-              <section class="" *ngIf="personnel.isActive !== null && personnel.isActive !== undefined">
-                <label class="">
-                  <input type="radio" [value]="true" formControlName="isActive" [checked]="personnel.isActive"
-                    (change)="setActivity(true)">
-                  Active
-                </label>
-                <label class="">
-                  <input type="radio" [value]="false" formControlName="isActive" [checked]="!personnel.isActive"
-                    (change)="setActivity(false)">
-                  Inactive
-                </label>
-              </section>
-            </div>
-          </form>
-        </article>
-      </p-panel>
-
-      <!-- Demographics -->
-      <p-panel class="col-4" header="Demographics">
-        <form [formGroup]="personnelDemographicsForm" id="personnel-detail-content">
-          <section class="">
-            <p class="">Gender</p>
-            <input type="text" formControlName="gender" />
-          </section>
-
-          <section class="">
-            <p class="">Ethnicity</p>
-            <input type="text" formControlName="ethnicity" />
-          </section>
-
-          <section class="">
-            <p class="">Position</p>
-            <input type="text" formControlName="position" />
-          </section>
-
-          <section class="=">
-            <p class="">Institution</p>
-            <input type="text" formControlName="institution" />
-          </section>
+            <section class="" *ngIf="personnel.isActive !== null && personnel.isActive !== undefined">
+              <label class="">
+                <input type="radio" [value]="true" formControlName="isActive" [checked]="personnel.isActive"
+                  (change)="setActivity(true)">
+                Active
+              </label>
+              <label class="">
+                <input type="radio" [value]="false" formControlName="isActive" [checked]="!personnel.isActive"
+                  (change)="setActivity(false)">
+                Inactive
+              </label>
+            </section>
+          </div>
         </form>
-      </p-panel>
+      </article>
+    </mat-card>
 
-      <!-- Projects -->
-      <p-panel class="col-4" header="Projects">
-        <article class="">
-          <section *ngFor="let project of personnel.assignedProjects">
-            <h3>{{ project.name }}</h3>
-          </section>
-        </article>
-      </p-panel>
-    </div>
+    <!-- Demographics -->
+    <mat-card class="col-span-1">
+      <h2>Demographics</h2>
+      <form [formGroup]="personnelDemographicsForm" id="personnel-detail-content">
+        <section class="">
+          <p class="">Gender</p>
+          <input type="text" formControlName="gender" />
+        </section>
 
+        <section class="">
+          <p class="">Ethnicity</p>
+          <input type="text" formControlName="ethnicity" />
+        </section>
+
+        <section class="">
+          <p class="">Position</p>
+          <input type="text" formControlName="position" />
+        </section>
+
+        <section class="=">
+          <p class="">Institution</p>
+          <input type="text" formControlName="institution" />
+        </section>
+      </form>
+    </mat-card>
+
+    <!-- Projects -->
+    <mat-card class="col-span-1">
+      <h2>Projects</h2>
+      <article class="" *ngIf="personnel && personnel.projects; else noProjects">
+        <section *ngFor="let project of personnel.projects">
+          <h3>{{ project }}</h3>
+        </section>
+      </article>
+      <ng-template #noProjects>
+        <p>This person doesn't seem to be assigned to a project.</p>
+      </ng-template>
+    </mat-card>
   </div>
 
-  <ng-template #noPersonnel>
-    No personnel data found. Try going back and selecting a different personnel.
-  </ng-template>
-
 </div>
+
+<ng-template #noPersonnel>
+  No personnel data found. Try going back and selecting a different personnel.
+</ng-template>

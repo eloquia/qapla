@@ -1,5 +1,9 @@
-<nav>
-  <p-menubar [model]="items">
-    <button pButton type="button" label="Sign Out" icon="pi pi-sign-out" iconPos="right" (click)="logOut()"></button>
-  </p-menubar>
-</nav>
+<mat-toolbar>
+  <span class="cursor-pointer" (click)="goHome()">MIND Lab Admins</span>
+
+  <span class="example-spacer"></span>
+
+  <button mat-icon-button aria-label="Example icon button with a vertical three dot icon" (click)="logOut()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>

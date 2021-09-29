@@ -7,12 +7,12 @@ import {
 } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
-import { DatePickerService } from '../date-picker/date-picker.service';
 import { MeetService } from '../meet.service';
-import { Meeting, MeetingViewType } from '../models/common';
+import { Meeting } from '../models/common';
 
 @Component({
   selector: 'app-meet-date',
@@ -41,28 +41,18 @@ import { Meeting, MeetingViewType } from '../models/common';
   ],
 })
 export class MeetDateComponent implements OnInit {
-  isLoaded: boolean = false;
-  get openCloseTrigger() {
-    return this.isLoaded ? 'open' : 'closed';
-  }
-  toggleMobileMenu() {
-    this.isLoaded = !this.isLoaded;
-  }
 
-  selectedYear: Observable<number> = this.datePickerService.displayedYear$;
-  selectedMonth: Observable<string> = this.datePickerService.displayedMonth$;
-  selectedDay: Observable<number> = this.datePickerService.displayedDay$;
-  meetingViewType$: Observable<MeetingViewType> = this.meetService.dateType$;
-
-  meetings$: Observable<Meeting[]> = this.meetService.meetings$.pipe(
-    tap(() => {
-      this.isLoaded = true;
-    })
+  date$: Observable<Date> = this.meetService.date$.pipe(
+    map<DateTime, Date>(dt => {
+      return dt.toJSDate();
+    }),
+    tap(d => console.log('d', d))
   );
+
+  meetings$: Observable<Meeting[]> = this.meetService.meetings$;
 
   constructor(
     private route: ActivatedRoute,
-    private datePickerService: DatePickerService,
     private meetService: MeetService
   ) {}
 
@@ -71,4 +61,5 @@ export class MeetDateComponent implements OnInit {
       this.meetService.setMeetings(data.meetings);
     });
   }
+
 }

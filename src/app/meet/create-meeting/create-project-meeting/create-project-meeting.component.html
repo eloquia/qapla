@@ -1,52 +1,50 @@
-<form [formGroup]="createProjectMeetingForm" id="create-project-meeting" class="flex flex-col gap-2 mt-2">
+<form [formGroup]="createProjectMeetingForm" id="create-project-meeting">
+  <div class="flex flex-column align-items-center" *ngIf="projects$ | async as projects; else noProjects">
+    <div class="grid">
+      <label class="col-4" for="projects">Projects</label>
+      <!-- <p-multiSelect class="col-8" [options]="projects" formControlName="projects" optionLabel="name">
+      </p-multiSelect> -->
 
-  <label class="flex flex-col">
-    Projects
-    <select multiple formControlName="projects">
-      <option *ngFor="let project of projects$ | async" [ngValue]="project">{{ project.name }}</option>
-    </select>
-  </label>
+      <label for="meetingDate" class="col-4">Date</label>
+      <input class="col-8" id="meetingDate" type="date" formControlName="date">
 
-  <label class="flex flex-col">
-    Date
-    <input type="date" formControlName="date">
-  </label>
+      <label for="meetingTime" class="col-4">Time</label>
+      <input id="meetingTime" class="col-8" type="time" formControlName="startTime">
 
-  <label class="flex flex-col">
-    Starts
-    <input type="time" formControlName="startTime">
-  </label>
+      <p class="col-4">Duration</p>
+      <div class="col-8">
+        <div class="field-radiobutton">
+          <input type="radio" [value]="15" id="duration1" formControlName="duration">
+          <label for="duration1">15 mins</label>
+        </div>
+        <div class="field-radiobutton">
+          <input type="radio" [value]="30" id="duration2" formControlName="duration">
+          <label for="duration2">30 mins</label>
+        </div>
+        <div class="field-radiobutton">
+          <input type="radio" [value]="45" id="duration3" formControlName="duration">
+          <label for="duration3">45 mins</label>
+        </div>
+        <div class="field-radiobutton">
+          <input type="radio" [value]="60" id="duration4" formControlName="duration">
+          <label for="duration4">60 mins</label>
+        </div>
+      </div>
 
-  <div class="flex flex-col">
-    <p>Duration</p>
-    <label class="flex gap-2">
-      <input type="radio" [value]="15" formControlName="duration">
-      15 mins
-    </label>
+      <div class="col-12 flex flex-row justify-content-between">
+        <button mat-button [disabled]="isValid" (click)="navigateBack()" label="Back">
+        </button>
 
-    <label class="flex gap-2">
-      <input type="radio" [value]="30" formControlName="duration">
-      30 mins
-    </label>
-
-    <label class="flex gap-2">
-      <input type="radio" [value]="45" formControlName="duration">
-      45 mins
-    </label>
-
-    <label class="flex gap-2">
-      <input type="radio" [value]="60" formControlName="duration">
-      1 hr
-    </label>
+        <button mat-button [class]="{
+            'hover:cursor-not-allowed': isValid
+          }" [disabled]="isValid" (click)="navigateConfirm()" label="Next">
+        </button>
+      </div>
+    </div>
   </div>
+  <ng-template #noProjects>
+    No personnels found. Maybe you need to add personnels to the system? Maybe something is wrong with the
+    server/database?
+  </ng-template>
 
-  <button
-      class="py-1 px-2 bg-green-200 border rounded border-green-300 shadow-sm hover:bg-green-300 hover:shadow-sm"
-      [class]="{
-        'hover:cursor-not-allowed': isFormValid
-      }"
-      [disabled]="isFormValid"
-      (click)="scheduleMeeting()">
-    Create
-  </button>
 </form>

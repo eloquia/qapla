@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DatePickerService } from './date-picker.service';
+import { CreateMeetingService } from './create-meeting.service';
 
-describe('DatePickerService', () => {
-  let service: DatePickerService;
+describe('CreateMeetingService', () => {
+  let service: CreateMeetingService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DatePickerService);
+    service = TestBed.inject(CreateMeetingService);
   });
 
   it('should be created', () => {

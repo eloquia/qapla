@@ -18,6 +18,16 @@ export interface Meeting {
   meetingItems?: MeetingItem[];
 }
 
+export interface DisplayedMeeting {
+  id: number;
+  name: string;
+  startDate: number;
+  endDate: string;
+  // personnels?: Personnel[];
+  // projects?: Project[];
+  meetingItems?: MeetingItem[];
+}
+
 export interface MeetingAttendance {
   id?: number;
   personnel: Personnel;
@@ -118,6 +128,7 @@ export interface MeetingNote {
   authorName?: string;
   aboutId: number;
   meetingNoteTag: MeetingNoteTag;
+  tags?: MeetingNoteTag[];
 }
 
 export const EMPTY_MEETING_NOTE: MeetingNote = {
@@ -158,15 +169,6 @@ export interface PresentMeetingItem extends MeetingItem {
   notes?: MeetingNote[];
 }
 
-export const EMPTY_PRESENT_MEETING_ITEM: PresentMeetingItem = {
-  id: 0,
-  personnel: EMPTY_PERSONNEL,
-  project: EMPTY_PROJECT,
-  plannedAttendanceStatus: 'Attending',
-  actualAttendanceStatus: 'Attending',
-  attendanceReason: '',
-};
-
 export interface BaseMeetingView {
   name: string;
   startDate: string;
@@ -183,32 +185,6 @@ export interface FutureMeetingView extends BaseMeetingView {
 export interface PresentMeetingView extends BaseMeetingView {
   meetingItems?: PresentMeetingItem[];
 }
-
-export const EMPTY_PRESENT_MEETING: PresentMeetingView = {
-  name: '',
-  startDate: DateTime.now().toISO(),
-  endDate: DateTime.now().toISO(),
-  meetingItems: [
-    {
-      id: 0,
-      personnel: EMPTY_PERSONNEL,
-      project: EMPTY_PROJECT,
-      plannedAttendanceStatus: 'Attending',
-      actualAttendanceStatus: 'Attending',
-      attendanceReason: '',
-      notes: [
-        {
-          text: '',
-          authorId: 0,
-          aboutId: 0,
-          meetingNoteTag: {
-            text: 'text tag',
-          },
-        },
-      ],
-    },
-  ],
-};
 
 export interface PastMeetingView extends BaseMeetingView {}
 
@@ -257,6 +233,28 @@ export const MOCK_MEETING_NOTE_COLLECTION_3: OtherMeetingNote[] = [
   MOCK_MEETING_NOTE_3,
 ];
 
+export const MOCK_PERSONNEL_1: Personnel = {
+  id: 999,
+  firstName: 'John',
+  lastName: 'Doe',
+  name: 'John Doe',
+  goesBy: 'John',
+  middleName: '',
+  email: 'john.doe@gmail.com',
+  gender: 'M',
+  assignedProjects: []
+}
+
+export const MOCK_PROJECT_1: Project = {
+  id: 999,
+  name: 'Mock Interceptor Project',
+  description: 'A project mocked for test purposes',
+  slug: 'mock-project',
+  assignedPersonnel: [
+    MOCK_PERSONNEL_1,
+  ],
+}
+
 export const EMPTY_MEETING: Meeting = {
   id: 0,
   name: 'Test Meeting',
@@ -265,11 +263,27 @@ export const EMPTY_MEETING: Meeting = {
   meetingItems: [],
 };
 
+export const MOCK_MEETING_1: Meeting = {
+  id: -999,
+  name: 'Mock Meeting',
+  startDate: DateTime.now().toISO(),
+  endDate: DateTime.now().toISO(),
+  meetingItems: [
+    {
+      id: -998,
+      personnel: MOCK_PERSONNEL_1,
+      project: MOCK_PROJECT_1,
+      plannedAttendanceStatus: 'Attending',
+      actualAttendanceStatus: 'Attending',
+      attendanceReason: 'Made up reason',
+    }
+  ],
+}
+
 /*
 
 */
 export interface SearchResult {
   id: number;
   text: string;
-  count: number;
 }

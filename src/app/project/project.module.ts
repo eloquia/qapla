@@ -19,9 +19,9 @@ import { CoreModule } from '../core/core.module';
   imports: [
     CommonModule,
     CoreModule,
-    ProjectRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
+    ProjectRoutingModule,
   ],
   exports: [
     CoreModule,

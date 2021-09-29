@@ -11,8 +11,12 @@ import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest
 })
 export class PersonnelService {
 
-  private personnelsSubject_: Subject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  public personnel$: Observable<Personnel[]> = this.personnelsSubject_.asObservable();
+  // -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  //     Observable Data Sources & Events
+  // -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+  // private personnelsSubject_: BehaviorSubject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
+  public personnel$: Observable<Personnel[]> = this.httpClient.get<Personnel[]>('http://localhost:8080/personnel');
 
   // private unassignedPersonnelSubject: Subject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
   public unassignedPersonnel$: Observable<Personnel[]> = this.personnel$.pipe(
@@ -24,14 +28,14 @@ export class PersonnelService {
 
   private updatePersonnelEventSubject_: Subject<UpdatePersonnelRequest> = new Subject<UpdatePersonnelRequest>();
   public updatePersonnelEvent$: Observable<UpdatePersonnelRequest> = this.updatePersonnelEventSubject_.asObservable();
-  updatePersonnelSub = this.updatePersonnelEvent$.pipe(
-    withLatestFrom(this.selectedPersonnelSubject_),
-    switchMap(([updateRequest, originalPersonnel]) => {
-      updateRequest.notes = originalPersonnel.goals
-        .concat(originalPersonnel.experiences, originalPersonnel.likes);
-      return this.httpClient.put(`http://localhost:8080/personnel/${updateRequest.id}`, updateRequest);
-    })
-  ).subscribe();
+  // updatePersonnelSub = this.updatePersonnelEvent$.pipe(
+  //   withLatestFrom(this.selectedPersonnelSubject_),
+  //   switchMap(([updateRequest, originalPersonnel]) => {
+  //     updateRequest.notes = originalPersonnel.goals
+  //       .concat(originalPersonnel.experiences, originalPersonnel.likes);
+  //     return this.httpClient.put(`http://localhost:8080/personnel/${updateRequest.id}`, updateRequest);
+  //   })
+  // ).subscribe();
 
   private addPersonnelGoalSubject_: Subject<PersonnelNote> = new Subject<PersonnelNote>();
   addGoalSub = this.addPersonnelGoalSubject_.asObservable().pipe(
@@ -90,24 +94,24 @@ export class PersonnelService {
   ).subscribe();
 
   private addPersonnelLikeSubject_: Subject<PersonnelNote> = new Subject<PersonnelNote>();
-  addLikeSub = this.addPersonnelLikeSubject_.asObservable().pipe(
-    withLatestFrom(this.selectedPersonnelSubject_),
-    tap(([like, personnel]) => {
-      const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
-      updatedPersonnel.likes.push(like);
-      this.selectedPersonnelSubject_.next(updatedPersonnel);
-    })
-  ).subscribe();
+  // addLikeSub = this.addPersonnelLikeSubject_.asObservable().pipe(
+  //   withLatestFrom(this.selectedPersonnelSubject_),
+  //   tap(([like, personnel]) => {
+  //     const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
+  //     updatedPersonnel.likes.push(like);
+  //     this.selectedPersonnelSubject_.next(updatedPersonnel);
+  //   })
+  // ).subscribe();
 
   private removePersonnelLikeSubject_: Subject<number> = new Subject<number>();
-  removeLikeSub = this.removePersonnelLikeSubject_.asObservable().pipe(
-    withLatestFrom(this.selectedPersonnelSubject_),
-    tap(([likeId, personnel]) => {
-      const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
-      updatedPersonnel.likes = updatedPersonnel.likes.filter(like => like.id !== likeId);
-      this.selectedPersonnelSubject_.next(updatedPersonnel);
-    })
-  ).subscribe();
+  // removeLikeSub = this.removePersonnelLikeSubject_.asObservable().pipe(
+  //   withLatestFrom(this.selectedPersonnelSubject_),
+  //   tap(([likeId, personnel]) => {
+  //     const updatedPersonnel: DisplayedPersonnel = JSON.parse(JSON.stringify(personnel));
+  //     updatedPersonnel.likes = updatedPersonnel.likes.filter(like => like.id !== likeId);
+  //     this.selectedPersonnelSubject_.next(updatedPersonnel);
+  //   })
+  // ).subscribe();
 
   private updatePersonnelActivitySubject_: Subject<boolean> = new Subject<boolean>();
   activitySub = this.updatePersonnelActivitySubject_.asObservable().pipe(
@@ -122,22 +126,26 @@ export class PersonnelService {
   constructor(
     private httpClient: HttpClient,
     private toasterService: ToastrService,
-  ) { }
-
-  public getAllPersonnel(): void {
-    this.httpClient.get<Personnel[]>('http://localhost:8080/personnel')
-      .subscribe(response => {
-        this.personnelsSubject_.next(response);
-      });
+  ) {
+    // this.getAllPersonnel();
   }
+
+  // public getAllPersonnel(): void {
+  //   this.httpClient.get<Personnel[]>('http://localhost:8080/personnel')
+  //     .subscribe(response => {
+  //       this.personnelsSubject_.next(response);
+  //     });
+  // }
 
   public getPersonnelDetails(id: number | string): Observable<DisplayedPersonnel> {
     return this.httpClient.get<Personnel>(`http://localhost:8080/personnel/${id}`).pipe(
+      tap(p => console.log('getting personnel with id', p.id)),
       map<Personnel, DisplayedPersonnel>(personnel => {
         return {
           id: personnel.id,
           firstName: personnel.firstName,
           lastName: personnel.lastName,
+          name: `${personnel.firstName} ${personnel.lastName}`,
           goesBy: personnel.goesBy,
           middleName: personnel.middleName,
           email: personnel.email,

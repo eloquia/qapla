@@ -15,6 +15,7 @@ export class PersonnelDetailComponent implements OnInit {
 
   personnel$: Observable<DisplayedPersonnel> = this.personnelService.selectedPersonnel$.pipe(
     tap(personnel => {
+      console.log('personnel', personnel)
       this.personnelOverviewForm.setControl('firstName', new FormControl(personnel.firstName));
       this.personnelOverviewForm.setControl('lastName', new FormControl(personnel.lastName));
       this.personnelOverviewForm.setControl('goesBy', new FormControl(personnel.goesBy));

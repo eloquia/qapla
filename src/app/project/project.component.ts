@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DialogService } from 'primeng/dynamicdialog';
-import { CreateProjectMeetingComponent } from '../meet/create-meeting/create-project-meeting/create-project-meeting.component';
 
 import { Project } from './models';
 import { ProjectService } from './project.service';
@@ -18,9 +16,10 @@ interface DisplayedProject {
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss'],
-  providers: [DialogService],
 })
 export class ProjectComponent implements OnInit {
+
+  displayedColumns: string[] = ['name', 'numPersonnel']
 
   projects$: Observable<DisplayedProject[]> = this.projectService.projects$
     .pipe(
@@ -35,32 +34,18 @@ export class ProjectComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private dialogService: DialogService,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
-    this.fetchProjects();
-  }
-
-  public fetchProjects() {
-    return this.projectService.getAllProjects();
-  }
-
-  public goToProject(slug: any) {
-    console.log('Going to project', slug)
-    this.router.navigate([`/project/${slug}`])
-  }
-
-  public deleteProject(id: number, name: string) {
-    this.projectService.deleteProjectById(id, name);
+    this.projectService.getAllProjects();
   }
 
   public showCreate() {
-    this.dialogService.open(CreateProjectMeetingComponent, {
-      header: 'Create a Project',
-      width: '70%'
-    });
+  }
+
+  public handleClickedRow(row: DisplayedProject) {
+    this.router.navigate([`/project/${row.slug}`])
   }
 
 }

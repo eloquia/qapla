@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 import { ProfileService } from '../profile.service';
-import { EMPTY_MEETING_NOTE, Meeting, MeetingItem, MeetingNote, MeetingViewType, SearchResult } from './models/common';
+import { Meeting, MeetingNote, MeetingViewType, MOCK_MEETING_1, SearchResult } from './models/common';
 import {
   CreateMeetingRequest,
   UpdateMeetingNoteRequest,
@@ -27,14 +28,20 @@ export class MeetService {
   public meetings$: Observable<Meeting[]> =
     this.meetingsSubject_.asObservable();
 
-  private dateTypeSubject_: Subject<MeetingViewType> =
-    new BehaviorSubject<MeetingViewType>(MeetingViewType.PRESENT);
-  public dateType$: Observable<MeetingViewType> =
-    this.dateTypeSubject_.asObservable();
-
-  private tagSearchResultsSubject_: Subject<SearchResult[]> = new Subject<
-    SearchResult[]
-  >();
+  private tagSearchResultsSubject_: Subject<SearchResult[]> = new BehaviorSubject<SearchResult[]>([
+    {
+      id: 1,
+      text: 'good',
+    },
+    {
+      id: 2,
+      text: 'bad',
+    },
+    {
+      id: 3,
+      text: 'question',
+    },
+  ]);
   public tagSearchResults$: Observable<SearchResult[]> =
     this.tagSearchResultsSubject_.asObservable();
 
@@ -139,11 +146,29 @@ export class MeetService {
         );
       }),
       tap((meetings) => {
-        // console.log('meetings fetched', meetings);
+        console.log('meetings fetched', meetings);
         this.meetingsSubject_.next(meetings);
       })
     )
-    .subscribe();
+    .subscribe({
+      next: r => console.log('r', r),
+      error: e => {
+        console.warn('e', e)
+        this.meetingsSubject_.next([MOCK_MEETING_1]);
+      }
+    });
+
+  // -------------------- Calendar ----------------------
+
+  private dateSubject_: Subject<DateTime> = new BehaviorSubject<DateTime>(DateTime.now());
+  public date$: Observable<DateTime> = this.dateSubject_.asObservable()
+    .pipe(
+      tap(date => {
+        const urlDisplayed = date.toFormat('yyyy-MM-dd');
+        // this.router.navigate([`/meet/${urlDisplayed}`]);
+        this.fetchMeetingsEventSubject_.next(urlDisplayed)
+      })
+    );
 
   // Search event
   private tagSearchEventSubject_: Subject<string> = new Subject();
@@ -220,6 +245,7 @@ export class MeetService {
     private httpClient: HttpClient,
     private toasterService: ToastrService,
     private profileService: ProfileService,
+    private router: Router,
   ) {}
 
   // -------------------- Functions ----------------------
@@ -228,9 +254,64 @@ export class MeetService {
     this.meetingsSubject_.next(meetings);
   }
 
-  public getMeetingsByDate(date: string): void {
+  public getMeetingsByDate(date: string): Observable<Meeting[]> {
     this.fetchMeetingsEventSubject_.next(date);
-    // return this.httpClient.get<Meeting[]>(`http://localhost:8080/meeting/${date}`);
+
+    const dateParts: string[] = date.split('-');
+    const year = dateParts[0];
+    const month = dateParts[1];
+    const day = dateParts[2];
+    const tz = DateTime.local().toFormat('z');
+    return this.httpClient.get<Meeting[]>(
+      `http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}&zone=${tz}`
+    ).pipe(
+      map(meetings => {
+        // convert incoming "notes: null" into an array, which might be wrong here...
+        return meetings ? meetings.map(meeting => {
+
+          if (meeting.meetingItems) {
+
+            meeting.meetingItems.map(meetingItem => {
+
+              if (!meetingItem.notes) {
+                console.log('adding notes to', meetingItem)
+
+                meetingItem.notes = [{
+                  text: '',
+                  authorId: this.profileService.getUserId(),
+                  aboutId: meetingItem.personnel.id,
+                  meetingNoteTag: {
+                    text: '',
+                  }
+                }];
+
+              } else {
+                // there are meeting notes, so we should filter by
+                // current author and other author
+                const notes: MeetingNote[] = meetingItem.notes.filter((note: MeetingNote) => {
+                  return note.authorId === this.profileService.getUserId();
+                })
+                const othersNotes: MeetingNote[] = meetingItem.notes.filter((notes: MeetingNote) => {
+                  return notes.authorId !== this.profileService.getUserId();
+                })
+
+                meetingItem.othersNotes = othersNotes;
+                meetingItem.notes = notes;
+              }
+
+              return meetingItem;
+            });
+
+          } else {
+            // there are no meeting items
+            console.log('no meeting items?', meeting.meetingItems)
+          }
+
+          return meeting;
+        })
+        : meetings;
+      })
+    );
   }
 
   public createMeeting(meetingDetails: CreateMeetingRequest): void {
@@ -248,5 +329,9 @@ export class MeetService {
   // ---------- Search for Tags ----------
   public searchTag(tagText: string): void {
     console.log('searching for', tagText);
+  }
+
+  updateDate(dateTime: DateTime): void {
+    this.dateSubject_.next(dateTime);
   }
 }

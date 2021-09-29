@@ -1,0 +1,18 @@
+<!-- Detail View -->
+<div *ngIf="meetingData; else noMeeting">
+  <div *ngIf="meetingData.meetingItems; else noMeetingItems">
+    <app-present-meeting-item *ngFor="let meetingItem of meetingData.meetingItems" [meetingItem]="meetingItem"
+      [attr.id]="meetingItem.id">
+    </app-present-meeting-item>
+  </div>
+  <ng-template #noMeetingItems>
+    <div>
+      No details to display
+    </div>
+  </ng-template>
+</div>
+<!-- End Detail View -->
+
+<ng-template #noMeeting>
+  No meeting
+</ng-template>

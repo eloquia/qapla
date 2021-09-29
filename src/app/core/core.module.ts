@@ -1,49 +1,82 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { MenubarModule } from 'primeng/menubar';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { TableModule } from 'primeng/table';
-import { PanelModule } from 'primeng/panel';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+
+import { MatLuxonDateModule } from 'ngx-material-luxon';
 
 import { ToastrModule } from 'ngx-toastr';
 
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { HomeComponent } from './home/home.component';
 import { IconModule } from './icon/icon.module';
 
 @NgModule({
   declarations: [
     ToolbarComponent,
     NotFoundComponent,
-    HomeComponent,
   ],
   imports: [
     CommonModule,
     IconModule,
-    MenubarModule,
-    CardModule,
-    ButtonModule,
-    DynamicDialogModule,
-    TableModule,
-    PanelModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatLuxonDateModule,
+    MatFormFieldModule,
+    MatExpansionModule,
+    MatDialogModule,
+    MatStepperModule,
+    MatSelectModule,
+    MatRadioModule,
     ToastrModule.forRoot(), // ToastrModule added
   ],
   exports: [
     ToolbarComponent,
     NotFoundComponent,
-    HomeComponent,
     IconModule,
-    MenubarModule,
-    CardModule,
-    ButtonModule,
-    DynamicDialogModule,
-    TableModule,
-    PanelModule,
+    MatAutocompleteModule,
+    MatIconModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatLuxonDateModule,
+    MatFormFieldModule,
+    MatExpansionModule,
+    MatDialogModule,
+    MatStepperModule,
+    MatSelectModule,
+    MatRadioModule,
   ],
-  providers: []
 })
 export class CoreModule { }

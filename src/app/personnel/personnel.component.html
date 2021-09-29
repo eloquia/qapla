@@ -1,43 +1,37 @@
 <div id="personnel-content" class="">
 
   <!-- Create Personnel -->
-  <section class="p-d-flex">
+  <section class="flex justify-between items-center">
     <h1 class="">Personnel</h1>
-    <p-button class="" (click)="toggleShowForm()" label="Create"></p-button>
+    <button mat-button class="" (click)="showForm()">Add</button>
   </section>
 
   <!-- List Personnel -->
   <section class="">
-    <div *ngIf="personnel$ | async as personnel; else noPersonnel">
-      <p-table [value]="personnel" styleClass="p-datatable">
-        <ng-template pTemplate="header">
-          <tr>
-            <th>Name</th>
-            <th>Recent Activity</th>
-            <th>Email</th>
-          </tr>
-        </ng-template>
+    <div *ngIf="displayedPersonnel$ | async as personnel; else noPersonnel">
+      <table mat-table [dataSource]="personnel" class="w-full mat-elevation-z8">
+        <!-- Personnel Name -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let person">{{person.firstName}} {{person.lastName}}</td>
+        </ng-container>
 
-        <ng-template pTemplate="body" let-personnel>
-          <tr class="personnel-row">
-            <td class="personnel-cell-clickable" (click)="goToPersonnel(personnel.id)">{{personnel.firstName}}
-              {{personnel.lastName}}</td>
-            <td>TBD</td>
-            <td>{{personnel.email}}</td>
-          </tr>
-        </ng-template>
-        <div class="personnel-list-item" class="flex gap-2" *ngFor="let person of personnel; index as i">
-          <span class="">
-            <a class="" [routerLink]="['/personnel', person.id]">
-              {{ person.firstName }} {{ person.lastName }}
-            </a>
-          </span>
-          <span class="">
-            <!-- <app-personnel-activity></app-personnel-activity> -->
-          </span>
-          <span class="">{{ person.email }}</span>
-        </div>
-      </p-table>
+        <!-- Assigned Project -->
+        <ng-container matColumnDef="projects">
+          <th mat-header-cell *matHeaderCellDef> Projects </th>
+          <td mat-cell *matCellDef="let person"> {{person.projects}} </td>
+        </ng-container>
+
+        <!-- Recent Activity -->
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row class="cursor-pointer hover:bg-gray-100" *matRowDef="let row; columns: displayedColumns;"
+          (click)="handleClickedRow(row)"></tr>
+      </table>
+
+      <mat-paginator *ngIf="personnel$ | async as ps" [pageSizeOptions]="pageSizeOptions" [length]="ps.length"
+        [pageSize]="pageSize" (page)="handlePage($event)" showFirstLastButtons>
+      </mat-paginator>
     </div>
     <ng-template #noPersonnel>
       No personnel found =[

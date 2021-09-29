@@ -16,6 +16,7 @@ export interface DisplayedPersonnel {
   id: number;
   firstName: string;
   lastName: string;
+  name: string;
   goesBy: string;
   middleName: string;
   email: string;
@@ -24,16 +25,17 @@ export interface DisplayedPersonnel {
   position?: string;
   institution?: string;
   isActive?: boolean;
-  assignedProjects: Project[];
-  goals: PersonnelNote[];
-  experiences: PersonnelNote[];
-  likes: PersonnelNote[];
+  projects?: string[];
+  goals?: PersonnelNote[];
+  experiences?: PersonnelNote[];
+  likes?: PersonnelNote[];
 }
 
 export interface Personnel {
   id: number;
   firstName: string;
   lastName: string;
+  name: string;
   goesBy: string;
   middleName: string;
   email: string;
@@ -50,6 +52,7 @@ export const EMPTY_PERSONNEL: DisplayedPersonnel = {
   id: 0,
   firstName: '',
   lastName: '',
+  name: '',
   goesBy: '',
   middleName: '',
   email: '',
@@ -58,7 +61,7 @@ export const EMPTY_PERSONNEL: DisplayedPersonnel = {
   position: '',
   institution: '',
   isActive: false,
-  assignedProjects: [EMPTY_PROJECT],
+  projects: [],
   goals: [EMTPY_PERSONNEL_NOTE],
   experiences: [EMTPY_PERSONNEL_NOTE],
   likes: [EMTPY_PERSONNEL_NOTE],

@@ -1,115 +1,106 @@
-<div id="project-detail-view" class="">
-  <!-- <button
-      class="flex py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300"
-      (click)="backToProjects()">
-    All Projects
-  </button> -->
+<div id="project-detail-view" class="" *ngIf="project$ | async as project; else noProject">
 
-  <div *ngIf="project$ | async as project; else noProject">
-    <div class="grid">
-      <!-- Basic information about project -->
-      <p-panel class="col-4 flex-grow-1" header="Basics">
-        <h1 class="">{{ project.name }}</h1>
-
-        <div class=""></div>
-
-        <p>{{ project.description }}</p>
-      </p-panel>
-
-      <!-- Project Objectives/Progress -->
-      <p-panel class="col-4 flex-grow-1" header="Objectives">
-        <div class="">
-          <p>
-            In progress--low priority
-          </p>
-        </div>
-      </p-panel>
-
-      <!-- Project Successes/Failures -->
-      <p-panel class="col-4 flex-grow-1" header="Successes/Lessons Learned">
-        <div class="">
-          <p>
-            In progress--low priority
-          </p>
-        </div>
-      </p-panel>
-
-      <!-- Assigned Personnel -->
-      <p-panel class="col-4 flex-grow-1" header="Assigned Personnel">
-        <!-- -- -- -- -- If there are people, show them -- -- -- -- -->
-        <div class="" *ngIf="project.assignedPersonnel && project.assignedPersonnel.length; else noPersonnel">
-          <div id="assigned-personnel-table-controls" class="flex">
-            <button class="w-2 mr-1"
-              *ngIf="personnelRemovalForm.controls.removePersonnelArray.value.length; else invalidRemove"
-              (click)="removePersonnel()">Remove</button>
-            <ng-template #invalidRemove>
-              <span class="">
-                Remove?
-              </span>
-            </ng-template>
-            <span class="">Name</span>
-          </div>
-          <form [formGroup]="personnelRemovalForm">
-            <div formArrayName="removePersonnelArray">
-              <div class="flex" *ngFor="let removePerson of removePersonnelArray.controls; let i = index"
-                formGroupName="{{i}}">
-                <!-- <button class="py-1 px-2 border rounded border-red-300 bg-red-200 shadow-sm hover:bg-red-300 hover:shadown-md">Remove</button> -->
-                <span class="w-2 mr-1">
-                  <input class="" type="checkbox" formControlName="remove">
-                </span>
-                <label class="">{{ project.assignedPersonnel[i].firstName }} {{ project.assignedPersonnel[i].lastName
-                  }}</label>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <!-- -- -- -- -- Else show "no assigned personnel" -- -- -- -- -->
-        <ng-template #noPersonnel>
-          <div id="no-project-personnel" class="my-4 flex flex-col gap-2">
-            <p>No assigned resources found. Add Some?</p>
-          </div>
-        </ng-template>
-
-      </p-panel>
-
-      <!-- Another section -->
-      <p-panel class="col-4 flex-grow-1" header="Update Personnel">
-        <form class="" [formGroup]="assignPersonnelForm">
-          <span class="">(add multiple people with ⌘/CRTL or Shift)</span>
-          <select multiple class="" formControlName="personnels">
-            <option *ngFor="let unassignedPerson of unassignedPersonnel | async" [ngValue]="unassignedPerson.id">
-              {{ unassignedPerson.firstName }} {{ unassignedPerson.lastName }}
-            </option>
-          </select>
-        </form>
-
-        <button class="" (click)="addPersonnel()">Add</button>
-      </p-panel>
-
-      <!-- Notes/Objectives -->
-      <p-panel class="col-4 flex-grow-1" header="Notes">
-        <!-- <ul *ngIf="project.notes; else noNotes">
-          <li class="project-note" *ngFor="let note of project.notes">
-            {{ note.description }}
-          </li>
-        </ul>
-        <ng-template #noNotes>
-          No notes
-        </ng-template> -->
-        <div class="">
-          <p>
-            In progress--low priority
-          </p>
-        </div>
-      </p-panel>
-    </div>
+  <div id="project-detail-header">
+    <h1>{{project.name}}</h1>
   </div>
 
-  <ng-template #noProject>
-    <div class="p-64">
-      No project found. Try going back and selecting a different project.
-    </div>
-  </ng-template>
+  <div class="grid grid-cols-3 gap-8">
+    <!-- Basic information about project -->
+    <mat-card class="col-span-2">
+      <h2 class="">Overview</h2>
+
+      <!-- <div class=""></div> -->
+
+      <p>{{ project.description }}</p>
+    </mat-card>
+
+    <!-- Project Objectives/Progress -->
+    <mat-card class="col-span-1">
+      <div class="">
+        <h2>Objectives/Progress</h2>
+        <p>
+          In progress--low priority
+        </p>
+      </div>
+    </mat-card>
+
+    <!-- Recent Activity -->
+    <mat-card class="col-span-1">
+      <div class="">
+        <h2>Recent Activity</h2>
+        <p>
+          In progress--low priority
+        </p>
+      </div>
+    </mat-card>
+
+    <!-- Assigned Personnel -->
+    <mat-card class="col-span-2">
+      <h2>Project Personnel</h2>
+      <div class="" *ngIf="project.assignedPersonnel && project.assignedPersonnel.length; else noPersonnel">
+        <div id="assigned-personnel-table-controls" class="">
+          <button class="" *ngIf="personnelRemovalForm.controls.removePersonnelArray.value.length; else invalidRemove"
+            (click)="removePersonnel()">Remove</button>
+          <ng-template #invalidRemove>
+            <span class="">
+              Remove?
+            </span>
+          </ng-template>
+          <span class="">Name</span>
+        </div>
+        <form [formGroup]="personnelRemovalForm">
+          <div formArrayName="removePersonnelArray">
+            <div class="" *ngFor="let removePerson of removePersonnelArray.controls; let i = index"
+              formGroupName="{{i}}">
+              <span class="">
+                <input class="" type="checkbox" formControlName="remove">
+              </span>
+              <label class="">{{ project.assignedPersonnel[i].firstName }} {{ project.assignedPersonnel[i].lastName
+                }}</label>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <ng-template #noPersonnel>
+        <div id="no-project-personnel" class="">
+          <p>No assigned resources found. Add Some?</p>
+        </div>
+      </ng-template>
+
+    </mat-card>
+
+    <!-- Another section -->
+    <mat-card class="col-span-1">
+      <h2>Update Personnel</h2>
+      <form class="" [formGroup]="assignPersonnelForm">
+        <select multiple class="" formControlName="personnels">
+          <option *ngFor="let unassignedPerson of unassignedPersonnel | async" [ngValue]="unassignedPerson.id">
+            {{ unassignedPerson.firstName }} {{ unassignedPerson.lastName }}
+          </option>
+        </select>
+      </form>
+
+      <span class="italic font-gray-500">(add multiple people with ⌘/CRTL or Shift)</span>
+
+      <button class="" (click)="addPersonnel()">Add</button>
+    </mat-card>
+
+    <!-- Notes/Objectives -->
+    <mat-card class="col-span-2" header="Notes">
+      <div class="">
+        <h2>Notes/Objectives</h2>
+        <p>
+          In progress--low priority
+        </p>
+      </div>
+    </mat-card>
+  </div>
 
 </div>
+
+<ng-template #noProject>
+  <div class="p-64">
+    No project found. Try going back and selecting a different project.
+  </div>
+</ng-template>

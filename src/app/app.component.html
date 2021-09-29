@@ -1,4 +1,25 @@
-<!-- <app-toolbar *ngIf="loggedIn$ | async"></app-toolbar> -->
-<app-toolbar *ngIf="true"></app-toolbar>
+<app-toolbar></app-toolbar>
 
-<router-outlet></router-outlet>
+<mat-sidenav-container *ngIf="loggedIn$ | async as loggedIn; else notLoggedIn" class="w-full">
+  <mat-sidenav [mode]="'side'" opened>
+    <div class="flex flex-col">
+      <a class="py-2 pl-4 w-full hover:bg-gray-100 text-lg" routerLink="/project"
+        routerLinkActive="active-link">Projects</a>
+      <a class="py-2 pl-4 w-full hover:bg-gray-100 text-lg" routerLink="/personnel"
+        routerLinkActive="active-link">Personnel</a>
+      <a class="py-2 pl-4 w-full hover:bg-gray-100 text-lg" routerLink="/meet"
+        routerLinkActive="active-link">Meetings</a>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content class="p-8 h-screen">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+<ng-template #notLoggedIn>
+  <router-outlet></router-outlet>
+</ng-template>
+
+<mat-toolbar>
+  <span class="example-spacer"></span>
+  <p class="text-sm">Made by Dale @ Eloquia</p>
+</mat-toolbar>

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
-import { AuthService } from '../auth.service';
+import { AuthService, LoginCredentials } from '../auth.service';
 import { SuccessToastConfig } from '../core/models';
 
 @Component({
@@ -11,11 +12,19 @@ import { SuccessToastConfig } from '../core/models';
 })
 export class LoginComponent implements OnInit {
 
-  email: string = '';
-  password: string = '';
+  loginForm = this.formBuilder.group({
+    email: [''],
+    password: ['']
+  });
+
+  @HostListener('keyup', ['$event'])
+  async onEnter(e: any) {
+    if (e.code === 'Enter') {
+      await this.logIn();
+    }
+  }
 
   loading = false;
-  submitted = false;
   returnUrl: string = this.route.snapshot.queryParams['returnUrl'] || '/';
   errorMessage = '';
 
@@ -24,6 +33,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthService,
     private toasterService: ToastrService,
+    private formBuilder: FormBuilder,
   ) {
     // redirect to home if already logged in
     if (this.authenticationService.userValue) {
@@ -33,22 +43,22 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {}
 
-  togglePasswordVisibility() {
-    
-  }
-
-  async onSubmit() {
-    this.submitted = true;
+  async logIn() {
+    this.loading = true;
 
     // stop here if form is invalid
-    if (!this.email || !this.password) {
-      console.log(`Invalid email: ${this.email} or password: ${this.password}`)
+    if (!this.loginForm.controls.email || !this.loginForm.controls.password) {
+      console.log(`Invalid email: ${this.loginForm.controls.email} or password: ${this.loginForm.controls.password}`)
       return;
     }
 
-    this.loading = true;
+    const credentials: LoginCredentials = {
+      email: this.loginForm.controls.email.value,
+      password: this.loginForm.controls.password.value
+    }
+
     this.authenticationService
-      .login(this.email, this.password)
+      .login(credentials)
       .subscribe({
         next: async () => {
           this.errorMessage = '';

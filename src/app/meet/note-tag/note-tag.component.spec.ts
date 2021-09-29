@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PastMeetingComponent } from './past-meeting.component';
+import { NoteTagComponent } from './note-tag.component';
 
-describe('PastMeetingComponent', () => {
-  let component: PastMeetingComponent;
-  let fixture: ComponentFixture<PastMeetingComponent>;
+describe('NoteTagComponent', () => {
+  let component: NoteTagComponent;
+  let fixture: ComponentFixture<NoteTagComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PastMeetingComponent ]
+      declarations: [ NoteTagComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PastMeetingComponent);
+    fixture = TestBed.createComponent(NoteTagComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

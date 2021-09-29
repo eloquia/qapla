@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -48,13 +48,10 @@ export class ProjectDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private personnelService: PersonnelService,
     private projectService: ProjectService,
     private formBuilder: FormBuilder,
-  ) {
-    this.personnelService.getAllPersonnel();
-  }
+  ) { }
 
   ngOnInit(): void {
     this.route.data
@@ -67,10 +64,6 @@ export class ProjectDetailComponent implements OnInit {
           this.projectService.getProjectBySlug(project.slug);
         }
       });
-  }
-
-  public backToProjects(): void {
-    this.router.navigate(['project'])
   }
 
   public addPersonnel(): void {
@@ -89,14 +82,5 @@ export class ProjectDetailComponent implements OnInit {
     const removalArray = this.personnelRemovalForm.get('removePersonnelArray')?.value;
     this.projectService.removeProjectPersonnel(removalArray);
   }
-
-  // TODO: Re-enable this validator, possibly
-  // public minRemoveValidator(): ValidatorFn {
-  //   return (control: AbstractControl) : ValidationErrors | null => {
-  //     const value = control;
-  //     console.log('value', value)
-  //     return null;
-  //   }
-  // }
 
 }

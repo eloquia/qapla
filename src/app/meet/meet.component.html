@@ -1,18 +1,53 @@
-<div id="meetings-panel" class="grid grid-cols-12 p-4">
-  <div id="meetings-container" class="col-span-10">
-    <h1 class="text-2xl bold">Meetings</h1>
-    <!-- List of any meetings planned -->
-    <router-outlet></router-outlet>
+<div id="meetings-panel" class="">
+  <!-- Primary Content -->
+  <div id="meetings-container" class="">
+    <!-- Header -->
+    <div id="meetings-header" class="flex justify-between items-center">
+      <h1 class="">Meetings</h1>
+
+      <div id="meeting-actions" class="">
+        <input matInput [matDatepicker]="dp" [ngModel]="date" (dateChange)="handleDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+
+        <button mat-button label="Schedule Meeting" (click)="openCreateMeeting()">Create</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div id="meeting-content">
+      <h2>{{ date$ | async | date:'longDate' }}</h2>
+      <div *ngIf="meetings$ | async as meetings; else noMeetings">
+        <mat-accordion class="" multi>
+          <mat-expansion-panel *ngFor="let meeting of meetings">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ meeting.startDate | date:'shortTime' }}
+              </mat-panel-title>
+              <mat-panel-description>
+                <span *ngIf="meeting.name; else unnamedMeeting">{{ meeting.name }}</span>
+                <ng-template #unnamedMeeting>
+                  <span>Unnamed Meeting</span>
+                </ng-template>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <app-editable-meeting [meetingData]="meeting">
+            </app-editable-meeting>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+
+      <ng-template #noMeetings>
+        <div class="flex flex-column align-items-center">
+          <i class="pi pi-heart" style="font-size: 12rem"></i>
+          <p class="mt-4">
+            No meetings found for this day. Enjoy your empty schedule! =]
+          </p>
+        </div>
+      </ng-template>
+    </div>
   </div>
 
-  <div id="meetings-right-panel" class="p-2 col-span-2 flex flex-col gap-3">
-    <!-- Date Picker -->
-    <app-date-picker></app-date-picker>
-
-    <app-create-meeting></app-create-meeting>
-
-    <!-- <button
-        class="py-1 px-2 border rounded border-indigo-500 hover:bg-indigo-200 shadow-sm hover:shadow-md"
-        (click)="handleCreate()">Create Meeting</button> -->
-  </div>
 </div>

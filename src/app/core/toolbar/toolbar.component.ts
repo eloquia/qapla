@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/auth.service';
 
 @Component({
@@ -9,24 +8,6 @@ import { AuthService } from 'src/app/auth.service';
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent implements OnInit {
-
-  items: MenuItem[] = [
-    {
-      label: 'Projects',
-      icon: 'pi pi-briefcase',
-      routerLink: ['/project'],
-    },
-    {
-      label: 'Personnel',
-      icon: 'pi pi-user',
-      routerLink: ['/personnel'],
-    },
-    {
-      label: 'Meetings',
-      icon: 'pi pi-users',
-      routerLink: ['/meet'],
-    },
-  ]
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -38,5 +19,9 @@ export class ToolbarComponent implements OnInit {
 
   public logOut(): void {
     this.authService.logout();
+  }
+
+  public goHome(): void {
+    this.router.navigate(['']);
   }
 }

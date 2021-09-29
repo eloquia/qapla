@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { CreateProjectMeetingRequest } from '../../models/requests';
   styleUrls: ['./create-project-meeting.component.scss'],
 })
 export class CreateProjectMeetingComponent implements OnInit {
-  public isFormValid: boolean = false;
+  public isValid: boolean = false;
   projects$: Observable<Project[]> = this.projectService.projects$;
 
   createProjectMeetingForm = this.formBuilder.group({
@@ -40,7 +41,8 @@ export class CreateProjectMeetingComponent implements OnInit {
     private meetingService: MeetService,
     private toasterService: ToastrService,
     private meetingNameService: MeetingNameService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +83,7 @@ export class CreateProjectMeetingComponent implements OnInit {
       const endDate = DateTime.fromFormat(
         `${year}-${month}-${day} ${startHour}:${startMinute}:00`,
         'yyyy-MM-dd HH:mm:ss'
-      ).plus({ minute: duration });
+      ).plus({ minutes: duration });
 
       console.log('startDate ISO', startDate.toISO());
       console.log('endDate ISO', endDate.toISO());
@@ -128,5 +130,13 @@ export class CreateProjectMeetingComponent implements OnInit {
       this.createProjectMeetingForm.get('startTime')?.value &&
       this.createProjectMeetingForm.get('duration')?.value
     );
+  }
+
+  public navigateConfirm() {
+    this.router.navigate(['/meet/create/confirm']);
+  }
+
+  public navigateBack() {
+    this.router.navigate(['/meet/create/start']);
   }
 }

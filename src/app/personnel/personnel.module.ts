@@ -22,10 +22,10 @@ import { CoreModule } from '../core/core.module';
   imports: [
     CommonModule,
     CoreModule,
-    PersonnelRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
     CommonComponentsModule,
+    PersonnelRoutingModule,
   ],
   exports: [
     CoreModule,

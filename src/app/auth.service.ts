@@ -9,6 +9,11 @@ import { LoginResponse } from './models';
 import { ProfileService } from './profile.service';
 import { SuccessToastConfig } from './core/models';
 
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private tokenSubject_: BehaviorSubject<string>;
@@ -17,7 +22,7 @@ export class AuthService {
   private userSubject_: BehaviorSubject<string | null>;
   public user$: Observable<string | null>;
 
-  private isLoggedInSubject_: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private isLoggedInSubject_: Subject<boolean> = new BehaviorSubject<boolean>(true);
   public isLoggedIn$: Observable<boolean> = this.isLoggedInSubject_.asObservable();
   private userId: number = 0;
 
@@ -47,16 +52,16 @@ export class AuthService {
     return this.userId;
   }
 
-  login(email: string, password: string): Observable<LoginResponse> {
+  login(credentials: LoginCredentials): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(`http://localhost:8080/authenticate`, {
-        email,
-        password,
+        email: credentials.email,
+        password: credentials.password,
       })
       .pipe(
         map((loginResponse: LoginResponse) => {
           // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
-          loginResponse.authdata = window.btoa(email + ':' + password);
+          loginResponse.authdata = window.btoa(credentials.email + ':' + credentials.password);
           sessionStorage.setItem('token', JSON.stringify(loginResponse));
           sessionStorage.setItem('user', JSON.stringify(loginResponse));
 
