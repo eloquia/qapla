@@ -3,10 +3,14 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, throwError } from 'rxjs';
-import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { switchMap, tap, withLatestFrom, map } from 'rxjs/operators';
 import { WarningToastConfig } from '../core/models';
 
-import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project } from './models';
+import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project, ProjectListItem } from './models';
+
+interface ProjectListItemResponse {
+  projectListItems: ProjectListItem[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +18,9 @@ import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project } f
 export class ProjectService {
 
   private currentSlug: string = '';
+
+  private projectListItemsSubject_: Subject<ProjectListItem[]> = new BehaviorSubject<ProjectListItem[]>([]);
+  public projectListItems$: Observable<ProjectListItem[]> = this.projectListItemsSubject_.asObservable();
 
   private projectsSubject_: Subject<Project[]> = new BehaviorSubject<Project[]>([]);
   public projects$: Observable<Project[]> = this.projectsSubject_.asObservable();
@@ -148,20 +155,27 @@ export class ProjectService {
     private apollo: Apollo,
   ) {
     this.apollo
-      .watchQuery({
+      .query<ProjectListItemResponse>({
         query: gql`
           query findProjects {
-            projects {
+            projectListItems {
               id
               name
-              description
+              slug
+              personnel {
+                id
+                firstName
+              }
             }
           }
         `,
-      })
-      .valueChanges.subscribe((result: any) => {
-        this.projectsSubject_.next(result?.data?.projects)
-      });
+      }).pipe(
+        map((result: any) => {
+          console.log('result', result)
+          this.projectListItemsSubject_.next(result?.data?.projectListItems)
+        })
+      )
+      .subscribe();
   }
 
   public createProject(createProjectRequest: CreateProjectRequest): void {

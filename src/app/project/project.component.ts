@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Project } from './models';
+import { Project, ProjectListItem } from './models';
 import { ProjectService } from './project.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
@@ -21,14 +21,18 @@ export class ProjectComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'numPersonnel']
 
-  projects$: Observable<DisplayedProject[]> = this.projectService.projects$
+  projects$: Observable<DisplayedProject[]> = this.projectService.projectListItems$
     .pipe(
-      map<Project[], DisplayedProject[]>(projects => projects.map(project => {
-        return {
+      map<ProjectListItem[], DisplayedProject[]>(projects => projects.map(project => {
+        const dp = {
           name: project.name,
           slug: project.slug ? project.slug : '',
-          numPersonnel: project.assignedPersonnel ? project.assignedPersonnel.length : 0,
+          numPersonnel: project.personnel ? project.personnel.length : 0,
         }
+
+        console.log('dp', dp)
+
+        return dp
       }))
     );
 

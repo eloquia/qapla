@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ProjectDetails } from '../../models';
-import { ProjectService } from '../../project.service';
 
 interface ProjectDetailsResponse {
   projectDetails: ProjectDetails
@@ -35,20 +34,7 @@ export class ProjectDetailResolverService implements Resolve<ProjectDetails> {
         console.log('map', a)
         const data: ProjectDetailsResponse = a.data;
         return data.projectDetails
-        // return projectDetails;
       })
     );
-
-    // return this.projectService.getProjectBySlug(slug).pipe(
-    //   take(1),
-    //   mergeMap(project => {
-    //     if (project) {
-    //       return of(project);
-    //     } else { // id not found
-    //       this.router.navigate(['/project']);
-    //       return EMPTY;
-    //     }
-    //   })
-    // );
   }
 }
