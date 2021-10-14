@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, throwError } from 'rxjs';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
@@ -29,22 +30,22 @@ export class ProjectService {
   // -------------------- Events ----------------------
 
   private getProjectsEventSubject_: Subject<void> = new Subject<void>();
-  private getProjectsSub: Subscription = this.getProjectsEventSubject_.asObservable().pipe(
-    switchMap(() => {
-      return this.httpClient.get<Project[]>('http://localhost:8080/project')
-    })
-  ).subscribe({
-    next: (projects) => {
-      this.projectsSubject_.next(projects);
-    },
-    error: (e) => {
-      this.toasterService.warning(
-        `Could not fetch projects: ${e}`,
-        `Uh Oh`,
-        WarningToastConfig,
-      )
-    }
-  });
+  // private getProjectsSub: Subscription = this.getProjectsEventSubject_.asObservable().pipe(
+  //   switchMap(() => {
+  //     return this.httpClient.get<Project[]>('http://localhost:8080/project')
+  //   })
+  // ).subscribe({
+  //   next: (projects) => {
+  //     this.projectsSubject_.next(projects);
+  //   },
+  //   error: (e) => {
+  //     this.toasterService.warning(
+  //       `Could not fetch projects: ${e}`,
+  //       `Uh Oh`,
+  //       WarningToastConfig,
+  //     )
+  //   }
+  // });
 
   private updateProjectEventSubject_: Subject<void> = new Subject<void>();
   private updateProjectSubscription$: Subscription = this.updateProjectEventSubject_.asObservable().pipe(
@@ -144,8 +145,23 @@ export class ProjectService {
   constructor(
     private httpClient: HttpClient,
     private toasterService: ToastrService,
+    private apollo: Apollo,
   ) {
-
+    this.apollo
+      .watchQuery({
+        query: gql`
+          query findProjects {
+            projects {
+              id
+              name
+              description
+            }
+          }
+        `,
+      })
+      .valueChanges.subscribe((result: any) => {
+        this.projectsSubject_.next(result?.data?.projects)
+      });
   }
 
   public createProject(createProjectRequest: CreateProjectRequest): void {

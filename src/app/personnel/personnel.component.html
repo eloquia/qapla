@@ -8,18 +8,18 @@
 
   <!-- List Personnel -->
   <section class="">
-    <div *ngIf="displayedPersonnel$ | async as personnel; else noPersonnel">
+    <div *ngIf="personnelList$ | async as personnel; else noPersonnel">
       <table mat-table [dataSource]="personnel" class="w-full mat-elevation-z8">
         <!-- Personnel Name -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef> Name </th>
-          <td mat-cell *matCellDef="let person">{{person.firstName}} {{person.lastName}}</td>
+          <td mat-cell *matCellDef="let person">{{person.name}}</td>
         </ng-container>
 
         <!-- Assigned Project -->
         <ng-container matColumnDef="projects">
           <th mat-header-cell *matHeaderCellDef> Projects </th>
-          <td mat-cell *matCellDef="let person"> {{person.projects}} </td>
+          <td mat-cell *matCellDef="let person"> {{person.projectNames}} </td>
         </ng-container>
 
         <!-- Recent Activity -->
@@ -29,7 +29,7 @@
           (click)="handleClickedRow(row)"></tr>
       </table>
 
-      <mat-paginator *ngIf="personnel$ | async as ps" [pageSizeOptions]="pageSizeOptions" [length]="ps.length"
+      <mat-paginator *ngIf="personnelList$ | async as ps" [pageSizeOptions]="pageSizeOptions" [length]="ps.length"
         [pageSize]="pageSize" (page)="handlePage($event)" showFirstLastButtons>
       </mat-paginator>
     </div>

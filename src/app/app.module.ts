@@ -16,6 +16,7 @@ import { LogoutComponent } from './logout/logout.component';
 import { HomeComponent } from './home/home.component';
 import { meetingReducer } from './stores/meeting/reducer';
 import { MockMeetingDataService } from './core/interceptors/mock-meeting-data.service';
+import { GraphQLModule } from './graphql.module';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, LogoutComponent, HomeComponent],
@@ -29,6 +30,7 @@ import { MockMeetingDataService } from './core/interceptors/mock-meeting-data.se
     StoreModule.forRoot({ meetings: meetingReducer }),
     EffectsModule.forRoot([]),
     AppRoutingModule,
+    GraphQLModule,
   ],
   exports: [
     CoreModule,

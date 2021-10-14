@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { DisplayedPersonnel } from './models';
+import { DisplayedPersonnel, PersonnelListItem } from './models';
 import { PersonnelService } from './personnel.service';
 
 const initialPageEvent: PageEvent = {
@@ -22,24 +22,7 @@ const initialPageEvent: PageEvent = {
 export class PersonnelComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'projects']
-
-  personnel$: Observable<DisplayedPersonnel[]> = this.personnelService.personnel$
-    .pipe(
-      map(ps => {
-        if (!ps) {
-          return [];
-        }
-
-        const dp: DisplayedPersonnel[] = ps.map(p => {
-          return {
-            ...p,
-            projects: p.assignedProjects ? p.assignedProjects.map(project => project.name) : [],
-          }
-        });
-
-        return dp;
-      })
-    );
+  personnelList$: Observable<PersonnelListItem[]> = this.personnelService.personnelList$
 
   // -- -- -- -- -- -- -- -- -- -- --
   //            Paginator

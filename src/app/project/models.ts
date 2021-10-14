@@ -37,6 +37,16 @@ export interface Project {
   // objectives: ProjectNote[];
 }
 
+export interface ProjectDetails {
+  id: number;
+  name: string;
+  description: string;
+  slug?: string;
+  assignedPersonnel?: Personnel[];
+  assignedPersonnelIDs?: number[];
+  // objectives: ProjectNote[];
+}
+
 export const EMPTY_PROJECT: Project = {
   id: 0,
   name: '',

@@ -1,10 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel } from './models';
+import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
+
+interface UsersResponse {
+  userDetails: Personnel[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -15,13 +20,16 @@ export class PersonnelService {
   //     Observable Data Sources & Events
   // -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  // private personnelsSubject_: BehaviorSubject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  public personnel$: Observable<Personnel[]> = this.httpClient.get<Personnel[]>('http://localhost:8080/personnel');
+  private personnelsSubject_: BehaviorSubject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
+  public personnel$: Observable<Personnel[]> = this.personnelsSubject_.asObservable();
+
+  private personnelListSubject_: BehaviorSubject<PersonnelListItem[]> = new BehaviorSubject<PersonnelListItem[]>([]);
+  public personnelList$: Observable<PersonnelListItem[]> = this.personnelListSubject_.asObservable();
 
   // private unassignedPersonnelSubject: Subject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  public unassignedPersonnel$: Observable<Personnel[]> = this.personnel$.pipe(
-    map(personnels => personnels.filter(personnel => !personnel.assignedProjects))
-  );
+  // public unassignedPersonnel$: Observable<Personnel[]> = this.personnel$.pipe(
+  //   map(personnels => personnels.filter(personnel => !personnel.assignedProjects))
+  // );
 
   private selectedPersonnelSubject_: Subject<DisplayedPersonnel> = new BehaviorSubject<DisplayedPersonnel>(EMPTY_PERSONNEL);
   public selectedPersonnel$: Observable<DisplayedPersonnel> = this.selectedPersonnelSubject_.asObservable();
@@ -126,8 +134,39 @@ export class PersonnelService {
   constructor(
     private httpClient: HttpClient,
     private toasterService: ToastrService,
+    private apollo: Apollo,
   ) {
-    // this.getAllPersonnel();
+    // GraphQL - Get all personnel
+
+    this.apollo.query<UsersResponse>({
+      query: gql`
+        query findUserListItems {
+          userDetails {
+            id
+            firstName
+            lastName
+            assignedProjects {
+              id
+              name
+            }
+          }
+        }
+      `
+    }).pipe(
+      map(a => {
+        const users: PersonnelListItem[] = a.data.userDetails?.map(u => {
+          return {
+            id: u.id,
+            name: `${u.firstName} ${u.lastName}`,
+            projectNames: u.assignedProjects.map(p => p.name),
+          }
+        })
+        return users
+      })
+    ).subscribe({
+      next: r => this.personnelListSubject_.next(r),
+      error: e => console.warn('Error getting users', e)
+    });
   }
 
   // public getAllPersonnel(): void {

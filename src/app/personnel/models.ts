@@ -48,6 +48,12 @@ export interface Personnel {
   notes?: PersonnelNote[];
 }
 
+export interface PersonnelListItem {
+  id: number;
+  name: string;
+  projectNames: string[];
+}
+
 export const EMPTY_PERSONNEL: DisplayedPersonnel = {
   id: 0,
   firstName: '',

@@ -16,7 +16,7 @@ import { ProjectService } from '../../project.service';
 })
 export class ProjectDetailComponent implements OnInit {
 
-  unassignedPersonnel: Observable<Personnel[]> = this.personnelService.unassignedPersonnel$;
+  // unassignedPersonnel: Observable<Personnel[]> = this.personnelService.unassignedPersonnel$;
   personnelRemovalForm = this.formBuilder.group({
     removePersonnelArray: this.formBuilder.array([]),
   });
@@ -54,16 +54,17 @@ export class ProjectDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.route.data
-      .subscribe(data => {
-        const project: Project = data.project;
+    // this.route.data
+    //   .subscribe(data => {
+    //     const project: Project = data.project;
+    //     console.log('ngOnInit', project)
 
-        if (!project.slug) {
-          console.warn('No slug for this project!');
-        } else {
-          this.projectService.getProjectBySlug(project.slug);
-        }
-      });
+    //     if (!project.slug) {
+    //       console.warn('No slug for this project!');
+    //     } else {
+    //       this.projectService.getProjectBySlug(project.slug);
+    //     }
+    //   });
   }
 
   public addPersonnel(): void {
