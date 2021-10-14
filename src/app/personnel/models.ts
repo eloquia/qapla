@@ -16,10 +16,10 @@ export interface DisplayedPersonnel {
   id: number;
   firstName: string;
   lastName: string;
-  name: string;
-  goesBy: string;
-  middleName: string;
-  email: string;
+  name?: string;
+  goesBy?: string;
+  middleName?: string;
+  email?: string;
   gender?: string;
   ethnicity?: string;
   position?: string;
