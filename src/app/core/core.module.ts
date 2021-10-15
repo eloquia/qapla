@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTableModule } from '@angular/material/table';
@@ -37,6 +38,7 @@ import { IconModule } from './icon/icon.module';
     IconModule,
     MatAutocompleteModule,
     MatIconModule,
+    MatInputModule,
     MatCardModule,
     MatChipsModule,
     MatDatepickerModule,

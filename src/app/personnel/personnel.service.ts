@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
 
@@ -137,7 +137,17 @@ export class PersonnelService {
     private apollo: Apollo,
   ) {
     // GraphQL - Get all personnel
+    this.getUsers();
+  }
 
+  // public getAllPersonnel(): void {
+  //   this.httpClient.get<Personnel[]>('http://localhost:8080/personnel')
+  //     .subscribe(response => {
+  //       this.personnelsSubject_.next(response);
+  //     });
+  // }
+
+  public getUsers() {
     this.apollo.query<UsersResponse>({
       query: gql`
         query findUserListItems {
@@ -158,7 +168,7 @@ export class PersonnelService {
           return {
             id: u.id,
             name: `${u.firstName} ${u.lastName}`,
-            projectNames: u.assignedProjects.map(p => p.name),
+            projectNames: u.assignedProjects ? u.assignedProjects.map(p => p.name) : [],
           }
         })
         return users
@@ -168,13 +178,6 @@ export class PersonnelService {
       error: e => console.warn('Error getting users', e)
     });
   }
-
-  // public getAllPersonnel(): void {
-  //   this.httpClient.get<Personnel[]>('http://localhost:8080/personnel')
-  //     .subscribe(response => {
-  //       this.personnelsSubject_.next(response);
-  //     });
-  // }
 
   public getPersonnelDetails(id: number | string): Observable<DisplayedPersonnel> {
     return this.httpClient.get<Personnel>(`http://localhost:8080/personnel/${id}`).pipe(

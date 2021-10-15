@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 
 import { CreatePersonnelRequest } from '../../models';
 import { PersonnelService } from '../../personnel.service';
+import { CreatePersonnelService } from './create-personnel.service';
 
 @Component({
   selector: 'app-create-personnel',
   templateUrl: './create-personnel.component.html',
-  styleUrls: ['./create-personnel.component.scss']
+  styleUrls: ['./create-personnel.component.scss'],
+  providers: [CreatePersonnelService],
 })
 export class CreatePersonnelComponent implements OnInit {
+
+  emailInUse = false;
 
   showErrors: boolean = false;
   personnelForm = this.formBuilder.group({
@@ -20,7 +25,7 @@ export class CreatePersonnelComponent implements OnInit {
     lastName: ['', [ Validators.required ]],
     goesBy: [''],
     middleName: [''],
-    email: [''],
+    email: ['', [ Validators.required ]],
     gender: [''],
     ethnicity: [''],
     position: [''],
@@ -34,6 +39,8 @@ export class CreatePersonnelComponent implements OnInit {
     private formBuilder: FormBuilder,
     private personnelService: PersonnelService,
     private projectService: ProjectService,
+    private createPersonnelService: CreatePersonnelService,
+    public dialogRef: MatDialogRef<CreatePersonnelComponent>,
   ) { }
 
   ngOnInit(): void {
@@ -60,9 +67,22 @@ export class CreatePersonnelComponent implements OnInit {
         institution: this.personnelForm.get('institution')?.value ? this.personnelForm.get('institution')?.value : '',
         assignedProjectIDs: this.personnelForm.get('assignedProjects')?.value ? this.personnelForm.get('assignedProjects')?.value : [],
       }
-      this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
-        this.clearForm();
-      });
+      // this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
+      //   this.clearForm();
+      // });
+      this.createPersonnelService.createPersonnel(createPersonnelRequest).subscribe({
+        next: r => {
+          console.log('User created successfully', r);
+          this.emailInUse = false;
+          this.dialogRef.close();
+        },
+        error: e => {
+          console.warn(e)
+          if (e.message === 'Email already in use') {
+            this.emailInUse = true;
+          }
+        },
+      })
     }
   }
 

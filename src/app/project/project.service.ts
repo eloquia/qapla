@@ -171,7 +171,6 @@ export class ProjectService {
         `,
       }).pipe(
         map((result: any) => {
-          console.log('result', result)
           this.projectListItemsSubject_.next(result?.data?.projectListItems)
         })
       )

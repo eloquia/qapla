@@ -88,7 +88,7 @@ export interface CreatePersonnelRequest {
 }
 
 export interface CreatePersonnelResponse {
-
+  id: string;
 }
 
 export interface DeletePersonnelRequest {

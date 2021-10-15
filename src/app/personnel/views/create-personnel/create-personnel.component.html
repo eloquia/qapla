@@ -1,65 +1,69 @@
 <form id="create-personnel-form" class="" [formGroup]="personnelForm">
+  <h1>Create Personnel</h1>
 
-  <div id="create-personnel-form-contents" class="">
-    <label class="">
-      First Name:
-      <input type="text" formControlName="firstName" required>
+  <div id="create-personnel-form-contents" class="grid grid-cols-2 gap-4">
+    <div appearance="fill">
+      <!-- <mat-label>First Name</mat-label> -->
+      <input matInput type="text" formControlName="firstName" placeholder="First Name" required>
       <span *ngIf="showErrors && personnelForm.controls.firstName.invalid" class="">
         First Name is required.
       </span>
-    </label>
+    </div>
 
-    <label class="">
-      Last Name:
-      <input type="text" formControlName="lastName" required>
+    <div appearance="fill">
+      <!-- <mat-label>Last Name</mat-label> -->
+      <input matInput type="text" formControlName="lastName" placeholder="Last Name" required>
       <span *ngIf="showErrors && personnelForm.controls.lastName.invalid" class="">
         Last Name is required.
       </span>
-    </label>
+    </div>
 
-    <label class="">
-      Middle Name:
-      <input type="text" formControlName="middleName">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Middle Name</mat-label> -->
+      <input matInput type="text" formControlName="middleName" placeholder="Middle Name">
+    </div>
 
-    <label class="">
-      Goes By:
-      <input type="text" formControlName="goesBy">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Goes By</mat-label> -->
+      <input matInput type="text" formControlName="goesBy" placeholder="Goes By">
+    </div>
 
-    <label class="">
-      Email:
-      <input type="email" formControlName="email">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Email</mat-label> -->
+      <input matInput type="email" formControlName="email" placeholder="Email">
+      <span *ngIf="emailInUse" class="text-red-500">
+        Email address already used
+      </span>
+    </div>
 
     <!-- <div *ngIf="email.invalid && userForm.dirty" class="error">
       Technologies required.
     </div>  -->
 
-    <label class="">
-      Gender:
-      <input type="text" formControlName="gender">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Gender</mat-label> -->
+      <input matInput type="text" formControlName="gender" placeholder="Gender">
+    </div>
 
-    <label class="">
-      Ethnicity:
-      <input type="text" formControlName="ethnicity">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Ethnicity</mat-label> -->
+      <input matInput type="text" formControlName="ethnicity" placeholder="Gender">
+    </div>
 
-    <label class="">
-      Position:
-      <input type="text" formControlName="position">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Position</mat-label> -->
+      <input matInput type="text" formControlName="position" placeholder="Assistant Professor">
+    </div>
 
-    <label class="">
-      Institution:
-      <input type="text" formControlName="institution">
-    </label>
+    <div appearance="fill">
+      <!-- <mat-label>Institution/Company</mat-label> -->
+      <input matInput type="text" formControlName="institution" placeholder="UMD">
+    </div>
 
-    <label class="">
-      Project(s):
+    <div appearance="fill">
+      <!-- <mat-label>Project(s)</mat-label> -->
       <div *ngIf="projects$ | async as projects; else noProjects">
-        <select multiple formControlName="assignedProjects">
+        <select matSelect multiple formControlName="assignedProjects">
           <option [ngValue]="null" disabled>Assign to a Project?</option>
           <option *ngFor="let project of projects" [ngValue]="project.id">
             {{ project.name }}
@@ -69,8 +73,10 @@
       <ng-template #noProjects>
         No projects found
       </ng-template>
-    </label>
+    </div>
   </div>
 
-  <button class="" (click)="createPersonnel()">Create</button>
+  <div class="create-personnel-actions">
+    <button class="" (click)="createPersonnel()">Create</button>
+  </div>
 </form>

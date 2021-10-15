@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
@@ -6,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { DisplayedPersonnel, PersonnelListItem } from './models';
 import { PersonnelService } from './personnel.service';
+import { CreatePersonnelComponent } from './views/create-personnel/create-personnel.component';
 
 const initialPageEvent: PageEvent = {
   previousPageIndex: 0,
@@ -54,6 +56,7 @@ export class PersonnelComponent implements OnInit {
   )
 
   constructor(
+    public dialog: MatDialog,
     private personnelService: PersonnelService,
     private router: Router,
   ) { }
@@ -63,7 +66,14 @@ export class PersonnelComponent implements OnInit {
   }
 
   public showForm(): void {
-    console.log('Showing Add Personnel form');
+    const dialogRef = this.dialog.open(CreatePersonnelComponent, {
+      width: '600px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.personnelService.getUsers();
+    });
   }
 
   public handleClickedRow(row: DisplayedPersonnel) {

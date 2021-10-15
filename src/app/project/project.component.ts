@@ -30,8 +30,6 @@ export class ProjectComponent implements OnInit {
           numPersonnel: project.personnel ? project.personnel.length : 0,
         }
 
-        console.log('dp', dp)
-
         return dp
       }))
     );
