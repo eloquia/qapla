@@ -1,7 +1,12 @@
-<form id="create-project-form" class="flex flex-col gap-2 w-64" [formGroup]="projectForm">
+<form id="create-project-form" class="flex flex-col gap-4" [formGroup]="projectForm">
+  <h1>Create Project</h1>
+
   <label class="flex flex-col">
     Name:
     <input type="text" formControlName="name">
+    <span *ngIf="isSameName" class="text-red-500">
+      Project name already in use
+    </span>
   </label>
 
   <label class="flex flex-col">
@@ -9,5 +14,5 @@
     <textarea formControlName="description"></textarea>
   </label>
 
-  <button class="bg-green-200 border border-green-300 hover:bg-green-300" (click)="createProject()">Create</button>
+  <button class="py-2 bg-green-200 border border-green-300 hover:bg-green-300" (click)="createProject()">Create</button>
 </form>

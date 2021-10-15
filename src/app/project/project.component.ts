@@ -5,6 +5,8 @@ import { Project, ProjectListItem } from './models';
 import { ProjectService } from './project.service';
 import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateProjectComponent } from './create-project/create-project.component';
 
 interface DisplayedProject {
   name: string;
@@ -35,6 +37,7 @@ export class ProjectComponent implements OnInit {
     );
 
   constructor(
+    public dialog: MatDialog,
     private projectService: ProjectService,
     private router: Router,
   ) { }
@@ -44,6 +47,14 @@ export class ProjectComponent implements OnInit {
   }
 
   public showCreate() {
+    const dialogRef = this.dialog.open(CreateProjectComponent, {
+      width: '600px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.projectService.getAllProjects();
+    });
   }
 
   public handleClickedRow(row: DisplayedProject) {

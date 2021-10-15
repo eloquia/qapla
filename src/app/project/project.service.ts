@@ -154,6 +154,21 @@ export class ProjectService {
     private toasterService: ToastrService,
     private apollo: Apollo,
   ) {
+    this.getAllProjects()
+  }
+
+  public createProject(createProjectRequest: CreateProjectRequest): void {
+    this.httpClient.post<CreateProjectResponse>('http://localhost:8080/project', createProjectRequest)
+      .subscribe(() => {
+        this.toasterService.success('Created Project', 'Success!', {
+          progressBar: true,
+          closeButton: true,
+        });
+      });
+  }
+
+  public getAllProjects(): void {
+    // this.getProjectsEventSubject_.next();
     this.apollo
       .query<ProjectListItemResponse>({
         query: gql`
@@ -175,20 +190,6 @@ export class ProjectService {
         })
       )
       .subscribe();
-  }
-
-  public createProject(createProjectRequest: CreateProjectRequest): void {
-    this.httpClient.post<CreateProjectResponse>('http://localhost:8080/project', createProjectRequest)
-      .subscribe(() => {
-        this.toasterService.success('Created Project', 'Success!', {
-          progressBar: true,
-          closeButton: true,
-        });
-      });
-  }
-
-  public getAllProjects(): void {
-    this.getProjectsEventSubject_.next();
   }
 
   public getProjectDetails(id: number | string): Observable<Project> {

@@ -12,7 +12,7 @@ export interface CreateProjectRequest {
 }
 
 export interface CreateProjectResponse {
-
+  id: string;
 }
 
 export interface ProjectNote {

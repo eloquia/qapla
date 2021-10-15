@@ -32,7 +32,6 @@ export class CreatePersonnelService {
       `
     }).pipe(
       map(a => {
-        console.log('a', a)
         return a.data;
       })
     )
