@@ -6,7 +6,7 @@ import { Personnel } from 'src/app/personnel/models';
 import { ProfileService } from 'src/app/profile.service';
 import { Project } from 'src/app/project/models';
 import { MeetService } from '../meet.service';
-import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from '../models/requests';
+import { CreateMeetingRequest } from '../models/requests';
 
 import { CreateMeetingService } from './create-meeting.service';
 
@@ -125,20 +125,22 @@ export class CreateMeetingComponent implements OnInit {
 
     // project or personnel
     if (this.meetingType === 'People') {
-      const meetingDetails: CreatePeopleMeetingRequest = {
+      const meetingDetails: CreateMeetingRequest = {
         name: this.meetingName,
         startDate: start.toISO(),
-        endDate: endDate.toISO(),
+        // endDate: endDate.toISO(),
+        durationMinutes: parseInt(durationParts[0]),
         createdBy,
         personnelIds: this.chosenPeople.map(person => person.id),
       };
       this.meetService.createMeeting(meetingDetails);
     } else if (this.meetingType === 'Project') {
       console.log('chosen chosenProjects', this.chosenProjects)
-      const meetingDetails: CreateProjectMeetingRequest = {
+      const meetingDetails: CreateMeetingRequest = {
         name: this.meetingName,
         startDate: start.toISO(),
-        endDate: endDate.toISO(),
+        // endDate: endDate.toISO(),
+        durationMinutes: parseInt(durationParts[0]),
         createdBy,
         projectIds: []
       };

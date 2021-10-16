@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Apollo, gql } from 'apollo-angular';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
@@ -17,6 +18,14 @@ import {
   UpdateMeetingNoteResponse,
   UpdateMeetingResponse,
 } from './models/responses';
+
+export interface GetMeetingsByDateResponse {
+  meetingsByDate: Meeting[];
+}
+
+export interface CreateMeetingResponse {
+  projectId: number;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -85,78 +94,6 @@ export class MeetService {
     this.successCreateFormEventSubject_.asObservable();
 
   private fetchMeetingsEventSubject_: Subject<string> = new Subject<string>();
-  private fetchMeetingsSub = this.fetchMeetingsEventSubject_
-    .asObservable()
-    .pipe(
-      switchMap((date) => {
-        const dateParts: string[] = date.split('-');
-        const year = dateParts[0];
-        const month = dateParts[1];
-        const day = dateParts[2];
-        const tz = DateTime.local().toFormat('z');
-        return this.httpClient.get<Meeting[]>(
-          `http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}&zone=${tz}`
-        ).pipe(
-          map(meetings => {
-            // convert incoming "notes: null" into an array, which might be wrong here...
-            return meetings ? meetings.map(meeting => {
-
-              if (meeting.meetingItems) {
-
-                meeting.meetingItems.map(meetingItem => {
-
-                  if (!meetingItem.notes) {
-                    console.log('adding notes to', meetingItem)
-
-                    meetingItem.notes = [{
-                      text: '',
-                      authorId: this.profileService.getUserId(),
-                      aboutId: meetingItem.personnel.id,
-                      meetingNoteTag: {
-                        text: '',
-                      }
-                    }];
-
-                  } else {
-                    // there are meeting notes, so we should filter by
-                    // current author and other author
-                    const notes: MeetingNote[] = meetingItem.notes.filter((note: MeetingNote) => {
-                      return note.authorId === this.profileService.getUserId();
-                    })
-                    const othersNotes: MeetingNote[] = meetingItem.notes.filter((notes: MeetingNote) => {
-                      return notes.authorId !== this.profileService.getUserId();
-                    })
-
-                    meetingItem.othersNotes = othersNotes;
-                    meetingItem.notes = notes;
-                  }
-
-                  return meetingItem;
-                });
-
-              } else {
-                // there are no meeting items
-                console.log('no meeting items?', meeting.meetingItems)
-              }
-
-              return meeting;
-            })
-            : meetings;
-          })
-        );
-      }),
-      tap((meetings) => {
-        console.log('meetings fetched', meetings);
-        this.meetingsSubject_.next(meetings);
-      })
-    )
-    .subscribe({
-      next: r => console.log('r', r),
-      error: e => {
-        console.warn('e', e)
-        this.meetingsSubject_.next([MOCK_MEETING_1]);
-      }
-    });
 
   // -------------------- Calendar ----------------------
 
@@ -246,6 +183,7 @@ export class MeetService {
     private toasterService: ToastrService,
     private profileService: ProfileService,
     private router: Router,
+    private apollo: Apollo,
   ) {}
 
   // -------------------- Functions ----------------------
@@ -254,68 +192,83 @@ export class MeetService {
     this.meetingsSubject_.next(meetings);
   }
 
-  public getMeetingsByDate(date: string): Observable<Meeting[]> {
-    this.fetchMeetingsEventSubject_.next(date);
+  // public getMeetingsByDate(date: string): Observable<Meeting[]> {
+  //   this.fetchMeetingsEventSubject_.next(date);
 
-    const dateParts: string[] = date.split('-');
-    const year = dateParts[0];
-    const month = dateParts[1];
-    const day = dateParts[2];
-    const tz = DateTime.local().toFormat('z');
-    return this.httpClient.get<Meeting[]>(
-      `http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}&zone=${tz}`
-    ).pipe(
-      map(meetings => {
-        // convert incoming "notes: null" into an array, which might be wrong here...
-        return meetings ? meetings.map(meeting => {
+  //   const dateParts: string[] = date.split('-');
+  //   const year = dateParts[0];
+  //   const month = dateParts[1];
+  //   const day = dateParts[2];
+  //   const tz = DateTime.local().toFormat('z');
+  //   return this.httpClient.get<Meeting[]>(
+  //     `http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}&zone=${tz}`
+  //   ).pipe(
+  //     map(meetings => {
+  //       // convert incoming "notes: null" into an array, which might be wrong here...
+  //       return meetings ? meetings.map(meeting => {
 
-          if (meeting.meetingItems) {
+  //         if (meeting.meetingItems) {
 
-            meeting.meetingItems.map(meetingItem => {
+  //           meeting.meetingItems.map(meetingItem => {
 
-              if (!meetingItem.notes) {
-                console.log('adding notes to', meetingItem)
+  //             if (!meetingItem.notes) {
+  //               console.log('adding notes to', meetingItem)
 
-                meetingItem.notes = [{
-                  text: '',
-                  authorId: this.profileService.getUserId(),
-                  aboutId: meetingItem.personnel.id,
-                  meetingNoteTag: {
-                    text: '',
-                  }
-                }];
+  //               meetingItem.notes = [{
+  //                 text: '',
+  //                 authorId: this.profileService.getUserId(),
+  //                 aboutId: meetingItem.personnel.id,
+  //                 meetingNoteTag: {
+  //                   text: '',
+  //                 }
+  //               }];
 
-              } else {
-                // there are meeting notes, so we should filter by
-                // current author and other author
-                const notes: MeetingNote[] = meetingItem.notes.filter((note: MeetingNote) => {
-                  return note.authorId === this.profileService.getUserId();
-                })
-                const othersNotes: MeetingNote[] = meetingItem.notes.filter((notes: MeetingNote) => {
-                  return notes.authorId !== this.profileService.getUserId();
-                })
+  //             } else {
+  //               // there are meeting notes, so we should filter by
+  //               // current author and other author
+  //               const notes: MeetingNote[] = meetingItem.notes.filter((note: MeetingNote) => {
+  //                 return note.authorId === this.profileService.getUserId();
+  //               })
+  //               const othersNotes: MeetingNote[] = meetingItem.notes.filter((notes: MeetingNote) => {
+  //                 return notes.authorId !== this.profileService.getUserId();
+  //               })
 
-                meetingItem.othersNotes = othersNotes;
-                meetingItem.notes = notes;
-              }
+  //               meetingItem.othersNotes = othersNotes;
+  //               meetingItem.notes = notes;
+  //             }
 
-              return meetingItem;
-            });
+  //             return meetingItem;
+  //           });
 
-          } else {
-            // there are no meeting items
-            console.log('no meeting items?', meeting.meetingItems)
-          }
+  //         } else {
+  //           // there are no meeting items
+  //           console.log('no meeting items?', meeting.meetingItems)
+  //         }
 
-          return meeting;
-        })
-        : meetings;
-      })
-    );
-  }
+  //         return meeting;
+  //       })
+  //       : meetings;
+  //     })
+  //   );
+  // }
 
-  public createMeeting(meetingDetails: CreateMeetingRequest): void {
-    this.createMeetingEventSubject_.next(meetingDetails);
+  public createMeeting(meetingDetails: CreateMeetingRequest) {
+    // this.createMeetingEventSubject_.next(meetingDetails);
+    return this.apollo.mutate<CreateMeetingResponse>({
+      mutation: gql`
+        mutation createMeeting {
+          createMeeting(input: {
+            name: "${meetingDetails.name}",
+            peopleIDs: ${meetingDetails.personnelIds},
+            projectIDs: ${meetingDetails.projectIds},
+            startTime: "${meetingDetails.startDate}",
+            durationMinutes: ${meetingDetails.durationMinutes}
+          })
+        }
+      `
+    }).pipe(
+      map(a => a.data)
+    )
   }
 
   public updateMeetingNote(updateRequest: UpdateMeetingNoteRequest): void {
@@ -333,5 +286,24 @@ export class MeetService {
 
   updateDate(dateTime: DateTime): void {
     this.dateSubject_.next(dateTime);
+  }
+
+  public getMeetingsByDate(date: string): Observable<Meeting[]> {
+    console.log('getMeetingsByDate', date)
+    return this.apollo.query<GetMeetingsByDateResponse>({
+      query: gql`
+        query getMeetingsByDate {
+          meetingsByDate(date: "${date}") {
+            id
+            name
+            startTime
+          }
+        }
+      `
+    }).pipe(
+      map(a => {
+        return a.data.meetingsByDate
+      })
+    )
   }
 }

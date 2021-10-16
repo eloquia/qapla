@@ -15,6 +15,9 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 import { DisplayedMeeting, Meeting } from './models/common';
+import { IMeetingState } from '../stores/meeting/state';
+import { Store } from '@ngrx/store';
+import { selectMeetings } from '../stores/meeting/selectors';
 
 @Component({
   selector: 'app-meet',
@@ -29,14 +32,18 @@ export class MeetComponent implements OnInit {
     })
   );
 
-  meetings$ = this.meetService.meetings$.pipe(
+  // meetings$ = this.meetService.meetings$.pipe(
+  meetings$ = this.store.select(selectMeetings).pipe(
     map<Meeting[], DisplayedMeeting[]>(ms => {
-      const displayedMeetings = ms.map(m => {
-        return {
-          ...m,
-          startDate: Date.parse(m.startDate),
-        }
-      });
+      console.log('ms', ms)
+      const displayedMeetings = !!ms && ms.length
+        ? ms.map(m => {
+          return {
+            ...m,
+            startDate: Date.parse(m.startDate),
+          }
+        })
+        : [];
       return displayedMeetings;
     })
   );
@@ -44,9 +51,12 @@ export class MeetComponent implements OnInit {
   constructor(
     private meetService: MeetService,
     public dialog: MatDialog,
+    private store: Store<IMeetingState>,
   ) { }
 
   ngOnInit(): void {
+    const dt: string = DateTime.now().toISO();
+    this.store.dispatch({ type: '[Meeting API] Get Meetings By Date', payload: dt })
   }
 
   selectDate($event: any) {

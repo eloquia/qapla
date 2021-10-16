@@ -12,7 +12,7 @@ import { ProfileService } from 'src/app/profile.service';
 import { MeetService } from '../../meet.service';
 import { MeetingNameService } from '../../meeting-name.service';
 import { GOLANG_MEETING_FORMAT } from '../../models/common';
-import { CreatePeopleMeetingRequest } from '../../models/requests';
+import { CreateMeetingRequest } from '../../models/requests';
 
 @Component({
   selector: 'app-create-people-meeting',
@@ -103,12 +103,13 @@ export class CreatePeopleMeetingComponent implements OnInit {
 
       const personnel = this.createPeopleMeetingForm.get('personnel')?.value;
 
-      const createPeopleMeetingRequest: CreatePeopleMeetingRequest = {
+      const createPeopleMeetingRequest: CreateMeetingRequest = {
         name: this.meetingNameService.createName({
           customName: this.createPeopleMeetingForm.get('name')?.value,
         }),
         startDate: startDate.toFormat(GOLANG_MEETING_FORMAT),
-        endDate: endDate.toFormat(GOLANG_MEETING_FORMAT),
+        // endDate: endDate.toFormat(GOLANG_MEETING_FORMAT),
+        durationMinutes: duration,
         createdBy: this.profileService.getUserId(),
         personnelIds: personnel,
       };

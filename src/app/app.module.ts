@@ -22,6 +22,7 @@ import { projectReducer } from './stores/project/reducer';
 import { PersonnelEffects } from './stores/personnel/effects';
 import { personnelReducer } from './stores/personnel/reducers';
 import { ProjectEffects } from './stores/project/effects';
+import { MeetingEffects } from './stores/meeting/effects';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, LogoutComponent, HomeComponent],
@@ -33,7 +34,7 @@ import { ProjectEffects } from './stores/project/effects';
     FormsModule,
     ReactiveFormsModule,
     StoreModule.forRoot({
-      meetings: meetingReducer,
+      meeting: meetingReducer,
       project: projectReducer,
       personnel: personnelReducer,
     },
@@ -49,6 +50,7 @@ import { ProjectEffects } from './stores/project/effects';
     EffectsModule.forRoot([
       PersonnelEffects,
       ProjectEffects,
+      MeetingEffects,
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

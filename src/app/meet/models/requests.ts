@@ -10,17 +10,20 @@ export class CreateMeetingItem {
 export interface CreateMeetingRequest {
   name: string;
   startDate: string;
-  endDate: string;
+  endDate?: string;
   createdBy: number;
+  projectIds?: number[];
+  personnelIds?: number[];
+  durationMinutes: number;
 }
 
-export interface CreateProjectMeetingRequest extends CreateMeetingRequest {
-  projectIds: number[];
-}
+// export interface CreateProjectMeetingRequest extends CreateMeetingRequest {
+//   projectIds: number[];
+// }
 
-export interface CreatePeopleMeetingRequest extends CreateMeetingRequest {
-  personnelIds: number[];
-}
+// export interface CreatePeopleMeetingRequest extends CreateMeetingRequest {
+//   personnelIds: number[];
+// }
 
 /* ---------- Update Meeting ---------- */
 

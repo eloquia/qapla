@@ -13,7 +13,7 @@ import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 import { MeetService } from '../meet.service';
 import { Meeting } from '../models/common';
-import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from '../models/requests';
+import { CreateMeetingRequest } from '../models/requests';
 
 @Injectable()
 export class CreateMeetingService {
@@ -175,20 +175,22 @@ export class CreateMeetingService {
         }
         
         if (this.meetingTypeSubject_.value === 'People') {
-          const createPersonnelMeetingRequest: CreatePeopleMeetingRequest = {
+          const createPersonnelMeetingRequest: CreateMeetingRequest = {
             name,
             startDate,
-            endDate,
+            // endDate,
+            durationMinutes: meetingDurationMinutes,
             createdBy,
             personnelIds: personnels.map(p => p.id),
           }
 
           createMeetingRequest = createPersonnelMeetingRequest;
         } else if (this.meetingTypeSubject_.value === 'Project') {
-          const createProjectMeetingRequest: CreateProjectMeetingRequest = {
+          const createProjectMeetingRequest: CreateMeetingRequest = {
             name,
             startDate,
-            endDate,
+            // endDate,
+            durationMinutes: meetingDurationMinutes,
             createdBy,
             projectIds: projects.map(p => p.id)
           }

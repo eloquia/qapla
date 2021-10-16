@@ -12,7 +12,7 @@ import { ProjectService } from 'src/app/project/project.service';
 import { MeetService } from '../../meet.service';
 import { MeetingNameService } from '../../meeting-name.service';
 import { GOLANG_MEETING_FORMAT } from '../../models/common';
-import { CreateProjectMeetingRequest } from '../../models/requests';
+import { CreateMeetingRequest } from '../../models/requests';
 
 @Component({
   selector: 'app-create-project-meeting',
@@ -105,12 +105,13 @@ export class CreateProjectMeetingComponent implements OnInit {
       const createdBy = this.profileService.getUserId();
       console.log('createdBy', createdBy);
 
-      const createMeetingRequest: CreateProjectMeetingRequest = {
+      const createMeetingRequest: CreateMeetingRequest = {
         name: this.meetingNameService.createName({
           selectedProjects: projects,
         }),
         startDate: startDate.toISO(),
-        endDate: endDate.toISO(),
+        // endDate: endDate.toISO(),
+        durationMinutes: duration,
         createdBy,
         projectIds,
       };

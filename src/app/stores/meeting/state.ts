@@ -1,12 +1,9 @@
-import { DateTime } from 'luxon';
 import { Meeting } from 'src/app/meet/models/common';
 
-export interface MeetingState {
-  meetings: ReadonlyArray<Meeting[]>;
-  date: DateTime;
+export interface IMeetingState {
+  meetingsbyDate: Meeting[];
 }
 
-export const initialState: MeetingState = {
-  date: DateTime.now(),
-  meetings: [],
+export const initialMeetingState: IMeetingState = {
+  meetingsbyDate: [],
 }
