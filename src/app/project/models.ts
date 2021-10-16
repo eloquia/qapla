@@ -32,7 +32,7 @@ export interface Project {
   name: string;
   description: string;
   slug?: string;
-  assignedPersonnel?: Personnel[];
+  personnel?: Personnel[];
   assignedPersonnelIDs?: number[];
   // objectives: ProjectNote[];
 }
@@ -51,11 +51,12 @@ export interface ProjectListItem {
   id: number;
   name: string;
   slug: string;
-  personnel: {
-    id: number;
-    firstName: string;
-    lastName: string;
-  }[];
+  // personnel: {
+  //   id: number;
+  //   firstName: string;
+  //   lastName: string;
+  // }[];
+  numPersonnel: number;
 }
 
 export const EMPTY_PROJECT: Project = {

@@ -6,10 +6,10 @@ import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, throwError }
 import { switchMap, tap, withLatestFrom, map } from 'rxjs/operators';
 import { WarningToastConfig } from '../core/models';
 
-import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project, ProjectListItem } from './models';
+import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project, ProjectDetails, ProjectListItem } from './models';
 
-interface ProjectListItemResponse {
-  projectListItems: ProjectListItem[];
+interface ProjectDetailsResponse {
+  projectDetailsList: ProjectDetails[];
 }
 
 @Injectable({
@@ -89,8 +89,8 @@ export class ProjectService {
           */
           assignedPersonnelIDs: project.assignedPersonnelIDs
             ? project.assignedPersonnelIDs.concat(addedPersonnel)
-            : project.assignedPersonnel
-              ? project.assignedPersonnel.map(person => person.id).concat(addedPersonnel)
+            : project.personnel
+              ? project.personnel.map(person => person.id).concat(addedPersonnel)
               : addedPersonnel,
         }
 
@@ -118,8 +118,8 @@ export class ProjectService {
       // personnelRemovalArray is an array of remove:boolean
       // each index in this array corresponds with project.assignedPersonnel
       let updatedPersonnelIDs: number[] = [];
-      if (project.assignedPersonnel) {
-        updatedPersonnelIDs = project.assignedPersonnel
+      if (project.personnel) {
+        updatedPersonnelIDs = project.personnel
           .map(assignedPerson => assignedPerson.id)
           .filter((personId, idx) => !personnelRemovalArray[idx].remove);
 
@@ -157,23 +157,29 @@ export class ProjectService {
     this.getAllProjects()
   }
 
-  public createProject(createProjectRequest: CreateProjectRequest): void {
-    this.httpClient.post<CreateProjectResponse>('http://localhost:8080/project', createProjectRequest)
-      .subscribe(() => {
-        this.toasterService.success('Created Project', 'Success!', {
-          progressBar: true,
-          closeButton: true,
-        });
-      });
+  public createProject(createProjectRequest: CreateProjectRequest): Observable<number> {
+    return this.apollo.query<CreateProjectResponse>({
+      query: gql`
+        mutation createProject {
+          createProject(input: {
+            name: "${createProjectRequest.name}",
+            description: "${createProjectRequest.description}"
+          }) {
+            id
+          }
+        }
+      `
+    }).pipe(
+      map(a => a.data.id)
+    )
   }
 
-  public getAllProjects(): void {
-    // this.getProjectsEventSubject_.next();
-    this.apollo
-      .query<ProjectListItemResponse>({
+  public getAllProjects(): Observable<Project[]> {
+    return this.apollo
+      .query<ProjectDetailsResponse>({
         query: gql`
           query findProjects {
-            projectListItems {
+            projectDetailsList {
               id
               name
               slug
@@ -185,11 +191,8 @@ export class ProjectService {
           }
         `,
       }).pipe(
-        map((result: any) => {
-          this.projectListItemsSubject_.next(result?.data?.projectListItems)
-        })
-      )
-      .subscribe();
+        map((result) => result.data.projectDetailsList)
+      );
   }
 
   public getProjectDetails(id: number | string): Observable<Project> {

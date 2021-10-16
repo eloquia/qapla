@@ -26,10 +26,10 @@ export class ProjectDetailComponent implements OnInit {
   subscription = this.projectService.selectedProject$.pipe(
     tap(newProject => {
       // fill out form--create a form control inside the array
-      newProject.assignedPersonnel
+      newProject.personnel
 
-      if (newProject.assignedPersonnel) {
-        const fgArgs = newProject.assignedPersonnel.map(() => {
+      if (newProject.personnel) {
+        const fgArgs = newProject.personnel.map(() => {
 
           return this.formBuilder.group({
             remove: new FormControl(false),

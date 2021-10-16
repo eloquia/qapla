@@ -75,7 +75,7 @@ export class PersonnelComponent implements OnInit {
     public dialog: MatDialog,
     private personnelService: PersonnelService,
     private router: Router,
-    private store: Store<IPersonnelState>
+    private store: Store<IPersonnelState>,
   ) { }
 
   ngOnInit(): void {

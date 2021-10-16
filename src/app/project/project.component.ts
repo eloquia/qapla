@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateProjectComponent } from './create-project/create-project.component';
+import { Store } from '@ngrx/store';
+import { IProjectState } from '../stores/project/state';
+import { selectProjectList } from '../stores/project/selectors';
 
 interface DisplayedProject {
   name: string;
@@ -23,10 +26,11 @@ export class ProjectComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'numPersonnel']
 
-  projects$: Observable<DisplayedProject[]> = this.projectService.projectListItems$
+  projects$: Observable<ProjectListItem[]> = this.store.select(selectProjectList)
     .pipe(
-      map<ProjectListItem[], DisplayedProject[]>(projects => projects.map(project => {
+      map<Project[], ProjectListItem[]>(projects => projects.map(project => {
         const dp = {
+          id: project.id,
           name: project.name,
           slug: project.slug ? project.slug : '',
           numPersonnel: project.personnel ? project.personnel.length : 0,
@@ -40,10 +44,11 @@ export class ProjectComponent implements OnInit {
     public dialog: MatDialog,
     private projectService: ProjectService,
     private router: Router,
+    private store: Store<IProjectState>,
   ) { }
 
   ngOnInit(): void {
-    this.projectService.getAllProjects();
+    this.store.dispatch({ type: '[Project API] Get All Project Details' });
   }
 
   public showCreate() {

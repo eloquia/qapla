@@ -250,7 +250,7 @@ export const MOCK_PROJECT_1: Project = {
   name: 'Mock Interceptor Project',
   description: 'A project mocked for test purposes',
   slug: 'mock-project',
-  assignedPersonnel: [
+  personnel: [
     MOCK_PERSONNEL_1,
   ],
 }

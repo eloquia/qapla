@@ -21,6 +21,7 @@ import { GraphQLModule } from './graphql.module';
 import { projectReducer } from './stores/project/reducer';
 import { PersonnelEffects } from './stores/personnel/effects';
 import { personnelReducer } from './stores/personnel/reducers';
+import { ProjectEffects } from './stores/project/effects';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, LogoutComponent, HomeComponent],
@@ -33,7 +34,7 @@ import { personnelReducer } from './stores/personnel/reducers';
     ReactiveFormsModule,
     StoreModule.forRoot({
       meetings: meetingReducer,
-      projects: projectReducer,
+      project: projectReducer,
       personnel: personnelReducer,
     },
     {
@@ -47,6 +48,7 @@ import { personnelReducer } from './stores/personnel/reducers';
     }),
     EffectsModule.forRoot([
       PersonnelEffects,
+      ProjectEffects,
     ]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states

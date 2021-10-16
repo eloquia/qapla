@@ -37,7 +37,7 @@
     <!-- Assigned Personnel -->
     <mat-card class="col-span-2">
       <h2>Project Personnel</h2>
-      <div class="" *ngIf="project.assignedPersonnel && project.assignedPersonnel.length; else noPersonnel">
+      <div class="" *ngIf="project.personnel && project.personnel.length; else noPersonnel">
         <div id="assigned-personnel-table-controls" class="">
           <button class="" *ngIf="personnelRemovalForm.controls.removePersonnelArray.value.length; else invalidRemove"
             (click)="removePersonnel()">Remove</button>
@@ -55,7 +55,7 @@
               <span class="">
                 <input class="" type="checkbox" formControlName="remove">
               </span>
-              <label class="">{{ project.assignedPersonnel[i].firstName }} {{ project.assignedPersonnel[i].lastName
+              <label class="">{{ project.personnel[i].firstName }} {{ project.personnel[i].lastName
                 }}</label>
             </div>
           </div>

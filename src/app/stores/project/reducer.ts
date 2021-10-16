@@ -5,7 +5,7 @@ import * as ProjectActions from './actions';
 
 const _projectReducer = createReducer(
   initialProjectState,
-  on(ProjectActions.getProjects, (state, { projects }) => ({ projects })),
+  on(ProjectActions.getProjectsSuccess, (state, { payload }) => ({ ...state, projectDetailsList: payload })),
 );
 
 export function projectReducer(state: IProjectState | undefined, action: Action) {
