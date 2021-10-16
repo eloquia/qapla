@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
+import { IProjectState } from 'src/app/stores/project/state';
 import { CreateProjectRequest } from '../models';
 
-import { ProjectService } from '../project.service';
 import { CreateProjectService } from './create-project.service';
 
 @Component({
@@ -23,9 +24,8 @@ export class CreateProjectComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private projectService: ProjectService,
     public dialogRef: MatDialogRef<CreateProjectComponent>,
-    private createProjectService: CreateProjectService,
+    private store: Store<IProjectState>,
   ) { }
 
   ngOnInit(): void {
@@ -36,19 +36,7 @@ export class CreateProjectComponent implements OnInit {
       name: this.projectForm.get('name')?.value,
       description: this.projectForm.get('description')?.value,
     }
-    this.createProjectService.createProject(createProjectRequest)
-    .subscribe({
-      next: r => {
-        this.dialogRef.close()
-        this.isSameName = false;
-      },
-      error: e => {
-        console.warn(e)
-        if (e.message === 'Project with name already exists') {
-          this.isSameName = true;
-        }
-      },
-    });
+    this.store.dispatch({ type: '[Project API] Create Project', createProjectRequest });
   }
 
 }
