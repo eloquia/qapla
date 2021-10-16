@@ -12,6 +12,10 @@ interface ProjectDetailsResponse {
   projectDetailsList: ProjectDetails[];
 }
 
+interface GetProjectByIDResponse {
+  projectDetails: ProjectDetails;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -203,11 +207,22 @@ export class ProjectService {
     return this.httpClient.get<Project>(`http://localhost:8080/project/${name}?search`)
   }
 
-  public getProjectBySlug(slug: string): Observable<Project> {
+  public getProjectBySlug(slug: string): Observable<ProjectDetails> {
     this.currentSlug = slug;
-    return this.httpClient.get<Project>(`http://localhost:8080/project/${slug}?searchTerm=slug`).pipe(
-      tap(project => this.selectedProjectSubject_.next(project))
-    );
+    return this.apollo.query<GetProjectByIDResponse>({
+      query: gql`
+        query projectDetails {
+          projectDetails("${slug}") {
+            id
+            name
+            description
+            personnel
+          }
+        }
+      `
+    }).pipe(
+      map(a => a.data.projectDetails)
+    )
   }
 
   public refreshProject(): Observable<Project> {

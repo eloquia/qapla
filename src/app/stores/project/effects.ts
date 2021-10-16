@@ -36,6 +36,16 @@ export class ProjectEffects {
     )
   ));
 
+  getProjectById$ = createEffect(() => this.actions$.pipe(
+    ofType('[Project API] Get Project By ID'),
+    switchMap((projectSlug: string) => this.projectService.getProjectBySlug(projectSlug)
+      .pipe(
+        map(r => ({ type: '[Project API] Get Project By ID Success', payload: r })),
+        catchError(() => of({ type: '[Project API] Get Project By ID Error' }))
+      )
+    ),
+  ));
+
   // deleteProject$ = createEffect(() => this.actions$.pipe(
   //   ofType('[Personnel API] Delete Personnel'),
   //   switchMap((id: number) => this.personnelService.deletePersonnel({id})
