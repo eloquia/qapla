@@ -88,11 +88,15 @@ export interface CreatePersonnelRequest {
 }
 
 export interface CreatePersonnelResponse {
-  id: string;
+  id: number;
 }
 
 export interface DeletePersonnelRequest {
   id: number;
+}
+
+export interface DeletePersonnelResponse {
+  message: string;
 }
 
 export interface UpdatePersonnelRequest {
@@ -109,6 +113,10 @@ export interface UpdatePersonnelRequest {
   isActive?: boolean;
   assignedProjectIDs?: number[];
   notes?: PersonnelNote[];
+}
+
+export interface PersonnelDetails {
+  id: number;
 }
 
 /*

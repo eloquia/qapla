@@ -11,6 +11,11 @@ import { PersonnelDetailResolverService } from './views/personnel-detail/personn
 import { CommonComponentsModule } from '../common/common.module';
 import { CreatePersonnelComponent } from './views/create-personnel/create-personnel.component';
 import { CoreModule } from '../core/core.module';
+import { StoreModule } from '@ngrx/store';
+import { personnelReducer } from '../stores/personnel/reducers';
+import { personnelFeatureKey } from '../stores/personnel/selectors';
+import { EffectsModule } from '@ngrx/effects';
+import { PersonnelEffects } from '../stores/personnel/effects';
 
 @NgModule({
   declarations: [
@@ -25,6 +30,10 @@ import { CoreModule } from '../core/core.module';
     ReactiveFormsModule,
     HttpClientModule,
     CommonComponentsModule,
+    // StoreModule.forFeature(personnelFeatureKey, personnelReducer),
+    // EffectsModule.forFeature([
+    //   PersonnelEffects,
+    // ]),
     PersonnelRoutingModule,
   ],
   exports: [

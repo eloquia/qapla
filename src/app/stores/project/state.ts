@@ -1,9 +1,9 @@
 import { Project } from "src/app/project/models";
 
-export interface State {
+export interface IProjectState {
   projects: Project[];
 }
 
-export const initialState: State = {
+export const initialProjectState: IProjectState = {
   projects: [],
 };

@@ -1,13 +1,13 @@
 import { Action, createReducer, on } from "@ngrx/store";
 
-import { initialState, State } from "./state";
+import { initialProjectState, IProjectState } from "./state";
 import * as ProjectActions from './actions';
 
-const projectdReducer = createReducer(
-  initialState,
-  on(ProjectActions.createProject, state => (state, { project }) => ({ home: game.home, away: game.away })),
+const _projectReducer = createReducer(
+  initialProjectState,
+  on(ProjectActions.getProjects, (state, { projects }) => ({ projects })),
 );
 
-export function reducer(state: State | undefined, action: Action) {
-  return scoreboardReducer(state, action);
+export function projectReducer(state: IProjectState | undefined, action: Action) {
+  return _projectReducer(state, action);
 }

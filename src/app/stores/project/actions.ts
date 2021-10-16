@@ -13,5 +13,5 @@ export const getProjectById = createAction(
 
 export const getProjects = createAction(
   '[Project] Get All Projects',
-  props<{ pageNumber: number, pageSize: number }>(),
+  props<{ projects: Project[] }>(),
 );

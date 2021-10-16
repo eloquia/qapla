@@ -16,5 +16,6 @@ export const initialState: ReadonlyArray<Meeting> = [];
 
 export const meetingReducer = createReducer(
   initialState,
-  on(retrievedMeetingList, (state, { meetings }) => [...meetings])
+  // on(retrievedMeetingList, (state, { meetings }) => [...meetings])
+  on(retrievedMeetingList, (state, { meetings }) => ({ ...meetings }))
 )

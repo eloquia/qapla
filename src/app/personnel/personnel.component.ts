@@ -2,10 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { selectPersonnelList } from '../stores/personnel/selectors';
+import { IPersonnelState } from '../stores/personnel/state';
 
-import { DisplayedPersonnel, PersonnelListItem } from './models';
+import { DisplayedPersonnel, Personnel, PersonnelListItem } from './models';
 import { PersonnelService } from './personnel.service';
 import { CreatePersonnelComponent } from './views/create-personnel/create-personnel.component';
 
@@ -24,7 +27,20 @@ const initialPageEvent: PageEvent = {
 export class PersonnelComponent implements OnInit {
 
   displayedColumns: string[] = ['name', 'projects']
-  personnelList$: Observable<PersonnelListItem[]> = this.personnelService.personnelList$
+  personnelList$: Observable<PersonnelListItem[]> = this.store.select(selectPersonnelList)
+    .pipe(
+      map<Personnel[], PersonnelListItem[]>(personnelList => {
+        return !!personnelList && personnelList.length
+        ? personnelList.map(p => {
+            return {
+              id: p.id,
+              name: `${p.firstName} ${p.lastName}`,
+              projectNames: p.assignedProjects.map(ap => ap.name),
+            }
+          })
+        : []
+      })
+    );
 
   // -- -- -- -- -- -- -- -- -- -- --
   //            Paginator
@@ -59,10 +75,11 @@ export class PersonnelComponent implements OnInit {
     public dialog: MatDialog,
     private personnelService: PersonnelService,
     private router: Router,
+    private store: Store<IPersonnelState>
   ) { }
 
   ngOnInit(): void {
-    // throw new Error('Method not implemented.');
+    this.store.dispatch({ type: '[Personnel API] Get Personnel List' })
   }
 
   public showForm(): void {

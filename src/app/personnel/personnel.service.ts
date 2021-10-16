@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 
-import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
+import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, DeletePersonnelResponse, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
 
 interface UsersResponse {
   userDetails: Personnel[];
@@ -21,7 +22,8 @@ export class PersonnelService {
   // -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   private personnelsSubject_: BehaviorSubject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  public personnel$: Observable<Personnel[]> = this.personnelsSubject_.asObservable();
+  // public personnel$: Observable<Personnel[]> = this.personnelsSubject_.asObservable();
+  personnel$ = this.store.select(state => state.personnel);
 
   private personnelListSubject_: BehaviorSubject<PersonnelListItem[]> = new BehaviorSubject<PersonnelListItem[]>([]);
   public personnelList$: Observable<PersonnelListItem[]> = this.personnelListSubject_.asObservable();
@@ -135,6 +137,7 @@ export class PersonnelService {
     private httpClient: HttpClient,
     private toasterService: ToastrService,
     private apollo: Apollo,
+    private store: Store<{ personnel: Personnel[] }>
   ) {
     // GraphQL - Get all personnel
     this.getUsers();
@@ -147,14 +150,15 @@ export class PersonnelService {
   //     });
   // }
 
-  public getUsers() {
-    this.apollo.query<UsersResponse>({
+  public getUsers(): Observable<Personnel[]> {
+    return this.apollo.query<UsersResponse>({
       query: gql`
-        query findUserListItems {
+        query getAllPersonnel {
           userDetails {
             id
             firstName
             lastName
+            email
             assignedProjects {
               id
               name
@@ -164,19 +168,9 @@ export class PersonnelService {
       `
     }).pipe(
       map(a => {
-        const users: PersonnelListItem[] = a.data.userDetails?.map(u => {
-          return {
-            id: u.id,
-            name: `${u.firstName} ${u.lastName}`,
-            projectNames: u.assignedProjects ? u.assignedProjects.map(p => p.name) : [],
-          }
-        })
-        return users
+        return a.data.userDetails
       })
-    ).subscribe({
-      next: r => this.personnelListSubject_.next(r),
-      error: e => console.warn('Error getting users', e)
-    });
+    );
   }
 
   public getPersonnelDetails(id: number | string): Observable<DisplayedPersonnel> {
@@ -218,6 +212,15 @@ export class PersonnelService {
 
   public deletePersonnel(deletePersonnelRequest: DeletePersonnelRequest) {
     console.log('personnelService.deletePersonnel', deletePersonnelRequest)
+    return this.apollo.query<DeletePersonnelResponse>({
+      query: gql`
+        mutation deletePersonnel {
+          deletePersonnel(id: "${deletePersonnelRequest.id}") {
+            message
+          }
+        }
+      `
+    })
   }
 
   public updatePersonnel(updatePersonnelRequest: UpdatePersonnelRequest): void {

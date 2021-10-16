@@ -12,7 +12,7 @@ export interface CreateProjectRequest {
 }
 
 export interface CreateProjectResponse {
-  id: string;
+  id: number;
 }
 
 export interface ProjectNote {
@@ -48,11 +48,11 @@ export interface ProjectDetails {
 }
 
 export interface ProjectListItem {
-  id: string;
+  id: number;
   name: string;
   slug: string;
   personnel: {
-    id: string;
+    id: number;
     firstName: string;
     lastName: string;
   }[];
