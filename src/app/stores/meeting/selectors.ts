@@ -8,5 +8,5 @@ export const selectMeetingFeature = createFeatureSelector<IMeetingState>(meeting
 
 export const selectMeetings = createSelector(
   selectMeetingFeature,
-  meetingState => meetingState.meetingsbyDate
+  meetingState => meetingState.meetingsByDate
 );

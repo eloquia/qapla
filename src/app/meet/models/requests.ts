@@ -12,18 +12,34 @@ export interface CreateMeetingRequest {
   startDate: string;
   endDate?: string;
   createdBy: number;
-  projectIds?: number[];
-  personnelIds?: number[];
   durationMinutes: number;
 }
 
-// export interface CreateProjectMeetingRequest extends CreateMeetingRequest {
-//   projectIds: number[];
-// }
+export interface CreateProjectMeetingData {
+  name: string;
+  startDate: string;
+  createdBy?: number;
+  durationMinutes: number;
+  projectIds: string[];
+}
 
-// export interface CreatePeopleMeetingRequest extends CreateMeetingRequest {
-//   personnelIds: number[];
-// }
+export interface CreateProjectMeetingRequest {
+  type: string;
+  createProjectMeetingRequest: CreateProjectMeetingData;
+}
+
+export interface CreatePeopleMeetingData {
+  name: string;
+  startDate: string;
+  createdBy?: number;
+  durationMinutes: number;
+  personnelIds: string[];
+}
+
+export interface CreatePeopleMeetingRequest {
+  type: string;
+  createPeopleMeetingRequest: CreatePeopleMeetingData
+}
 
 /* ---------- Update Meeting ---------- */
 

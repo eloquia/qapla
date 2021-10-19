@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Personnel } from 'src/app/personnel/models';
 import { ProfileService } from 'src/app/profile.service';
 import { Project } from 'src/app/project/models';
+import { selectPersonnelList } from 'src/app/stores/personnel/selectors';
+import { IPersonnelState } from 'src/app/stores/personnel/state';
 import { MeetService } from '../meet.service';
-import { CreateMeetingRequest } from '../models/requests';
+import { CreatePeopleMeetingData, CreatePeopleMeetingRequest, CreateProjectMeetingData, CreateProjectMeetingRequest } from '../models/requests';
 
 import { CreateMeetingService } from './create-meeting.service';
 
@@ -28,31 +31,17 @@ export class CreateMeetingComponent implements OnInit {
   isValid$: Observable<boolean> = this.createMeetingService.isCreateMeetingValid$;
   meetingType: string = 'People';
 
-  people$: Observable<Personnel[]> = this.createMeetingService.personnels$
+  people$: Observable<any[]> = this.store.select(selectPersonnelList)
     .pipe(
-      map(personnels => {
-        return personnels
-          .map(personnel => {
-            return {
-              ...personnel,
-              name: `${personnel.firstName} ${personnel.lastName}`
-            }
-          })
-          .sort((a, b) => {
-            const nameA = a.lastName.toUpperCase(); // ignore upper and lowercase
-            const nameB = b.lastName.toUpperCase(); // ignore upper and lowercase
-            if (nameA < nameB) {
-              return -1;
-            }
-            if (nameA > nameB) {
-              return 1;
-            }
-
-            // names must be equal
-            return 0;
-          })
-      })
+      map(pList => pList.map(person => {
+        const p = {
+          ...person,
+          fullName: `${person.firstName} ${person.lastName}`
+        }
+        return p
+      }))
     );
+
   projects$: Observable<Project[]> = this.createMeetingService.projects$;
 
   // -- -- -- -- -- -- -- -- -- --
@@ -70,9 +59,12 @@ export class CreateMeetingComponent implements OnInit {
     private createMeetingService: CreateMeetingService,
     private meetService: MeetService,
     private profileService: ProfileService,
+    private store: Store<IPersonnelState>,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.store.dispatch({ type: '[Personnel API] Get Personnel List' })
+  }
 
   // -- -- -- -- -- -- -- -- -- --
   //          First Page
@@ -103,48 +95,33 @@ export class CreateMeetingComponent implements OnInit {
   // -- -- -- -- -- -- -- -- -- --
 
   scheduleMeeting(): void {
-    console.log('scheduleMeeting')
     const createdBy = this.profileService.getUserId();
 
     const durationParts: string[] = this.meetingDuration.split(' ');
 
     const start = DateTime.fromFormat(`${this.startDate} ${this.meetingTime}`, 'yyyy-MM-dd HH:mm');
-    console.log('start', start)
-    console.log('start ISO', start.toISO())
-
-    let endDate: DateTime;
-    if (durationParts[0] === '1') {
-      endDate = DateTime.fromISO(start.toISO())
-        .plus({ hours: 1 });
-    } else {
-      const startDateISOString = start.toISO()
-      console.log('startDateISOString', startDateISOString)
-      endDate = DateTime.fromISO(startDateISOString)
-        .plus({ minutes: parseInt(durationParts[0]) });
-    }
 
     // project or personnel
     if (this.meetingType === 'People') {
-      const meetingDetails: CreateMeetingRequest = {
+      const meetingDetails: CreatePeopleMeetingData = {
         name: this.meetingName,
         startDate: start.toISO(),
-        // endDate: endDate.toISO(),
         durationMinutes: parseInt(durationParts[0]),
         createdBy,
-        personnelIds: this.chosenPeople.map(person => person.id),
-      };
-      this.meetService.createMeeting(meetingDetails);
-    } else if (this.meetingType === 'Project') {
-      console.log('chosen chosenProjects', this.chosenProjects)
-      const meetingDetails: CreateMeetingRequest = {
-        name: this.meetingName,
-        startDate: start.toISO(),
-        // endDate: endDate.toISO(),
-        durationMinutes: parseInt(durationParts[0]),
-        createdBy,
-        projectIds: []
+        personnelIds: this.chosenPeople.map(person => `${person.id}`),
       };
       console.log('createPeopleMeetingRequest', meetingDetails)
+      this.store.dispatch({ type: '[Meeting API] Create Personnel Meeting', createPeopleMeetingRequest: meetingDetails })
+    } else if (this.meetingType === 'Project') {
+      const meetingDetails: CreateProjectMeetingData = {
+        name: this.meetingName,
+        startDate: start.toISO(),
+        durationMinutes: parseInt(durationParts[0]),
+        createdBy,
+        projectIds: this.chosenProjects.map(project => `${project.id}`)
+      };
+      console.log('createProjectMeetingRequest', meetingDetails)
+      this.store.dispatch({ type: '[Meeting API] Create Project Meeting', createProjectMeetingRequest: meetingDetails })
     } else {
       console.warn('Unknown meeting type:', this.meetingType)
     }

@@ -5,5 +5,5 @@ import { initialMeetingState } from './state';
 
 export const meetingReducer = createReducer(
   initialMeetingState,
-  on(retrievedMeetingListSuccess, (state, { payload }) => ({ ...state, meetings: payload }))
+  on(retrievedMeetingListSuccess, (state, { payload }) => ({ ...state, meetingsByDate: payload }))
 )

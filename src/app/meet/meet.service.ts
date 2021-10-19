@@ -8,9 +8,11 @@ import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 import { ProfileService } from '../profile.service';
-import { Meeting, MeetingNote, MeetingViewType, MOCK_MEETING_1, SearchResult } from './models/common';
+import { Meeting, SearchResult } from './models/common';
 import {
   CreateMeetingRequest,
+  CreatePeopleMeetingRequest,
+  CreateProjectMeetingRequest,
   UpdateMeetingNoteRequest,
   UpdateMeetingRequest,
 } from './models/requests';
@@ -24,7 +26,7 @@ export interface GetMeetingsByDateResponse {
 }
 
 export interface CreateMeetingResponse {
-  projectId: number;
+  id: number;
 }
 
 @Injectable({
@@ -56,38 +58,38 @@ export class MeetService {
 
   // -------------------- Events ----------------------
 
-  private createMeetingEventSubject_: Subject<CreateMeetingRequest> =
-    new Subject<CreateMeetingRequest>();
-  public createMeeting$: Observable<CreateMeetingRequest> =
-    this.createMeetingEventSubject_.asObservable();
-  private createMeetingSub = this.createMeetingEventSubject_
-    .asObservable()
-    .pipe(
-      switchMap((createMeetingRequest) => {
-        return this.httpClient.post<Meeting>(
-          'http://localhost:8080/meeting',
-          createMeetingRequest
-        );
-      })
-    )
-    .subscribe({
-      next: (v) => {
-        this.toasterService.success(
-          `Meeting Scheduled`,
-          `Success`,
-          SuccessToastConfig
-        );
-        this.successCreateFormEventSubject_.next(null);
-      },
-      error: (e) => {
-        console.warn('Error scheduling meeting', e);
-        this.toasterService.warning(
-          `Something went wrong: ${e.status} ${e.statusText}`,
-          `Error`,
-          WarningToastConfig
-        );
-      },
-    });
+  // private createMeetingEventSubject_: Subject<CreateMeetingRequest> =
+  //   new Subject<CreateMeetingRequest>();
+  // public createMeeting$: Observable<CreateMeetingRequest> =
+  //   this.createMeetingEventSubject_.asObservable();
+  // private createMeetingSub = this.createMeetingEventSubject_
+  //   .asObservable()
+  //   .pipe(
+  //     switchMap((createMeetingRequest) => {
+  //       return this.httpClient.post<Meeting>(
+  //         'http://localhost:8080/meeting',
+  //         createMeetingRequest
+  //       );
+  //     })
+  //   )
+  //   .subscribe({
+  //     next: (v) => {
+  //       this.toasterService.success(
+  //         `Meeting Scheduled`,
+  //         `Success`,
+  //         SuccessToastConfig
+  //       );
+  //       this.successCreateFormEventSubject_.next(null);
+  //     },
+  //     error: (e) => {
+  //       console.warn('Error scheduling meeting', e);
+  //       this.toasterService.warning(
+  //         `Something went wrong: ${e.status} ${e.statusText}`,
+  //         `Error`,
+  //         WarningToastConfig
+  //       );
+  //     },
+  //   });
 
   private successCreateFormEventSubject_: Subject<any> = new Subject<any>();
   public successCreateFormEvent$: Observable<any> =
@@ -181,8 +183,6 @@ export class MeetService {
   constructor(
     private httpClient: HttpClient,
     private toasterService: ToastrService,
-    private profileService: ProfileService,
-    private router: Router,
     private apollo: Apollo,
   ) {}
 
@@ -192,82 +192,43 @@ export class MeetService {
     this.meetingsSubject_.next(meetings);
   }
 
-  // public getMeetingsByDate(date: string): Observable<Meeting[]> {
-  //   this.fetchMeetingsEventSubject_.next(date);
-
-  //   const dateParts: string[] = date.split('-');
-  //   const year = dateParts[0];
-  //   const month = dateParts[1];
-  //   const day = dateParts[2];
-  //   const tz = DateTime.local().toFormat('z');
-  //   return this.httpClient.get<Meeting[]>(
-  //     `http://localhost:8080/meeting?year=${year}&month=${month}&day=${day}&zone=${tz}`
-  //   ).pipe(
-  //     map(meetings => {
-  //       // convert incoming "notes: null" into an array, which might be wrong here...
-  //       return meetings ? meetings.map(meeting => {
-
-  //         if (meeting.meetingItems) {
-
-  //           meeting.meetingItems.map(meetingItem => {
-
-  //             if (!meetingItem.notes) {
-  //               console.log('adding notes to', meetingItem)
-
-  //               meetingItem.notes = [{
-  //                 text: '',
-  //                 authorId: this.profileService.getUserId(),
-  //                 aboutId: meetingItem.personnel.id,
-  //                 meetingNoteTag: {
-  //                   text: '',
-  //                 }
-  //               }];
-
-  //             } else {
-  //               // there are meeting notes, so we should filter by
-  //               // current author and other author
-  //               const notes: MeetingNote[] = meetingItem.notes.filter((note: MeetingNote) => {
-  //                 return note.authorId === this.profileService.getUserId();
-  //               })
-  //               const othersNotes: MeetingNote[] = meetingItem.notes.filter((notes: MeetingNote) => {
-  //                 return notes.authorId !== this.profileService.getUserId();
-  //               })
-
-  //               meetingItem.othersNotes = othersNotes;
-  //               meetingItem.notes = notes;
-  //             }
-
-  //             return meetingItem;
-  //           });
-
-  //         } else {
-  //           // there are no meeting items
-  //           console.log('no meeting items?', meeting.meetingItems)
-  //         }
-
-  //         return meeting;
-  //       })
-  //       : meetings;
-  //     })
-  //   );
-  // }
-
-  public createMeeting(meetingDetails: CreateMeetingRequest) {
-    // this.createMeetingEventSubject_.next(meetingDetails);
+  public createPersonMeeting(meetingDetails: CreatePeopleMeetingRequest) {
+    const stringify = JSON.stringify(meetingDetails.createPeopleMeetingRequest.personnelIds);
     return this.apollo.mutate<CreateMeetingResponse>({
       mutation: gql`
-        mutation createMeeting {
-          createMeeting(input: {
-            name: "${meetingDetails.name}",
-            peopleIDs: ${meetingDetails.personnelIds},
-            projectIDs: ${meetingDetails.projectIds},
-            startTime: "${meetingDetails.startDate}",
-            durationMinutes: ${meetingDetails.durationMinutes}
-          })
+        mutation createUserMeeting {
+          createUserMeeting(input: {
+            name: "${meetingDetails.createPeopleMeetingRequest.name}",
+            peopleIDs: ${stringify},
+            startTime: "${meetingDetails.createPeopleMeetingRequest.startDate}",
+            durationMinutes: ${meetingDetails.createPeopleMeetingRequest.durationMinutes}
+          }) {
+            id
+          }
         }
       `
     }).pipe(
-      map(a => a.data)
+      map(a => a.data?.id)
+    )
+  }
+
+  public createProjectMeeting(meetingDetails: CreateProjectMeetingRequest) {
+    const stringify = JSON.stringify(meetingDetails.createProjectMeetingRequest.projectIds);
+    return this.apollo.mutate<CreateMeetingResponse>({
+      mutation: gql`
+        mutation createProjectMeeting {
+          createProjectMeeting(input: {
+            name: "${meetingDetails.createProjectMeetingRequest.name}",
+            projectIDs: ${stringify},
+            startTime: "${meetingDetails.createProjectMeetingRequest.startDate}",
+            durationMinutes: ${meetingDetails.createProjectMeetingRequest.durationMinutes}
+          }) {
+            id
+          }
+        }
+      `
+    }).pipe(
+      map(a => a.data?.id)
     )
   }
 

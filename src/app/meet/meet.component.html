@@ -17,27 +17,29 @@
     <!-- Content -->
     <div id="meeting-content">
       <h2>{{ date$ | async | date:'longDate' }}</h2>
-      <div *ngIf="meetings$ | async as meetings; else noMeetings">
-        <mat-accordion class="" multi>
-          <mat-expansion-panel *ngFor="let meeting of meetings">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ meeting.startDate | date:'shortTime' }}
-              </mat-panel-title>
-              <mat-panel-description>
-                <span *ngIf="meeting.name; else unnamedMeeting">{{ meeting.name }}</span>
-                <ng-template #unnamedMeeting>
-                  <span>Unnamed Meeting</span>
-                </ng-template>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
+      <ng-container *ngIf="meetings$ | async as meetings; else noMeetings">
+        <div *ngIf="!!meetings && meetings.length > 0; else noMeetings">
+          <mat-accordion class="" multi>
+            <mat-expansion-panel *ngFor="let meeting of meetings">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ meeting.startTime | date:'shortTime' }}
+                </mat-panel-title>
+                <mat-panel-description>
+                  <span *ngIf="meeting.name; else unnamedMeeting">{{ meeting.name }}</span>
+                  <ng-template #unnamedMeeting>
+                    <span>Unnamed Meeting</span>
+                  </ng-template>
+                </mat-panel-description>
+              </mat-expansion-panel-header>
 
-            <app-editable-meeting [meetingData]="meeting">
-            </app-editable-meeting>
+              <app-editable-meeting [meetingData]="meeting">
+              </app-editable-meeting>
 
-          </mat-expansion-panel>
-        </mat-accordion>
-      </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </ng-container>
 
       <ng-template #noMeetings>
         <div class="flex flex-column align-items-center">

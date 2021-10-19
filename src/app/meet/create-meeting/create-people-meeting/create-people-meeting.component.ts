@@ -111,12 +111,12 @@ export class CreatePeopleMeetingComponent implements OnInit {
         // endDate: endDate.toFormat(GOLANG_MEETING_FORMAT),
         durationMinutes: duration,
         createdBy: this.profileService.getUserId(),
-        personnelIds: personnel,
+        // personnelIds: personnel,
       };
 
       console.log('createPeopleMeetingRequest', createPeopleMeetingRequest);
 
-      this.meetingService.createMeeting(createPeopleMeetingRequest);
+      // this.meetingService.createMeeting(createPeopleMeetingRequest);
     }
   }
 

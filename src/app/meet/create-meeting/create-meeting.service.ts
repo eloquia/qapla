@@ -3,17 +3,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, combineLatest, Observable, Subject, Subscription, throwError } from 'rxjs';
-import { map, switchMap, withLatestFrom } from 'rxjs/operators';
-import { SuccessToastConfig, WarningToastConfig } from 'src/app/core/models';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Personnel } from 'src/app/personnel/models';
 import { PersonnelService } from 'src/app/personnel/personnel.service';
 import { ProfileService } from 'src/app/profile.service';
 import { Project } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
 import { MeetService } from '../meet.service';
-import { Meeting } from '../models/common';
-import { CreateMeetingRequest } from '../models/requests';
 
 @Injectable()
 export class CreateMeetingService {
@@ -128,102 +125,6 @@ export class CreateMeetingService {
   //              Events
   // -------------------------------
   private createMeetingEventSubject_: Subject<void> = new Subject<void>();
-  public createMeetingEventSubscription$: Subscription = this.createMeetingEventSubject_.asObservable()
-    .pipe(
-      withLatestFrom(
-        combineLatest([
-          this.meetingNameSubject_,
-          this.meetingDateSubject_,
-          this.meetingStartTimeSubject_,
-          this.meetingDurationSubject_,
-          this.selectedPersonnelSubject_,
-          this.selectedProjectsSubject_,
-        ])
-      ),
-      switchMap((v => {
-        let createMeetingRequest: CreateMeetingRequest;
-        const name = v[1][0];
-        const meetingStartDate = v[1][1];
-        const meetingStartTime = v[1][2];
-        const meetingDurationMinutes = v[1][3];
-        const personnels = v[1][4];
-        const projects = v[1][5];
-
-        // console.log('meetingStartDate', meetingStartDate)
-        // console.log('meetingStartTime', meetingStartTime)
-
-        const startDateDt = DateTime.fromFormat(`${meetingStartDate.toFormat('yyyy-MM-dd')} ${meetingStartTime.toFormat('HH:mm')}:00`, 'yyyy-MM-dd HH:mm:ss');
-        // console.log('startDateDt', startDateDt);
-        const startDate: string = startDateDt.toISO();
-        // console.log('startDate', startDate);
-        const endDateDt = DateTime.fromFormat(`${meetingStartDate.toFormat('yyyy-MM-dd')} ${meetingStartTime.toFormat('HH:mm')}:00`, 'yyyy-MM-dd HH:mm:ss')
-        .plus({ minutes: meetingDurationMinutes });
-        // console.log('endDateDt', endDateDt);
-        const endDate: string = endDateDt.toISO();
-        // console.log('endDate', endDate);
-        const createdBy = this.profileService.getUserId();
-        if (!createdBy) {
-          return throwError(() => `Invalid Create Meeting data: ${v}`)
-        }
-
-        if (!startDate) {
-          return throwError(() => `Invalid Create Meeting start date: ${startDate}`)
-        }
-
-        if (!endDate) {
-          return throwError(() => `Invalid Create Meeting end date: ${endDate}`)
-        }
-        
-        if (this.meetingTypeSubject_.value === 'People') {
-          const createPersonnelMeetingRequest: CreateMeetingRequest = {
-            name,
-            startDate,
-            // endDate,
-            durationMinutes: meetingDurationMinutes,
-            createdBy,
-            personnelIds: personnels.map(p => p.id),
-          }
-
-          createMeetingRequest = createPersonnelMeetingRequest;
-        } else if (this.meetingTypeSubject_.value === 'Project') {
-          const createProjectMeetingRequest: CreateMeetingRequest = {
-            name,
-            startDate,
-            // endDate,
-            durationMinutes: meetingDurationMinutes,
-            createdBy,
-            projectIds: projects.map(p => p.id)
-          }
-
-          createMeetingRequest = createProjectMeetingRequest;
-        } else {
-          return throwError(() => `Invalid Create Meeting data: ${v}`)
-        }
-
-        return this.httpClient.post<Meeting>(
-          'http://localhost:8080/meeting',
-          createMeetingRequest
-        );
-      }))
-    )
-    .subscribe({
-      next: (v) => {
-        this.toasterService.success(
-          `Meeting Scheduled`,
-          `Success`,
-          SuccessToastConfig
-        );
-        this.resetCreateMeeting();
-      },
-      error: (e) => {
-        console.warn(e)
-        this.toasterService.warning(
-          `${e.error}`,
-          `Could not schedule meeting`,
-          WarningToastConfig
-        )
-      }
-    });
 
   constructor(
     private router: Router,

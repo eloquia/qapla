@@ -113,10 +113,10 @@ export class CreateProjectMeetingComponent implements OnInit {
         // endDate: endDate.toISO(),
         durationMinutes: duration,
         createdBy,
-        projectIds,
+        // projectIds,
       };
 
-      this.meetingService.createMeeting(createMeetingRequest);
+      // this.meetingService.createMeeting(createMeetingRequest);
     }
   }
 

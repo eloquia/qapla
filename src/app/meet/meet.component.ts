@@ -34,9 +34,9 @@ export class MeetComponent implements OnInit {
 
   // meetings$ = this.meetService.meetings$.pipe(
   meetings$ = this.store.select(selectMeetings).pipe(
+    // generate some values
     map<Meeting[], DisplayedMeeting[]>(ms => {
-      console.log('ms', ms)
-      const displayedMeetings = !!ms && ms.length
+      return !!ms && ms.length
         ? ms.map(m => {
           return {
             ...m,
@@ -44,8 +44,10 @@ export class MeetComponent implements OnInit {
           }
         })
         : [];
-      return displayedMeetings;
-    })
+    }),
+
+    // sort by time
+    map(ms => ms.sort((a, b) => a.startDate - b.startDate))
   );
 
   constructor(

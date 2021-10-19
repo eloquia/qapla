@@ -34,7 +34,7 @@
             <div class="form-field flex flex-col">
               <mat-label>People</mat-label>
               <mat-select [(ngModel)]="chosenPeople" multiple>
-                <mat-option *ngFor="let person of people" [value]="person">{{person.name}}</mat-option>
+                <mat-option *ngFor="let person of people" [value]="person">{{person.fullName}}</mat-option>
               </mat-select>
             </div>
           </ng-container>

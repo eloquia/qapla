@@ -22,6 +22,7 @@ export interface DisplayedMeeting {
   id: number;
   name: string;
   startDate: number;
+  startTime?: number;
   endDate: string;
   // personnels?: Personnel[];
   // projects?: Project[];

@@ -1,9 +1,9 @@
 import { Meeting } from 'src/app/meet/models/common';
 
 export interface IMeetingState {
-  meetingsbyDate: Meeting[];
+  meetingsByDate: Meeting[];
 }
 
 export const initialMeetingState: IMeetingState = {
-  meetingsbyDate: [],
+  meetingsByDate: [],
 }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MeetService } from 'src/app/meet/meet.service';
-import { CreateMeetingRequest } from 'src/app/meet/models/requests';
-import { CreatePersonnelRequest } from 'src/app/personnel/models';
-import { PersonnelService } from 'src/app/personnel/personnel.service';
+import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
 
 interface LoadMeetingsByDateRequest {
   type: string;
@@ -23,23 +23,40 @@ export class MeetingEffects {
 
   loadMeetingsByDate$ = createEffect(() => this.actions$.pipe(
     ofType('[Meeting API] Get Meetings By Date'),
-    switchMap((request: LoadMeetingsByDateRequest) => {
-    
-      return this.meetingService.getMeetingsByDate(request.payload)
+    switchMap((request: LoadMeetingsByDateRequest) => this.meetingService.getMeetingsByDate(request.payload)
       .pipe(
         map(p => {
+          console.log('p', p)
           return ({ type: '[Meeting API] Retrieved Meetings Success', payload: p })
         }),
         catchError(() => of({ type: '[Personnel API] Personnel Loaded Error' }))
       )
-    }),
+    ),
   ));
 
-  createMeeting$ = createEffect(() => this.actions$.pipe(
-    ofType('[Meeting API] Create Meeting'),
-    switchMap((createMeetingRequest: CreateMeetingRequest) => this.meetingService.createMeeting(createMeetingRequest)
+  createPeopleMeeting$ = createEffect(() => this.actions$.pipe(
+    ofType('[Meeting API] Create Personnel Meeting'),
+    switchMap((createPeopleMeetingRequest: CreatePeopleMeetingRequest) => this.meetingService.createPersonMeeting(createPeopleMeetingRequest)
       .pipe(
-        map(r => ({ type: '[Meeting API] Create Meeting Success' })),
+        map(r => {
+          this.matDialog.closeAll();
+          this.toasterService.success('Successfully scheduled meeting')
+          return ({ type: '[Meeting API] Create Meeting Success' })
+        }),
+        catchError(() => of({ type: '[Meeting API] Create Meeting Error' }))
+      )
+    )
+  ));
+
+  createProjectMeeting$ = createEffect(() => this.actions$.pipe(
+    ofType('[Meeting API] Create Project Meeting'),
+    switchMap((createProjectMeetingRequest: CreateProjectMeetingRequest) => this.meetingService.createProjectMeeting(createProjectMeetingRequest)
+      .pipe(
+        map(r => {
+          this.matDialog.closeAll();
+          this.toasterService.success('Successfully scheduled meeting')
+          return ({ type: '[Meeting API] Create Meeting Success' })
+        }),
         catchError(() => of({ type: '[Meeting API] Create Meeting Error' }))
       )
     )
@@ -58,6 +75,8 @@ export class MeetingEffects {
   constructor(
     private actions$: Actions,
     private meetingService: MeetService,
+    private matDialog: MatDialog,
+    private toasterService: ToastrService,
   ) {}
 
 }
