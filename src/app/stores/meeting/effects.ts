@@ -6,8 +6,14 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MeetService } from 'src/app/meet/meet.service';
 import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
+import { TagService } from 'src/app/meet/tag.service';
 
 interface LoadMeetingsByDateRequest {
+  type: string;
+  payload: any;
+}
+
+interface FetchTagsRequest {
   type: string;
   payload: any;
 }
@@ -26,13 +32,24 @@ export class MeetingEffects {
     switchMap((request: LoadMeetingsByDateRequest) => this.meetingService.getMeetingsByDate(request.payload)
       .pipe(
         map(p => {
-          console.log('p', p)
           return ({ type: '[Meeting API] Retrieved Meetings Success', payload: p })
         }),
         catchError(() => of({ type: '[Personnel API] Personnel Loaded Error' }))
       )
     ),
   ));
+
+  fetchTags$ = createEffect(() => this.actions$.pipe(
+    ofType('[Meeting API] Get Tag List'),
+    switchMap(() => this.tagService.getTags()
+      .pipe(
+        map(ts => {
+          return ({ type: '[Meeting API] Get Tag list', payload: ts })
+        }),
+        catchError(() => of({ type: '[Meeting API] Tag List Fetch Error' }))
+      )
+    )
+  ))
 
   createPeopleMeeting$ = createEffect(() => this.actions$.pipe(
     ofType('[Meeting API] Create Personnel Meeting'),
@@ -77,6 +94,7 @@ export class MeetingEffects {
     private meetingService: MeetService,
     private matDialog: MatDialog,
     private toasterService: ToastrService,
+    private tagService: TagService,
   ) {}
 
 }

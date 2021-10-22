@@ -59,6 +59,7 @@ export class MeetComponent implements OnInit {
   ngOnInit(): void {
     const dt: string = DateTime.now().toISO();
     this.store.dispatch({ type: '[Meeting API] Get Meetings By Date', payload: dt })
+    this.store.dispatch({ type: '[Meeting API] Get Tag List' })
   }
 
   selectDate($event: any) {

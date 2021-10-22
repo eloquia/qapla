@@ -128,7 +128,6 @@ export interface MeetingNote {
   authorId: number;
   authorName?: string;
   aboutId: number;
-  meetingNoteTag: MeetingNoteTag;
   tags?: MeetingNoteTag[];
 }
 
@@ -136,7 +135,6 @@ export const EMPTY_MEETING_NOTE: MeetingNote = {
   text: '',
   authorId: 0,
   aboutId: 0,
-  meetingNoteTag: EMPTY_MEETING_NOTE_TAG,
 }
 
 /* ---------- Meeting View Models ---------- */

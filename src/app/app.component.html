@@ -12,6 +12,26 @@
     </div>
   </mat-sidenav>
   <mat-sidenav-content class="p-8 h-screen">
+
+    <!-- <form [formGroup]="f">
+      <ng-container formArrayName="notes">
+        <div *ngFor="let note of notes.controls; let noteIdx = index">
+          <div [formGroupName]="noteIdx">
+            <input type="text" formControlName="text" placeholder="Note Text...">
+
+            <div formArrayName="tags">
+              <div *ngFor="let tag of noteTags(noteIdx).controls; let tagIdx = index">
+                <div [formGroupName]="tagIdx">
+                  <input type="text" placeholder="Tag Text..." formControlName="text">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </ng-container>
+    </form> -->
+
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

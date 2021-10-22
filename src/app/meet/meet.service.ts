@@ -258,6 +258,45 @@ export class MeetService {
             id
             name
             startTime
+            durationMinutes
+            people {
+              id
+              firstName
+              lastName
+            }
+            projects {
+              id
+              name
+            }
+            meetingItems {
+              id
+              personnel {
+                id
+                firstName
+                lastName
+              }
+              plannedAttendanceStatus
+              actualAttendanceStatus
+              attendanceReason
+              notes {
+                id
+                about {
+                  id
+                  firstName
+                  lastName
+                }
+                author {
+                  id
+                  firstName
+                  lastName
+                }
+                text
+                tags {
+                  id
+                  text
+                }
+              }
+            }
           }
         }
       `

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+
 import { APP_ROUTES } from './app.routes';
 import { AuthService } from './auth.service';
 
@@ -18,12 +18,30 @@ export class AppComponent {
   appRoutes = APP_ROUTES.filter(route => route.data && route.data.displayText);
   loggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
 
+  f = this.formBuilder.group({
+    name: [''],
+    notes: this.formBuilder.array([
+      this.formBuilder.group({
+        text: [''],
+        tags: this.formBuilder.array([
+          this.formBuilder.group({
+            text: ['']
+          })
+        ])
+      })
+    ])
+  })
+
   constructor(
     private authService: AuthService,
-    private router: Router,
-  ) {
-    // this.router.events.pipe(
-    //   tap(event => console.log('event', event))
-    // ).subscribe();
+    private formBuilder: FormBuilder,
+  ) {}
+
+  get notes(): FormArray {
+    return this.f.get('notes') as FormArray;
+  }
+
+  noteTags(idx: number): FormArray {
+    return this.notes.at(idx).get('tags') as FormArray;
   }
 }

@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { DateTime } from 'luxon';
-import { Meeting } from 'src/app/meet/models/common';
+import { Meeting, MeetingNoteTag } from 'src/app/meet/models/common';
 import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
 
 export const updateDate = createAction(
@@ -26,4 +26,17 @@ export const createPersonnelMeeting = createAction(
 export const createProjectMeeting = createAction(
   '[Meeting API] Create Project Meeting',
   props<{ createProjectMeetingRequest: CreateProjectMeetingRequest }>()
+)
+
+/* - - - - - - - - - - - - - -
+              Tags
+- - - - - - - - - - - - - - */
+export const getTagList = createAction(
+  '[Meeting API] Get Tag List',
+  props<{ payload: string }>()
+)
+
+export const getTagListSuccess = createAction(
+  '[Meeting API] Retrieved Tag List Success',
+  props<{ payload: MeetingNoteTag[] }>()
 )

@@ -10,3 +10,8 @@ export const selectMeetings = createSelector(
   selectMeetingFeature,
   meetingState => meetingState.meetingsByDate
 );
+
+export const selectTags = createSelector(
+  selectMeetingFeature,
+  meetingState => meetingState.tags
+);
