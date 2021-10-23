@@ -12,7 +12,7 @@ import { CreateMeetingComponent } from './create-meeting/create-meeting.componen
 
 import { MeetService } from './meet.service';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 import { IMeetingState } from '../stores/meeting/state';
 import { Store } from '@ngrx/store';
@@ -33,7 +33,13 @@ export class MeetComponent implements OnInit {
 
   meetings$ = this.store.select(selectMeetings)
     .pipe(
-      map(ms => ms.sort((a, b) => DateTime.fromISO(a.startDate).valueOf() - DateTime.fromISO(b.startDate).valueOf() ))
+      map(ms => ms.map(meeting => {
+        return {
+          ...meeting,
+          startTimeInt: DateTime.fromISO(meeting.startTime).valueOf(),
+        }
+      })),
+      map(ms => ms.sort((a, b) => DateTime.fromISO(a.startTime).valueOf() - DateTime.fromISO(b.startTime).valueOf() ))
     );
 
   constructor(

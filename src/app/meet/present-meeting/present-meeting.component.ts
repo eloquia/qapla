@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { DateTime } from 'luxon';
 import { ProfileService } from 'src/app/profile.service';
 import { MeetService } from '../meet.service';
-import { Meeting, MeetingItem, MeetingNote } from '../models/common';
+import { Meeting } from '../models/common';
 import { UpdateMeetingRequest } from '../models/requests';
 
 @Component({
@@ -19,7 +19,7 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
   @Input() meeting: Meeting = {
     id: 0,
     name: '',
-    startDate: DateTime.now().toISO(),
+    startTime: DateTime.now().toISO(),
   };
   meetingStartTime: string = '';
 
@@ -32,7 +32,7 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const meetingTime = DateTime.fromISO(this.meeting.startDate);
+    const meetingTime = DateTime.fromISO(this.meeting.startTime);
 
     this.meetingStartTime = meetingTime.toFormat('h:mm a');
   }
@@ -108,7 +108,7 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
         // })
         // : [],
     };
-    console.log('onDestroy!', updateRequest);
+    console.log('saveMeetingRequest', updateRequest);
     this.meetingService.updateMeeting(updateRequest);
   }
 }

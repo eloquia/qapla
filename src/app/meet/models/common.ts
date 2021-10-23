@@ -11,7 +11,8 @@ export const GOLANG_MEETING_FORMAT = 'ccc MMM dd yyyy HH:mm:ss';
 export interface Meeting {
   id: number;
   name: string;
-  startDate: string;
+  startDate?: string;
+  startTime: string;
   endDate?: string;
   // personnels?: Personnel[];
   // projects?: Project[];
@@ -184,7 +185,7 @@ export const MOCK_PROJECT_1: Project = {
 export const MOCK_MEETING_1: Meeting = {
   id: -999,
   name: 'Mock Meeting',
-  startDate: DateTime.now().toISO(),
+  startTime: DateTime.now().toISO(),
   endDate: DateTime.now().toISO(),
   meetingItems: [
     {

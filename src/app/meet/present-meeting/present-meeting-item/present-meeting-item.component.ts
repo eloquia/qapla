@@ -35,8 +35,6 @@ export class PresentMeetingItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('this.meetingItem', this.meetingItem);
-
     this.meetingItemForm.get('attendanceReason')?.setValue(this.meetingItem?.attendanceReason)
     this.meetingItemForm.get('plannedAttendance')?.setValue(this.meetingItem?.plannedAttendanceStatus)
     this.meetingItemForm.get('actualAttendance')?.setValue(this.meetingItem?.actualAttendanceStatus)
