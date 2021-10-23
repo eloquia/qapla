@@ -8,8 +8,8 @@
 
     <mat-chip-list #chipList aria-label="Note tags">
 
-      <ng-container *ngIf="!!note.tags && note.tags.length > 0; else noTags">
-        <ng-container *ngFor="let tag of note.tags; let tagIdx = index">
+      <ng-container *ngIf="!!selectedTags && selectedTags.length > 0; else noTags">
+        <ng-container *ngFor="let tag of selectedTags; let tagIdx = index">
           <mat-chip [selectable]="selectable" [removable]="removable" (removed)="removeTag(tagIdx)">
             {{tag.text}}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
@@ -25,7 +25,7 @@
         (matChipInputTokenEnd)="addTag($event)">
     </mat-chip-list>
 
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="handleAutocompleteSelect($event)">
       <mat-option *ngFor="let tag of filteredTags$ | async" [value]="tag">
         {{tag}}
       </mat-option>

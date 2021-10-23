@@ -31,7 +31,7 @@ export class NoteTagComponent implements OnInit {
   filteredTags$: Observable<string[]>;
   tagCtrl = new FormControl();
   tags$: Observable<MeetingNoteTag[]> = this.store.select(selectTags);
-  public selectedTags: string[] = [];
+  selectedTags: MeetingNoteTag[] = [];
 
   constructor(
     private store: Store<IMeetingState>,
@@ -49,7 +49,9 @@ export class NoteTagComponent implements OnInit {
       );
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.selectedTags = this.note.tags;
+  }
 
   public fetchResults(searchCandidate: string): void {
     console.log('fetchResults', searchCandidate)
@@ -75,8 +77,11 @@ export class NoteTagComponent implements OnInit {
     this.tagCtrl.setValue(null);
   }
 
-  selected(event: MatAutocompleteSelectedEvent): void {
-    console.log('selected', event)
+  handleAutocompleteSelect(event: MatAutocompleteSelectedEvent): void {
+    console.log('handleAutocompleteSelect event.option.value', event.option.value)
+    // this.note.tags = [...this.note.tags, { text: event.option.value }]
+    this.selectedTags = [...this.note.tags, { text: event.option.value }]
+    this.tagCtrl.setValue(null);
   }
 
 }
