@@ -12,18 +12,7 @@ export interface Meeting {
   id: number;
   name: string;
   startDate: string;
-  endDate: string;
-  // personnels?: Personnel[];
-  // projects?: Project[];
-  meetingItems?: MeetingItem[];
-}
-
-export interface DisplayedMeeting {
-  id: number;
-  name: string;
-  startDate: number;
-  startTime?: number;
-  endDate: string;
+  endDate?: string;
   // personnels?: Personnel[];
   // projects?: Project[];
   meetingItems?: MeetingItem[];
@@ -37,69 +26,6 @@ export interface MeetingAttendance {
   actualAttendanceStatus: AttendanceStatus;
   attendanceReason?: string;
 }
-
-/* ---------- Date Picker Models ---------- */
-export interface DatePickerDay {
-  displayValue: string;
-  isToday: boolean;
-  isSelectedDay: boolean;
-}
-
-export interface Month {
-  displayValue: string;
-  value: number;
-}
-
-export const months: Month[] = [
-  {
-    displayValue: 'Jan',
-    value: 1,
-  },
-  {
-    displayValue: 'Feb',
-    value: 2,
-  },
-  {
-    displayValue: 'Mar',
-    value: 3,
-  },
-  {
-    displayValue: 'Apr',
-    value: 4,
-  },
-  {
-    displayValue: 'May',
-    value: 5,
-  },
-  {
-    displayValue: 'Jun',
-    value: 6,
-  },
-  {
-    displayValue: 'Jul',
-    value: 7,
-  },
-  {
-    displayValue: 'Aug',
-    value: 8,
-  },
-  {
-    displayValue: 'Sep',
-    value: 9,
-  },
-  {
-    displayValue: 'Oct',
-    value: 10,
-  },
-  {
-    displayValue: 'Nov',
-    value: 11,
-  },
-  {
-    displayValue: 'Dec',
-    value: 12,
-  },
-];
 
 export type AttendanceStatus =
   | 'No Show'
@@ -128,13 +54,14 @@ export interface MeetingNote {
   authorId: number;
   authorName?: string;
   aboutId: number;
-  tags?: MeetingNoteTag[];
+  tags: MeetingNoteTag[];
 }
 
 export const EMPTY_MEETING_NOTE: MeetingNote = {
   text: '',
   authorId: 0,
   aboutId: 0,
+  tags: [],
 }
 
 /* ---------- Meeting View Models ---------- */
@@ -253,14 +180,6 @@ export const MOCK_PROJECT_1: Project = {
     MOCK_PERSONNEL_1,
   ],
 }
-
-export const EMPTY_MEETING: Meeting = {
-  id: 0,
-  name: 'Test Meeting',
-  startDate: '',
-  endDate: '',
-  meetingItems: [],
-};
 
 export const MOCK_MEETING_1: Meeting = {
   id: -999,

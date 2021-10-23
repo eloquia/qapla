@@ -23,7 +23,7 @@
             <mat-expansion-panel *ngFor="let meeting of meetings">
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  {{ meeting.startTime | date:'shortTime' }}
+                  {{ meeting.startDate | date:'shortTime' }}
                 </mat-panel-title>
                 <mat-panel-description>
                   <span *ngIf="meeting.name; else unnamedMeeting">{{ meeting.name }}</span>

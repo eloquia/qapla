@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { DateTime } from 'luxon';
 import { ProfileService } from 'src/app/profile.service';
 import { MeetService } from '../meet.service';
-import { EMPTY_MEETING, Meeting, MeetingItem, MeetingNote } from '../models/common';
+import { Meeting, MeetingItem, MeetingNote } from '../models/common';
 import { UpdateMeetingRequest } from '../models/requests';
 
 @Component({
@@ -16,7 +16,11 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
 
   isMouseIn: boolean = false;
 
-  @Input() meeting: Meeting = EMPTY_MEETING;
+  @Input() meeting: Meeting = {
+    id: 0,
+    name: '',
+    startDate: DateTime.now().toISO(),
+  };
   meetingStartTime: string = '';
 
   showDetail: boolean = false;
@@ -86,17 +90,23 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
     // update meeting
     const updateRequest: UpdateMeetingRequest = {
       id: this.meeting.id,
-      meetingItems: this.meeting.meetingItems?.map((meetingItem: MeetingItem) => {
-        return {
-          ...meetingItem,
-          notes: meetingItem.notes?.map((note: MeetingNote) => {
-            return {
-              ...note,
-              authorId: this.profileService.getUserId(),
-            }
-          })
-        };
-      }),
+      meetingItems: this.meeting.meetingItems
+        // ? this.meeting.meetingItems?.map((meetingItem: MeetingItem) => {
+        //   const displayedMeetingItem: MeetingItem = {
+
+        //     notes: meetingItem.notes?.map((note: MeetingNote) => {
+        //       return {
+        //         ...note,
+        //         authorId: this.profileService.getUserId(),
+        //       }
+        //     })
+        //   }
+        //   return {
+        //     ...meetingItem,
+            
+        //   };
+        // })
+        // : [],
     };
     console.log('onDestroy!', updateRequest);
     this.meetingService.updateMeeting(updateRequest);

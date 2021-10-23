@@ -1,10 +1,14 @@
-import { createReducer, on } from '@ngrx/store';
+import { Action, ActionReducer, createReducer, on } from '@ngrx/store';
 
 import { getTagListSuccess, retrievedMeetingListSuccess } from './actions';
-import { initialMeetingState } from './state';
+import { IMeetingState, initialMeetingState } from './state';
 
-export const meetingReducer = createReducer(
+const _meetingReducer: ActionReducer<IMeetingState, Action> = createReducer(
   initialMeetingState,
-  on(retrievedMeetingListSuccess, (state, { payload }) => ({ ...state, meetingsByDate: payload })),
   on(getTagListSuccess, (state, { payload }) => ({ ...state, tags: payload })),
+  on(retrievedMeetingListSuccess, (state, { payload }) => ({ ...state, meetingsByDate: payload })),
 )
+
+export function meetingReducer(state: IMeetingState | undefined, action: Action) {
+  return _meetingReducer(state, action)
+}

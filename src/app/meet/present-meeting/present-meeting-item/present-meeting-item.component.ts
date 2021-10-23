@@ -61,6 +61,7 @@ export class PresentMeetingItemComponent implements OnInit {
           text: '',
           authorId: this.profileService.getUserId(),
           aboutId: this.meetingItem!.personnel.id!,
+          tags: []
         }
       ]
 
@@ -74,9 +75,7 @@ export class PresentMeetingItemComponent implements OnInit {
         text: '',
         authorId: this.profileService.getUserId(),
         aboutId: this.meetingItem!.personnel.id!,
-        tags: [{
-          text: '',
-        }],
+        tags: [],
       }
       this.notes = [...this.notes, emptyNote];
     }

@@ -37,6 +37,11 @@ export const getTagList = createAction(
 )
 
 export const getTagListSuccess = createAction(
-  '[Meeting API] Retrieved Tag List Success',
+  '[Meeting API] Get Tag List Success',
   props<{ payload: MeetingNoteTag[] }>()
+)
+
+export const createTag = createAction(
+  '[Meeting API] Create Tag',
+  props<{ payload: string }>()
 )

@@ -44,7 +44,7 @@ export class MeetingEffects {
     switchMap(() => this.tagService.getTags()
       .pipe(
         map(ts => {
-          return ({ type: '[Meeting API] Get Tag list', payload: ts })
+          return ({ type: '[Meeting API] Get Tag List Success', payload: ts })
         }),
         catchError(() => of({ type: '[Meeting API] Tag List Fetch Error' }))
       )

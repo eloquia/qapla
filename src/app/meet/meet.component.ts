@@ -14,7 +14,6 @@ import { MeetService } from './meet.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
-import { DisplayedMeeting, Meeting } from './models/common';
 import { IMeetingState } from '../stores/meeting/state';
 import { Store } from '@ngrx/store';
 import { selectMeetings } from '../stores/meeting/selectors';
@@ -32,29 +31,16 @@ export class MeetComponent implements OnInit {
     })
   );
 
-  // meetings$ = this.meetService.meetings$.pipe(
-  meetings$ = this.store.select(selectMeetings).pipe(
-    // generate some values
-    map<Meeting[], DisplayedMeeting[]>(ms => {
-      return !!ms && ms.length
-        ? ms.map(m => {
-          return {
-            ...m,
-            startDate: Date.parse(m.startDate),
-          }
-        })
-        : [];
-    }),
-
-    // sort by time
-    map(ms => ms.sort((a, b) => a.startDate - b.startDate))
-  );
+  meetings$ = this.store.select(selectMeetings)
+    .pipe(
+      map(ms => ms.sort((a, b) => DateTime.fromISO(a.startDate).valueOf() - DateTime.fromISO(b.startDate).valueOf() ))
+    );
 
   constructor(
     private meetService: MeetService,
     public dialog: MatDialog,
     private store: Store<IMeetingState>,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     const dt: string = DateTime.now().toISO();
