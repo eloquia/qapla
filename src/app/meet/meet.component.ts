@@ -12,7 +12,7 @@ import { CreateMeetingComponent } from './create-meeting/create-meeting.componen
 
 import { MeetService } from './meet.service';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 import { IMeetingState } from '../stores/meeting/state';
 import { Store } from '@ngrx/store';
@@ -63,8 +63,8 @@ export class MeetComponent implements OnInit {
       width: '800px',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The createMeetingDialog was closed');
+    dialogRef.afterClosed().subscribe(() => {
+      this.store.dispatch({ type: '[Meeting API] Get Meetings By Date' })
     });
   }
 
