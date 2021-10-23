@@ -6,17 +6,18 @@
       <h1 class="">Meetings</h1>
 
       <div id="meeting-actions" class="">
-        <input matInput [matDatepicker]="dp" [ngModel]="date" (dateChange)="handleDateChange($event)">
-        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp></mat-datepicker>
-
         <button mat-button label="Schedule Meeting" (click)="openCreateMeeting()">Create</button>
       </div>
     </div>
 
     <!-- Content -->
     <div id="meeting-content">
-      <h2>{{ date$ | async | date:'longDate' }}</h2>
+      <!-- <h2>{{ date$ | async | date:'longDate' }}</h2> -->
+      <div class="mb-4">
+        <input matInput [matDatepicker]="dp" [ngModel]="dateTime$ | async" (dateChange)="handleDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+      </div>
       <ng-container *ngIf="meetings$ | async as meetings; else noMeetings">
         <div *ngIf="!!meetings && meetings.length > 0; else noMeetings">
           <mat-accordion class="" multi>

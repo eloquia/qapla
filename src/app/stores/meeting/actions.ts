@@ -45,3 +45,11 @@ export const createTag = createAction(
   '[Meeting API] Create Tag',
   props<{ payload: string }>()
 )
+
+/* - - - - - - - - - - - - - -
+              Tags
+- - - - - - - - - - - - - - */
+export const setDate = createAction(
+  '[Meeting API] Set Selected Date',
+  props<{ payload: string }>(),
+)

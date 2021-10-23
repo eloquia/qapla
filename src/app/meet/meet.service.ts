@@ -250,7 +250,6 @@ export class MeetService {
   }
 
   public getMeetingsByDate(date: string): Observable<Meeting[]> {
-    console.log('getMeetingsByDate', date)
     return this.apollo.query<GetMeetingsByDateResponse>({
       query: gql`
         query getMeetingsByDate {

@@ -16,7 +16,7 @@ import { map } from 'rxjs/operators';
 import { DateTime } from 'luxon';
 import { IMeetingState } from '../stores/meeting/state';
 import { Store } from '@ngrx/store';
-import { selectMeetings } from '../stores/meeting/selectors';
+import { selectDateString, selectMeetings } from '../stores/meeting/selectors';
 
 @Component({
   selector: 'app-meet',
@@ -30,6 +30,9 @@ export class MeetComponent implements OnInit {
       return dt.toJSDate();
     })
   );
+  dateTime$: Observable<DateTime> = this.store.select(selectDateString).pipe(
+    map(d => DateTime.fromISO(d))
+  )
 
   meetings$ = this.store.select(selectMeetings)
     .pipe(
@@ -64,12 +67,14 @@ export class MeetComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.store.dispatch({ type: '[Meeting API] Get Meetings By Date' })
+      const dt: string = DateTime.now().toISO();
+      this.store.dispatch({ type: '[Meeting API] Get Meetings By Date', payload: dt })
     });
   }
 
   public handleDateChange($event: MatDatepickerInputEvent<any, any>) {
-    this.meetService.updateDate($event.value)
+    const dt: DateTime = $event.value;
+    this.store.dispatch({ type: '[Meeting API] Set Selected Date', payload: dt.toISO() })
   }
 
 }

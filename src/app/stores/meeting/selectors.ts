@@ -15,3 +15,8 @@ export const selectTags = createSelector(
   selectMeetingFeature,
   meetingState => meetingState.tags
 );
+
+export const selectDateString = createSelector(
+  selectMeetingFeature,
+  meetingState => meetingState.selectedDateString
+);
