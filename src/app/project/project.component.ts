@@ -10,6 +10,7 @@ import { CreateProjectComponent } from './create-project/create-project.componen
 import { Store } from '@ngrx/store';
 import { IProjectState } from '../stores/project/state';
 import { selectProjectList } from '../stores/project/selectors';
+import { ProjectActionTypes } from '../stores/project/actions';
 
 interface DisplayedProject {
   name: string;
@@ -48,7 +49,7 @@ export class ProjectComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.store.dispatch({ type: '[Project API] Get All Project Details' });
+    this.store.dispatch({ type: ProjectActionTypes.GET_ALL_PROJECT_DETAILS });
   }
 
   public showCreate() {

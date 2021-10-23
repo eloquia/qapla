@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 import { MeetingNote, MeetingNoteTag } from '../models/common';
 import { IMeetingState } from 'src/app/stores/meeting/state';
 import { selectTags } from 'src/app/stores/meeting/selectors';
+import { TagActionTypes } from 'src/app/stores/meeting/actions';
 
 @Component({
   selector: 'app-note-tag',
@@ -62,7 +63,7 @@ export class NoteTagComponent implements OnInit {
 
     // Add our tag
     if (value) {
-      this.store.dispatch({ type: '[Meeting API] Create Tag', payload: value })
+      this.store.dispatch({ type: TagActionTypes.CREATE_TAG, payload: value })
       this.selectedTags = [ ...this.selectedTags, { text: value} ];
     }
 

@@ -17,6 +17,7 @@ import { DateTime } from 'luxon';
 import { IMeetingState } from '../stores/meeting/state';
 import { Store } from '@ngrx/store';
 import { selectDateString, selectMeetings } from '../stores/meeting/selectors';
+import { DateActionTypes, MeetingActionTypes, TagActionTypes } from '../stores/meeting/actions';
 
 @Component({
   selector: 'app-meet',
@@ -53,8 +54,8 @@ export class MeetComponent implements OnInit {
 
   ngOnInit(): void {
     const dt: string = DateTime.now().toISO();
-    this.store.dispatch({ type: '[Meeting API] Get Meetings By Date', payload: dt })
-    this.store.dispatch({ type: '[Meeting API] Get Tag List' })
+    this.store.dispatch({ type: MeetingActionTypes.GET_MEETINGS_BY_DATE, payload: dt })
+    this.store.dispatch({ type: TagActionTypes.GET_TAG_LIST })
   }
 
   selectDate($event: any) {
@@ -68,13 +69,13 @@ export class MeetComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       const dt: string = DateTime.now().toISO();
-      this.store.dispatch({ type: '[Meeting API] Get Meetings By Date', payload: dt })
+      this.store.dispatch({ type: MeetingActionTypes.GET_MEETINGS_BY_DATE, payload: dt })
     });
   }
 
   public handleDateChange($event: MatDatepickerInputEvent<any, any>) {
     const dt: DateTime = $event.value;
-    this.store.dispatch({ type: '[Meeting API] Set Selected Date', payload: dt.toISO() })
+    this.store.dispatch({ type: DateActionTypes.SET_DATE, payload: dt.toISO() })
   }
 
 }

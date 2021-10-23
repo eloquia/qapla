@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 import { Personnel } from 'src/app/personnel/models';
 import { ProfileService } from 'src/app/profile.service';
 import { Project } from 'src/app/project/models';
+import { MeetingActionTypes } from 'src/app/stores/meeting/actions';
+import { PersonnelActionTypes } from 'src/app/stores/personnel/actions';
 import { selectPersonnelList } from 'src/app/stores/personnel/selectors';
 import { IPersonnelState } from 'src/app/stores/personnel/state';
 import { MeetService } from '../meet.service';
@@ -63,7 +65,7 @@ export class CreateMeetingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store.dispatch({ type: '[Personnel API] Get Personnel List' })
+    this.store.dispatch({ type: PersonnelActionTypes.GET_PERSONNEL_LIST })
   }
 
   // -- -- -- -- -- -- -- -- -- --
@@ -111,7 +113,7 @@ export class CreateMeetingComponent implements OnInit {
         personnelIds: this.chosenPeople.map(person => `${person.id}`),
       };
       console.log('createPeopleMeetingRequest', meetingDetails)
-      this.store.dispatch({ type: '[Meeting API] Create Personnel Meeting', createPeopleMeetingRequest: meetingDetails })
+      this.store.dispatch({ type: MeetingActionTypes.CREATE_PERSONNEL_MEETING, createPeopleMeetingRequest: meetingDetails })
     } else if (this.meetingType === 'Project') {
       const meetingDetails: CreateProjectMeetingData = {
         name: this.meetingName,
@@ -121,7 +123,7 @@ export class CreateMeetingComponent implements OnInit {
         projectIds: this.chosenProjects.map(project => `${project.id}`)
       };
       console.log('createProjectMeetingRequest', meetingDetails)
-      this.store.dispatch({ type: '[Meeting API] Create Project Meeting', createProjectMeetingRequest: meetingDetails })
+      this.store.dispatch({ type: MeetingActionTypes.CREATE_PROJECT_MEETING, createProjectMeetingRequest: meetingDetails })
     } else {
       console.warn('Unknown meeting type:', this.meetingType)
     }

@@ -7,6 +7,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { MeetService } from 'src/app/meet/meet.service';
 import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
 import { TagService } from 'src/app/meet/tag.service';
+import { MeetingActionTypes, TagActionTypes } from './actions';
 
 interface LoadMeetingsByDateRequest {
   type: string;
@@ -28,11 +29,11 @@ interface FetchTagsRequest {
 export class MeetingEffects {
 
   loadMeetingsByDate$ = createEffect(() => this.actions$.pipe(
-    ofType('[Meeting API] Get Meetings By Date'),
+    ofType(MeetingActionTypes.GET_MEETINGS_BY_DATE),
     switchMap((request: LoadMeetingsByDateRequest) => this.meetingService.getMeetingsByDate(request.payload)
       .pipe(
         map(p => {
-          return ({ type: '[Meeting API] Retrieved Meetings Success', payload: p })
+          return ({ type: MeetingActionTypes.RETRIEVED_MEETINGS_SUCCESS, payload: p })
         }),
         catchError(() => of({ type: '[Personnel API] Personnel Loaded Error' }))
       )
@@ -40,11 +41,11 @@ export class MeetingEffects {
   ));
 
   fetchTags$ = createEffect(() => this.actions$.pipe(
-    ofType('[Meeting API] Get Tag List'),
+    ofType(TagActionTypes.GET_TAG_LIST),
     switchMap(() => this.tagService.getTags()
       .pipe(
         map(ts => {
-          return ({ type: '[Meeting API] Get Tag List Success', payload: ts })
+          return ({ type: TagActionTypes.GET_TAG_LIST_SUCCESS, payload: ts })
         }),
         catchError(() => of({ type: '[Meeting API] Tag List Fetch Error' }))
       )
@@ -52,7 +53,7 @@ export class MeetingEffects {
   ))
 
   createPeopleMeeting$ = createEffect(() => this.actions$.pipe(
-    ofType('[Meeting API] Create Personnel Meeting'),
+    ofType(MeetingActionTypes.CREATE_PERSONNEL_MEETING),
     switchMap((createPeopleMeetingRequest: CreatePeopleMeetingRequest) => this.meetingService.createPersonMeeting(createPeopleMeetingRequest)
       .pipe(
         map(r => {
@@ -66,7 +67,7 @@ export class MeetingEffects {
   ));
 
   createProjectMeeting$ = createEffect(() => this.actions$.pipe(
-    ofType('[Meeting API] Create Project Meeting'),
+    ofType(MeetingActionTypes.CREATE_PROJECT_MEETING),
     switchMap((createProjectMeetingRequest: CreateProjectMeetingRequest) => this.meetingService.createProjectMeeting(createProjectMeetingRequest)
       .pipe(
         map(r => {
@@ -78,16 +79,6 @@ export class MeetingEffects {
       )
     )
   ));
-
-  // deletePersonnel$ = createEffect(() => this.actions$.pipe(
-  //   ofType('[Personnel API] Delete Personnel'),
-  //   switchMap((id: number) => this.personnelService.deletePersonnel({id})
-  //     .pipe(
-  //       map(r => ({ type: '[Personnel API] Delete Personnel Success' })),
-  //       catchError(() => of({ type: '[Personnel API] Delete Personnel Error' }))
-  //     )
-  //   )
-  // ));
 
   constructor(
     private actions$: Actions,

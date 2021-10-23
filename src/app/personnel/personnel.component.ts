@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PersonnelActionTypes } from '../stores/personnel/actions';
 import { selectPersonnelList } from '../stores/personnel/selectors';
 import { IPersonnelState } from '../stores/personnel/state';
 
@@ -79,7 +80,7 @@ export class PersonnelComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.store.dispatch({ type: '[Personnel API] Get Personnel List' })
+    this.store.dispatch({ type: PersonnelActionTypes.GET_PERSONNEL_LIST })
   }
 
   public showForm(): void {

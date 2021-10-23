@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CreateProjectRequest } from 'src/app/project/models';
 import { ProjectService } from 'src/app/project/project.service';
+import { ProjectActionTypes } from './actions';
 
 /*
   Effects provide a way to perform side effects
@@ -15,11 +16,11 @@ import { ProjectService } from 'src/app/project/project.service';
 export class ProjectEffects {
 
   loadProjects$ = createEffect(() => this.actions$.pipe(
-    ofType('[Project API] Get All Project Details'),
+    ofType(ProjectActionTypes.GET_ALL_PROJECT_DETAILS),
     switchMap(() => this.projectService.getAllProjects()
       .pipe(
         map(p => {
-          return ({ type: '[Project API] Project Details List Loaded Success', payload: p })
+          return ({ type: ProjectActionTypes.GET_ALL_PROJECT_DETAILS_SUCCESS, payload: p })
         }),
         catchError(() => of({ type: '[Project API] Project Details List Loaded Error' }))
       )
@@ -27,7 +28,7 @@ export class ProjectEffects {
   ));
 
   createProject$ = createEffect(() => this.actions$.pipe(
-    ofType('[Project API] Create Project'),
+    ofType(ProjectActionTypes.CREATE_PROJECT),
     switchMap((createProjectRequest: CreateProjectRequest) => this.projectService.createProject(createProjectRequest)
       .pipe(
         map(r => ({ type: '[Project API] Create Project Success' })),
@@ -37,7 +38,7 @@ export class ProjectEffects {
   ));
 
   getProjectById$ = createEffect(() => this.actions$.pipe(
-    ofType('[Project API] Get Project By ID'),
+    ofType(ProjectActionTypes.GET_PROJECT_BY_ID),
     switchMap((projectSlug: string) => this.projectService.getProjectBySlug(projectSlug)
       .pipe(
         map(r => ({ type: '[Project API] Get Project By ID Success', payload: r })),
@@ -45,16 +46,6 @@ export class ProjectEffects {
       )
     ),
   ));
-
-  // deleteProject$ = createEffect(() => this.actions$.pipe(
-  //   ofType('[Personnel API] Delete Personnel'),
-  //   switchMap((id: number) => this.personnelService.deletePersonnel({id})
-  //     .pipe(
-  //       map(r => ({ type: '[Personnel API] Delete Personnel Success' })),
-  //       catchError(() => of({ type: '[Personnel API] Delete Personnel Error' }))
-  //     )
-  //   )
-  // ));
 
   constructor(
     private actions$: Actions,

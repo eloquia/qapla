@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CreatePersonnelRequest } from 'src/app/personnel/models';
 import { PersonnelService } from 'src/app/personnel/personnel.service';
+import { PersonnelActionTypes } from './actions';
 
 /*
   Effects provide a way to perform side effects
@@ -15,11 +16,11 @@ import { PersonnelService } from 'src/app/personnel/personnel.service';
 export class PersonnelEffects {
 
   loadPersonnel$ = createEffect(() => this.actions$.pipe(
-    ofType('[Personnel API] Get Personnel List'),
+    ofType(PersonnelActionTypes.GET_PERSONNEL_LIST),
     switchMap(() => this.personnelService.getUsers()
       .pipe(
         map(p => {
-          return ({ type: '[Personnel API] Personnel Loaded Success', payload: p })
+          return ({ type: PersonnelActionTypes.GET_PERSONNEL_LIST_SUCCESS, payload: p })
         }),
         catchError(() => of({ type: '[Personnel API] Personnel Loaded Error' }))
       )
@@ -27,7 +28,7 @@ export class PersonnelEffects {
   ));
 
   createPersonnel$ = createEffect(() => this.actions$.pipe(
-    ofType('[Personnel API] Create Personnel'),
+    ofType(PersonnelActionTypes.CREATE_PERSONNEL),
     switchMap((createPersonnelRequest: CreatePersonnelRequest) => this.personnelService.createPersonnel(createPersonnelRequest)
       .pipe(
         map(r => ({ type: '[Personnel API] Create Personnel Success' })),
@@ -37,7 +38,7 @@ export class PersonnelEffects {
   ));
 
   deletePersonnel$ = createEffect(() => this.actions$.pipe(
-    ofType('[Personnel API] Delete Personnel'),
+    ofType(PersonnelActionTypes.DELETE_PERSONNEL),
     switchMap((id: number) => this.personnelService.deletePersonnel({id})
       .pipe(
         map(r => ({ type: '[Personnel API] Delete Personnel Success' })),

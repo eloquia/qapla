@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
+import { ProjectActionTypes } from 'src/app/stores/project/actions';
 import { IProjectState } from 'src/app/stores/project/state';
 import { CreateProjectRequest } from '../models';
 
@@ -36,7 +37,7 @@ export class CreateProjectComponent implements OnInit {
       name: this.projectForm.get('name')?.value,
       description: this.projectForm.get('description')?.value,
     }
-    this.store.dispatch({ type: '[Project API] Create Project', createProjectRequest });
+    this.store.dispatch({ type: ProjectActionTypes.CREATE_PROJECT, createProjectRequest });
   }
 
 }
