@@ -8,7 +8,7 @@
 
     <mat-chip-list #chipList aria-label="Note tags">
 
-      <ng-container *ngIf="!!selectedTags && selectedTags.length > 0; else noTags">
+      <ng-container *ngIf="!!selectedTags && selectedTags.length > 0">
         <ng-container *ngFor="let tag of selectedTags; let tagIdx = index">
           <mat-chip [selectable]="selectable" [removable]="removable" (removed)="removeTag(tagIdx)">
             {{tag.text}}
@@ -16,9 +16,6 @@
           </mat-chip>
         </ng-container>
       </ng-container>
-      <ng-template #noTags>
-        <span></span>
-      </ng-template>
 
       <input placeholder="New tag..." #tagInput [formControl]="tagCtrl" [matAutocomplete]="auto"
         [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"

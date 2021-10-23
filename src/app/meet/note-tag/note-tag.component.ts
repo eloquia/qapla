@@ -5,7 +5,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { Store } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { MeetingNote, MeetingNoteTag } from '../models/common';
 import { IMeetingState } from 'src/app/stores/meeting/state';
@@ -53,13 +53,8 @@ export class NoteTagComponent implements OnInit {
     this.selectedTags = this.note.tags;
   }
 
-  public fetchResults(searchCandidate: string): void {
-    console.log('fetchResults', searchCandidate)
-  }
-
   public removeTag(tagIdx: number) {
-    console.log(`removeTag - tagIdx: ${tagIdx}`)
-    this.note.tags = this.note.tags!.splice(tagIdx, 1);
+    this.selectedTags = this.selectedTags.filter((tag, idx) => idx !== tagIdx)
   }
 
   addTag(event: MatChipInputEvent): void {
@@ -68,20 +63,18 @@ export class NoteTagComponent implements OnInit {
     // Add our tag
     if (value) {
       this.store.dispatch({ type: '[Meeting API] Create Tag', payload: value })
-      this.note.tags = [ ...this.note.tags, { text: value} ];
+      this.selectedTags = [ ...this.selectedTags, { text: value} ];
     }
 
     // Clear the input value
     event.chipInput!.clear();
 
-    this.tagCtrl.setValue(null);
+    this.tagCtrl.setValue('');
   }
 
   handleAutocompleteSelect(event: MatAutocompleteSelectedEvent): void {
-    console.log('handleAutocompleteSelect event.option.value', event.option.value)
-    // this.note.tags = [...this.note.tags, { text: event.option.value }]
-    this.selectedTags = [...this.note.tags, { text: event.option.value }]
-    this.tagCtrl.setValue(null);
+    this.selectedTags = [...this.selectedTags, { text: event.option.value }]
+    this.tagCtrl.setValue('');
   }
 
 }
