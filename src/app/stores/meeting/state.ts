@@ -5,10 +5,12 @@ export interface IMeetingState {
   meetingsByDate: Meeting[];
   tags: MeetingNoteTag[];
   selectedDateString: string;
+  createMeetingType: 'Personnel' | 'Project';
 }
 
 export const initialMeetingState: IMeetingState = {
   meetingsByDate: [],
   tags: [],
   selectedDateString: DateTime.now().toISO(),
+  createMeetingType: 'Personnel',
 }

@@ -20,3 +20,8 @@ export const selectDateString = createSelector(
   selectMeetingFeature,
   meetingState => meetingState.selectedDateString
 );
+
+export const selectMeetingType = createSelector(
+  selectMeetingFeature,
+  meetingState => meetingState.createMeetingType
+);

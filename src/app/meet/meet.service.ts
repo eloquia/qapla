@@ -8,10 +8,13 @@ import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 import { ProfileService } from '../profile.service';
+import { MeetingActionTypes } from '../stores/meeting/actions';
 import { Meeting, SearchResult } from './models/common';
 import {
   CreateMeetingRequest,
+  CreatePeopleMeetingData,
   CreatePeopleMeetingRequest,
+  CreateProjectMeetingData,
   CreateProjectMeetingRequest,
   UpdateMeetingNoteRequest,
   UpdateMeetingRequest,
@@ -230,6 +233,31 @@ export class MeetService {
     }).pipe(
       map(a => a.data?.id)
     )
+  }
+
+  public createMeeting(createMeetingRequest: CreateMeetingRequest) {
+    console.log('[LOG] Create Meeting', createMeetingRequest)
+    if (!!createMeetingRequest.meetingData.personnelIds && !!createMeetingRequest.meetingData.personnelIds!.length) {
+      const cpmr: CreatePeopleMeetingData = {
+        name: createMeetingRequest.meetingData.name,
+        startDate: createMeetingRequest.meetingData.startDate,
+        createdBy: createMeetingRequest.meetingData.createdBy,
+        personnelIds: createMeetingRequest.meetingData.personnelIds,
+        durationMinutes: createMeetingRequest.meetingData.durationMinutes,
+      };
+      return this.createPersonMeeting({ type: MeetingActionTypes.CREATE_PERSONNEL_MEETING, createPeopleMeetingRequest: cpmr })
+    } else if (!!createMeetingRequest.meetingData.projectIds && !!createMeetingRequest.meetingData.projectIds!.length) {
+      const cpmr: CreateProjectMeetingData = {
+        name: createMeetingRequest.meetingData.name,
+        startDate: createMeetingRequest.meetingData.startDate,
+        createdBy: createMeetingRequest.meetingData.createdBy,
+        projectIds: createMeetingRequest.meetingData.projectIds,
+        durationMinutes: createMeetingRequest.meetingData.durationMinutes,
+      }
+      return this.createProjectMeeting({ type: MeetingActionTypes.CREATE_PROJECT_MEETING, createProjectMeetingRequest: cpmr })
+    } else {
+      throw new Error('Unknown meeting type')
+    }
   }
 
   public updateMeetingNote(updateRequest: UpdateMeetingNoteRequest): void {

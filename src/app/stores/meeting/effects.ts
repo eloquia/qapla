@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { MeetService } from 'src/app/meet/meet.service';
-import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
+import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
 import { TagService } from 'src/app/meet/tag.service';
 import { MeetingActionTypes, TagActionTypes } from './actions';
 
@@ -79,6 +79,20 @@ export class MeetingEffects {
       )
     )
   ));
+
+  createMeeting$ = createEffect(() => this.actions$.pipe(
+    ofType(MeetingActionTypes.CREATE_MEETING),
+    switchMap((createMeetingRequest: CreateMeetingRequest) => this.meetingService.createMeeting(createMeetingRequest)
+      .pipe(
+        map(r => {
+          this.matDialog.closeAll();
+          this.toasterService.success('Successfully scheduled meeting')
+          return ({ type: '[Meeting API] Create Meeting Success' })
+        }),
+        catchError(() => of({ type: '[Meeting API] Create Meeting Error' }))
+      )
+    )
+  ))
 
   constructor(
     private actions$: Actions,

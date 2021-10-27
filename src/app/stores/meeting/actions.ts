@@ -1,12 +1,13 @@
 import { createAction, props } from '@ngrx/store';
 import { Meeting, MeetingNoteTag } from 'src/app/meet/models/common';
-import { CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
+import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
 
 export const enum MeetingActionTypes {
   GET_MEETINGS_BY_DATE = '[Meeting API] Get Meetings By Date',
   RETRIEVED_MEETINGS_SUCCESS = '[Meeting API] Retrieved Meetings Success',
   CREATE_PERSONNEL_MEETING = '[Meeting API] Create Personnel Meeting',
   CREATE_PROJECT_MEETING = '[Meeting API] Create Project Meeting',
+  CREATE_MEETING = '[Meeting API] Create Meeting',
 }
 
 export const getMeetingsByDate = createAction(
@@ -27,6 +28,11 @@ export const createPersonnelMeeting = createAction(
 export const createProjectMeeting = createAction(
   MeetingActionTypes.CREATE_PROJECT_MEETING,
   props<{ createProjectMeetingRequest: CreateProjectMeetingRequest }>()
+)
+
+export const createMeeting = createAction(
+  MeetingActionTypes.CREATE_MEETING,
+  props<{ meetingData: CreateMeetingRequest }>()
 )
 
 /* - - - - - - - - - - - - - -
@@ -63,4 +69,16 @@ export const enum DateActionTypes {
 export const setDate = createAction(
   DateActionTypes.SET_DATE,
   props<{ payload: string }>(),
+)
+
+/* - - - - - - - - - - - - - -
+        Create Meeting
+- - - - - - - - - - - - - - */
+export const enum CreateMeetingActionTypes {
+  SET_MEETING_TYPE = '[Meeting API] Set Meeting Type',
+}
+
+export const setMeetingType = createAction(
+  CreateMeetingActionTypes.SET_MEETING_TYPE,
+  props<{ payload: 'Project' | 'Personnel' }>()
 )

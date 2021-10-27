@@ -8,11 +8,16 @@ export class CreateMeetingItem {
 }
 
 export interface CreateMeetingRequest {
-  name: string;
-  startDate: string;
-  endDate?: string;
-  createdBy: number;
-  durationMinutes: number;
+  type: string;
+  meetingData: {
+    name: string;
+    startDate: string;
+    endDate?: string;
+    createdBy: number;
+    durationMinutes: number;
+    projectIds?: string[];
+    personnelIds?: string[];
+  }
 }
 
 export interface CreateProjectMeetingData {
@@ -20,7 +25,8 @@ export interface CreateProjectMeetingData {
   startDate: string;
   createdBy?: number;
   durationMinutes: number;
-  projectIds: string[];
+  projectIds?: string[];
+  personnelIds?: string[];
 }
 
 export interface CreateProjectMeetingRequest {
