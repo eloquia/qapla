@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-plus-circle',
@@ -17,11 +17,8 @@ import { Component, OnInit } from '@angular/core';
     </svg>
   </span>`,
 })
-export class PlusCircleComponent implements OnInit {
+export class PlusCircleComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

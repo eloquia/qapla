@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { Meeting } from '../models/common';
 
@@ -7,12 +7,10 @@ import { Meeting } from '../models/common';
   templateUrl: './editable-meeting.component.html',
   styleUrls: ['./editable-meeting.component.scss']
 })
-export class EditableMeetingComponent implements OnInit {
+export class EditableMeetingComponent {
 
   @Input() meetingData: Meeting = JSON.parse(JSON.stringify({}));
 
   constructor() { }
-
-  ngOnInit(): void {}
 
 }

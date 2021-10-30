@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-create-meeting-type',
   templateUrl: './create-meeting-type.component.html',
   styleUrls: ['./create-meeting-type.component.scss']
 })
-export class CreateMeetingTypeComponent implements OnInit {
+export class CreateMeetingTypeComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

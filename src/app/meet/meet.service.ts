@@ -236,7 +236,6 @@ export class MeetService {
   }
 
   public createMeeting(createMeetingRequest: CreateMeetingRequest) {
-    console.log('[LOG] Create Meeting', createMeetingRequest)
     if (!!createMeetingRequest.meetingData.personnelIds && !!createMeetingRequest.meetingData.personnelIds!.length) {
       const cpmr: CreatePeopleMeetingData = {
         name: createMeetingRequest.meetingData.name,

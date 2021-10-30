@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
@@ -14,12 +13,8 @@ import { IMeetingState } from 'src/app/stores/meeting/state';
 import { PersonnelActionTypes } from 'src/app/stores/personnel/actions';
 import { selectPersonnelList } from 'src/app/stores/personnel/selectors';
 import { IPersonnelState } from 'src/app/stores/personnel/state';
-import { CreateMeetingRequest } from '../models/requests';
 import { CreateMeetingService } from './create-meeting.service';
 
-/**
- * https://github.com/danmt/dynamic-component-loader
- */
 @Component({
   selector: 'app-create-meeting',
   templateUrl: './create-meeting.component.html',
@@ -136,7 +131,6 @@ export class CreateMeetingComponent implements OnInit {
       console.warn('Personnel or Projects must be added to a meeting')
       return;
     }
-    console.log('[LOG] Scheduling meeting with details', meetingDetails)
 
     this.personnelStore.dispatch({ type: MeetingActionTypes.CREATE_MEETING, meetingData: meetingDetails });
   }

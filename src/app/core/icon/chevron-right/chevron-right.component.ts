@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-chevron-right',
@@ -15,11 +15,8 @@ import { Component, OnInit } from '@angular/core';
         d="M9 5l7 7-7 7" />
   </svg>`,
 })
-export class ChevronRightComponent implements OnInit {
+export class ChevronRightComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

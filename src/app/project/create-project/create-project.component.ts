@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
@@ -14,7 +14,7 @@ import { CreateProjectService } from './create-project.service';
   styleUrls: ['./create-project.component.scss'],
   providers: [CreateProjectService],
 })
-export class CreateProjectComponent implements OnInit {
+export class CreateProjectComponent {
 
   isSameName = false;
 
@@ -28,9 +28,6 @@ export class CreateProjectComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateProjectComponent>,
     private store: Store<IProjectState>,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   public createProject() {
     const createProjectRequest: CreateProjectRequest = {

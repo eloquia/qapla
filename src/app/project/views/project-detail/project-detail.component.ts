@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { Personnel } from 'src/app/personnel/models';
 import { PersonnelService } from 'src/app/personnel/personnel.service';
 import { Project } from '../../models';
 import { ProjectService } from '../../project.service';
@@ -14,7 +13,7 @@ import { ProjectService } from '../../project.service';
   templateUrl: './project-detail.component.html',
   styleUrls: ['./project-detail.component.scss']
 })
-export class ProjectDetailComponent implements OnInit {
+export class ProjectDetailComponent {
 
   // unassignedPersonnel: Observable<Personnel[]> = this.personnelService.unassignedPersonnel$;
   personnelRemovalForm = this.formBuilder.group({
@@ -52,20 +51,6 @@ export class ProjectDetailComponent implements OnInit {
     private projectService: ProjectService,
     private formBuilder: FormBuilder,
   ) { }
-
-  ngOnInit(): void {
-    // this.route.data
-    //   .subscribe(data => {
-    //     const project: Project = data.project;
-    //     console.log('ngOnInit', project)
-
-    //     if (!project.slug) {
-    //       console.warn('No slug for this project!');
-    //     } else {
-    //       this.projectService.getProjectBySlug(project.slug);
-    //     }
-    //   });
-  }
 
   public addPersonnel(): void {
     if (this.assignPersonnelForm.get('personnels')?.value) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-chevron-down',
@@ -6,11 +6,8 @@ import { Component, OnInit } from '@angular/core';
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
   </svg>`,
 })
-export class ChevronDownComponent implements OnInit {
+export class ChevronDownComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

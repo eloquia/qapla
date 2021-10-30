@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
 export interface IdText {
@@ -12,7 +12,7 @@ export interface IdText {
   templateUrl: './dynamic-list.component.html',
   styleUrls: ['./dynamic-list.component.scss']
 })
-export class DynamicListComponent implements OnInit {
+export class DynamicListComponent {
 
   @Input() topic: string = '';
   @Input() items: IdText[] = [];
@@ -41,9 +41,6 @@ export class DynamicListComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   public toggleInput(): void {
     this.showInput = !this.showInput

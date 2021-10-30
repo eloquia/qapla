@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -10,7 +10,7 @@ import { SuccessToastConfig } from '../core/models';
   templateUrl: 'login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
   loginForm = this.formBuilder.group({
     email: [''],
@@ -40,8 +40,6 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/']);
     }
   }
-
-  ngOnInit() {}
 
   async logIn() {
     this.loading = true;

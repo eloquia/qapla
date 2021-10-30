@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SearchResult } from './models';
 import { SearchService } from './search.service';
@@ -19,7 +19,7 @@ import { SearchService } from './search.service';
   styleUrls: ['./searchbar-dropdown.component.scss'],
   providers: [SearchService],
 })
-export class SearchbarDropdownComponent<T> implements OnInit {
+export class SearchbarDropdownComponent<T> {
   showSearchResults: boolean = false;
   searchInput: string = '';
   searchResults: Observable<SearchResult[]> = this.searchService.searchResults$;
@@ -34,8 +34,6 @@ export class SearchbarDropdownComponent<T> implements OnInit {
   selectEvent: EventEmitter<T> = new EventEmitter();
 
   constructor(private searchService: SearchService) {}
-
-  ngOnInit(): void {}
 
   public showResults(): void {
     this.showSearchResults = true;

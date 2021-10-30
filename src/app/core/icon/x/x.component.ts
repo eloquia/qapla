@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-x',
@@ -6,11 +6,8 @@ import { Component, OnInit } from '@angular/core';
   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 </svg>`,
 })
-export class XComponent implements OnInit {
+export class XComponent {
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
 }

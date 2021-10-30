@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth.service';
 
@@ -7,11 +7,9 @@ import { AuthService } from 'src/app/auth.service';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss'],
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent {
 
   constructor(private router: Router, private authService: AuthService) {}
-
-  ngOnInit(): void {}
 
   public nav(route: any): void {
     this.router.navigate([route]);

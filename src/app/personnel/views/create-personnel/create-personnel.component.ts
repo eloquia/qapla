@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -15,7 +15,7 @@ import { CreatePersonnelService } from './create-personnel.service';
   styleUrls: ['./create-personnel.component.scss'],
   providers: [CreatePersonnelService],
 })
-export class CreatePersonnelComponent implements OnInit {
+export class CreatePersonnelComponent {
 
   emailInUse = false;
 
@@ -42,9 +42,6 @@ export class CreatePersonnelComponent implements OnInit {
     private createPersonnelService: CreatePersonnelService,
     public dialogRef: MatDialogRef<CreatePersonnelComponent>,
   ) { }
-
-  ngOnInit(): void {
-  }
 
   public createPersonnel(): void {
     if (this.personnelForm.invalid) {
