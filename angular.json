@@ -127,6 +127,9 @@
             "lintFilePatterns": [
               "src/**/*.ts",
               "src/**/*.html"
+            ],
+            "exclude": [
+              "**/node_modules/**"
             ]
           }
         }

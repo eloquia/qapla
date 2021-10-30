@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { ProjectDetails } from '../../models';
 
@@ -30,11 +30,8 @@ export class ProjectDetailResolverService implements Resolve<ProjectDetails> {
         }
       `,
     }).pipe(
-      map(a => {
-        console.log('map', a)
-        const data: ProjectDetailsResponse = a.data;
-        return data.projectDetails
-      })
+      map(a => a.data!.projectDetails),
+      catchError(() => EMPTY)
     );
   }
 }

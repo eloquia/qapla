@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
-import { EMPTY, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { EMPTY, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Apollo, gql } from 'apollo-angular';
 
 import { DisplayedPersonnel } from '../../models';
@@ -44,11 +44,12 @@ export class PersonnelDetailResolverService implements Resolve<DisplayedPersonne
     }).pipe(
       map(a => {
         return {
-          id: a.data.getUserById.id,
-          firstName: a.data.getUserById.firstName,
-          lastName: a.data.getUserById.lastName,
+          id: a.data!.getUserById!.id,
+          firstName: a.data!.getUserById!.firstName,
+          lastName: a.data!.getUserById!.lastName,
         }
-      })
+      }),
+      catchError(() => EMPTY)
     );
   }
 }

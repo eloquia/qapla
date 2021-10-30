@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, throwError } from 'rxjs';
-import { switchMap, tap, withLatestFrom, map } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import { switchMap, tap, withLatestFrom, map, catchError } from 'rxjs/operators';
 import { WarningToastConfig } from '../core/models';
 
 import { CreateProjectRequest, CreateProjectResponse, EMPTY_PROJECT, Project, ProjectDetails, ProjectListItem } from './models';
@@ -174,7 +174,8 @@ export class ProjectService {
         }
       `
     }).pipe(
-      map(a => a.data.id)
+      map(a => a.data!.id),
+      catchError(() => of(-1))
     )
   }
 
@@ -195,7 +196,8 @@ export class ProjectService {
           }
         `,
       }).pipe(
-        map((result) => result.data.projectDetailsList)
+        map((result) => result.data!.projectDetailsList),
+        catchError(() => of([]))
       );
   }
 
@@ -221,7 +223,8 @@ export class ProjectService {
         }
       `
     }).pipe(
-      map(a => a.data.projectDetails)
+      map(a => a.data!.projectDetails),
+      catchError(() => EMPTY)
     )
   }
 

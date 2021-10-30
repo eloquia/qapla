@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Apollo, gql } from 'apollo-angular';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, map, tap, withLatestFrom } from 'rxjs/operators';
 
 import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, DeletePersonnelResponse, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
 
@@ -167,9 +167,8 @@ export class PersonnelService {
         }
       `
     }).pipe(
-      map(a => {
-        return a.data.userDetails
-      })
+      map(a => a.data!.userDetails),
+      catchError(() => of([]))
     );
   }
 

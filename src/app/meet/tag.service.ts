@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
-import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { MeetingNote, MeetingNoteTag } from './models/common';
 
 interface GetTagsResponse {
@@ -55,8 +55,9 @@ export class TagService {
       `
     }).pipe(
       map(a => {
-        return a.data.tags
-      })
+        return a.data!.tags
+      }),
+      catchError(() => of([]))
     )
   }
 }

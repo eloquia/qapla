@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
 import { ProfileService } from '../profile.service';
 import { MeetingActionTypes } from '../stores/meeting/actions';
@@ -328,8 +328,9 @@ export class MeetService {
       `
     }).pipe(
       map(a => {
-        return a.data.meetingsByDate
-      })
+        return a.data!.meetingsByDate
+      }),
+      catchError(() => of([]))
     )
   }
 }
