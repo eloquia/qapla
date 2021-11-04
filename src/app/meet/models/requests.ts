@@ -1,5 +1,5 @@
 import { Type } from '@angular/core';
-import { MeetingItem, MeetingNote } from './common';
+import { MeetingItem, MeetingNote, MeetingNoteInput } from './common';
 
 /* ---------- Create Meeting ---------- */
 
@@ -64,7 +64,7 @@ export interface UpdateMeetingItemRequest {
   plannedAttendanceStatus: string;
   actualAttendanceStatus: string;
   attendanceReason: string;
-  notes: MeetingNote[];
+  notes: MeetingNoteInput[];
 }
 
 export interface UpdateMeetingItemRequestWrapper {

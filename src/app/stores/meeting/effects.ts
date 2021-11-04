@@ -146,7 +146,7 @@ export class MeetingEffects {
       ofType(MeetingActionTypes.UPDATE_MEETING_ITEM_ERROR),
       tap((r) => this.toasterService.warning(
         `Update Meeting Failure: ${r}`,
-        `Success`,
+        `Error`,
         WarningToastConfig,
       ))
     ),

@@ -1,9 +1,11 @@
-<div class="meeting-note flex flex-row">
+<div class="meeting-note flex flex-row gap-2">
   <!-- Note -->
-  <textarea matInput placeholder="Today this intern..." [(ngModel)]="note.text"></textarea>
+  <mat-form-field appearance="fill">
+    <textarea matInput placeholder="Today this intern..." [(ngModel)]="note.text"></textarea>
+  </mat-form-field>
 
   <!-- Note Tag -->
-  <mat-form-field class="example-chip-list" appearance="outline">
+  <mat-form-field class="example-chip-list" appearance="fill">
     <mat-label>Tags</mat-label>
 
     <mat-chip-list #chipList aria-label="Note tags">

@@ -7,6 +7,7 @@ import { MeetingActionTypes } from 'src/app/stores/meeting/actions';
 import { IMeetingState } from 'src/app/stores/meeting/state';
 import { MeetingItem, MeetingNote } from '../../models/common';
 import { UpdateMeetingItemRequest } from '../../models/requests';
+import { NoteService } from '../../note.service';
 
 @Component({
   selector: 'app-present-meeting-item',
@@ -39,6 +40,7 @@ export class PresentMeetingItemComponent implements OnInit, OnDestroy {
     private profileService: ProfileService,
     private formBuilder: FormBuilder,
     private store: Store<IMeetingState>,
+    private noteService: NoteService,
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class PresentMeetingItemComponent implements OnInit, OnDestroy {
       plannedAttendanceStatus: this.meetingItemForm.get('plannedAttendance')!.value,
       actualAttendanceStatus: this.meetingItemForm.get('actualAttendance')!.value,
       attendanceReason: this.meetingItemForm.get('attendanceReason')!.value,
-      notes: this.notes,
+      notes: this.notes.map(n => this.noteService.toInput(n)),
     };
     console.log('saveMeetingRequest', updateRequest);
     // this.meetingService.updateMeeting(updateRequest);

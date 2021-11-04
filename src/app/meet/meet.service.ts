@@ -6,8 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
+import { ProfileService } from '../profile.service';
 import { MeetingActionTypes } from '../stores/meeting/actions';
-import { Meeting, SearchResult } from './models/common';
+import { Meeting, MeetingNote, MeetingNoteInput, SearchResult } from './models/common';
 import {
   CreateMeetingRequest,
   CreatePeopleMeetingData,
@@ -24,6 +25,7 @@ import {
   UpdateMeetingNoteResponse,
   UpdateMeetingResponse,
 } from './models/responses';
+import { UPDATE_MEETING_ITEM } from './mutations';
 
 export interface GetMeetingsByDateResponse {
   meetingsByDate: Meeting[];
@@ -192,6 +194,7 @@ export class MeetService {
     private httpClient: HttpClient,
     private toasterService: ToastrService,
     private apollo: Apollo,
+    private profileService: ProfileService,
   ) {}
 
   // -------------------- Functions ----------------------
@@ -361,22 +364,52 @@ export class MeetService {
   }
 
   public updateMeetingItem(updateMeetingItemRequest: UpdateMeetingItemRequestWrapper) {
-    console.log('updateMeetingItem', updateMeetingItemRequest)
-    return this.apollo.mutate<UpdateMeetingItemResponse>({
-      mutation: gql`
-        mutation updateMeetingItem {
-          updateMeetingItem(input: {
-            id: "${updateMeetingItemRequest.payload.id}",
-            personnelID: "${updateMeetingItemRequest.payload.personnelID}",
-            plannedAttendanceStatus: ${updateMeetingItemRequest.payload.plannedAttendanceStatus},
-            actualAttendanceStatus: ${updateMeetingItemRequest.payload.actualAttendanceStatus},
-            attendanceReason: ${updateMeetingItemRequest.payload.attendanceReason},
-            notes: ${updateMeetingItemRequest.payload.notes}
-          }) {
-            id
-          }
+    const notes: MeetingNoteInput[] = updateMeetingItemRequest.payload.notes
+      ? updateMeetingItemRequest.payload.notes.map(note => {
+        return {
+          id: note.id,
+          text: note.text,
+          author: `${this.profileService.getUserId()}`,
+          about: updateMeetingItemRequest.payload.personnelID,
+          tags: note.tags ? note.tags.map(tag => {
+            return {
+              id: tag.id ? tag.id : -1,
+              text: tag.text,
+            }
+          }) : []
         }
-      `
+      })
+      : [];
+
+    const umir: UpdateMeetingItemRequest = {
+      id: updateMeetingItemRequest.payload.id,
+      personnelID: updateMeetingItemRequest.payload.personnelID,
+      plannedAttendanceStatus: updateMeetingItemRequest.payload.plannedAttendanceStatus,
+      actualAttendanceStatus: updateMeetingItemRequest.payload.actualAttendanceStatus,
+      attendanceReason: updateMeetingItemRequest.payload.attendanceReason,
+      notes,
+    }
+
+    return this.apollo.mutate<UpdateMeetingItemResponse>({
+      mutation: UPDATE_MEETING_ITEM,
+      variables: {
+        // meetingItemId: updateMeetingItemRequest.payload.id,
+        updateMeetingItemRequest: umir,
+      },
+      // mutation: gql`
+      //   mutation updateMeetingItem {
+      //     updateMeetingItem(input: {
+      //       id: "${updateMeetingItemRequest.payload.id}",
+      //       personnelID: "${updateMeetingItemRequest.payload.personnelID}",
+      //       plannedAttendanceStatus: "${updateMeetingItemRequest.payload.plannedAttendanceStatus}",
+      //       actualAttendanceStatus: "${updateMeetingItemRequest.payload.actualAttendanceStatus}",
+      //       attendanceReason: "${updateMeetingItemRequest.payload.attendanceReason}",
+      //       notes: ${updateMeetingItemRequest.payload.notes}
+      //     }) {
+      //       id
+      //     }
+      //   }
+      // `
     }).pipe(
       map(a => a.data?.id),
       catchError(e => {

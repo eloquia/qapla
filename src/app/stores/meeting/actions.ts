@@ -17,7 +17,7 @@ export const enum MeetingActionTypes {
   // Update Meeting Item
   UPDATE_MEETING_ITEM = '[Meeting API] Update Meeting Note',
   UPDATE_MEETING_ITEM_SUCCESS = '[Meeting API] Update Meeting Note Success',
-  UPDATE_MEETING_ITEM_ERROR = '[Meeting API] Update Meeting Note Success',
+  UPDATE_MEETING_ITEM_ERROR = '[Meeting API] Update Meeting Note Error',
 }
 
 export const getMeetingsByDate = createAction(

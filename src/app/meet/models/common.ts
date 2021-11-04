@@ -58,6 +58,15 @@ export interface MeetingNote {
   tags: MeetingNoteTag[];
 }
 
+export interface MeetingNoteInput {
+  id?: number;
+  text: string;
+  author: string;
+  authorName?: string;
+  about: string;
+  tags: MeetingNoteTag[];
+}
+
 export const EMPTY_MEETING_NOTE: MeetingNote = {
   text: '',
   authorId: 0,

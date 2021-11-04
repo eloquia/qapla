@@ -16,6 +16,8 @@ import { EditableMeetingComponent } from './editable-meeting/editable-meeting.co
 import { CreateMeetingTypeComponent } from './create-meeting-type/create-meeting-type.component';
 import { MeetHomeComponent } from './meet-home/meet-home.component';
 import { NoteTagComponent } from './note-tag/note-tag.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -35,6 +37,8 @@ import { NoteTagComponent } from './note-tag/note-tag.component';
     CommonModule,
     CommonComponentsModule,
     FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     ReactiveFormsModule,
     HttpClientModule,
     MeetRoutingModule,
