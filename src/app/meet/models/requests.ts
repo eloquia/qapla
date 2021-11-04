@@ -51,7 +51,29 @@ export interface CreatePeopleMeetingRequest {
 
 export interface UpdateMeetingRequest {
   id: number;
+  name?: string;
+  people?: string[];
+  startTime: string;
+  durationMinutes: number;
   meetingItems?: MeetingItem[];
+}
+
+export interface UpdateMeetingItemRequest {
+  id: string;
+  personnelID: string;
+  plannedAttendanceStatus: string;
+  actualAttendanceStatus: string;
+  attendanceReason: string;
+  notes: MeetingNote[];
+}
+
+export interface UpdateMeetingItemRequestWrapper {
+  type: string;
+  payload: UpdateMeetingItemRequest;
+}
+
+export interface UpdateMeetingItemResponse {
+  id: string;
 }
 
 export interface UpdateMeetingNoteRequest {

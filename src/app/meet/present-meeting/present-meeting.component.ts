@@ -1,7 +1,10 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { DateTime } from 'luxon';
 import { ProfileService } from 'src/app/profile.service';
+import { MeetingActionTypes } from 'src/app/stores/meeting/actions';
+import { IMeetingState } from 'src/app/stores/meeting/state';
 import { MeetService } from '../meet.service';
 import { Meeting } from '../models/common';
 import { UpdateMeetingRequest } from '../models/requests';
@@ -29,6 +32,7 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private meetingService: MeetService,
     private profileService: ProfileService,
+    private store: Store<IMeetingState>,
   ) {}
 
   ngOnInit(): void {
@@ -87,10 +91,16 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
   }
 
   saveMeeting(): void {
+    const durationMinutes = DateTime.fromISO(this.meeting.startDate!)
+      .diff(DateTime.fromISO(this.meeting.endDate!), 'minutes')
+      .minutes
     // update meeting
     const updateRequest: UpdateMeetingRequest = {
       id: this.meeting.id,
-      meetingItems: this.meeting.meetingItems
+      name: this.meeting.name,
+      startTime: this.meeting.startDate!,
+      durationMinutes,
+      meetingItems: this.meeting.meetingItems,
         // ? this.meeting.meetingItems?.map((meetingItem: MeetingItem) => {
         //   const displayedMeetingItem: MeetingItem = {
 
@@ -109,6 +119,7 @@ export class PresentMeetingComponent implements OnInit, OnDestroy {
         // : [],
     };
     console.log('saveMeetingRequest', updateRequest);
-    this.meetingService.updateMeeting(updateRequest);
+    // this.meetingService.updateMeeting(updateRequest);
+    this.store.dispatch({ type: MeetingActionTypes.UPDATE_MEETING, payload: updateRequest })
   }
 }

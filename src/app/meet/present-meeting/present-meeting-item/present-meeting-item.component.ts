@@ -1,17 +1,23 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 
 import { ProfileService } from 'src/app/profile.service';
+import { MeetingActionTypes } from 'src/app/stores/meeting/actions';
+import { IMeetingState } from 'src/app/stores/meeting/state';
 import { MeetingItem, MeetingNote } from '../../models/common';
+import { UpdateMeetingItemRequest } from '../../models/requests';
 
 @Component({
   selector: 'app-present-meeting-item',
   templateUrl: './present-meeting-item.component.html',
   styleUrls: ['./present-meeting-item.component.scss'],
 })
-export class PresentMeetingItemComponent implements OnInit {
+export class PresentMeetingItemComponent implements OnInit, OnDestroy {
   plannedAttendanceOptions = [ 'Attending', 'Leave Early', 'Join Late', 'Not Attending' ]
   actualAttendanceOptions = [ 'Attending', 'Leave Early', 'Join Late', 'Not Attending', 'No Show' ];
+
+  isVisible: boolean = true;
 
   @Input()
   showProjectName: boolean = false;
@@ -32,6 +38,7 @@ export class PresentMeetingItemComponent implements OnInit {
   constructor(
     private profileService: ProfileService,
     private formBuilder: FormBuilder,
+    private store: Store<IMeetingState>,
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +46,27 @@ export class PresentMeetingItemComponent implements OnInit {
     this.meetingItemForm.get('plannedAttendance')?.setValue(this.meetingItem?.plannedAttendanceStatus)
     this.meetingItemForm.get('actualAttendance')?.setValue(this.meetingItem?.actualAttendanceStatus)
     this.notes = this.meetingItem!.notes ? this.meetingItem!.notes : [];
+  }
+
+  ngOnDestroy(): void {
+    this.saveMeetingDetails();
+  }
+
+  saveMeetingDetails(): void {
+    console.log('save meeting details');
+
+    // update meeting
+    const updateRequest: UpdateMeetingItemRequest = {
+      id: `${this.meetingItem!.id}`,
+      personnelID: `${this.meetingItem!.personnel.id}`,
+      plannedAttendanceStatus: this.meetingItemForm.get('plannedAttendance')!.value,
+      actualAttendanceStatus: this.meetingItemForm.get('actualAttendance')!.value,
+      attendanceReason: this.meetingItemForm.get('attendanceReason')!.value,
+      notes: this.notes,
+    };
+    console.log('saveMeetingRequest', updateRequest);
+    // this.meetingService.updateMeeting(updateRequest);
+    this.store.dispatch({ type: MeetingActionTypes.UPDATE_MEETING_ITEM, payload: updateRequest })
   }
 
   /**
@@ -94,6 +122,13 @@ export class PresentMeetingItemComponent implements OnInit {
   handleTagChange($event: any) {
     console.log('handleTagChange($event)', $event.value)
     const tags = $event.value;
+  }
+
+  /*
+    Other actions
+  */
+  public toggleVisibility(): void {
+    this.isVisible = !this.isVisible;
   }
 
 }

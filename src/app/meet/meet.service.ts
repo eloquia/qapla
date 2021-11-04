@@ -1,13 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 import { DateTime } from 'luxon';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { SuccessToastConfig, WarningToastConfig } from '../core/models';
-import { ProfileService } from '../profile.service';
 import { MeetingActionTypes } from '../stores/meeting/actions';
 import { Meeting, SearchResult } from './models/common';
 import {
@@ -16,6 +14,9 @@ import {
   CreatePeopleMeetingRequest,
   CreateProjectMeetingData,
   CreateProjectMeetingRequest,
+  UpdateMeetingItemRequest,
+  UpdateMeetingItemRequestWrapper,
+  UpdateMeetingItemResponse,
   UpdateMeetingNoteRequest,
   UpdateMeetingRequest,
 } from './models/requests';
@@ -29,6 +30,10 @@ export interface GetMeetingsByDateResponse {
 }
 
 export interface CreateMeetingResponse {
+  id: number;
+}
+
+export interface UpdatePersonnelMeetingResponse {
   id: number;
 }
 
@@ -263,8 +268,29 @@ export class MeetService {
     this.updateMeetingNoteEventSubject_.next(updateRequest);
   }
 
-  public updateMeeting(updateRequest: UpdateMeetingRequest): void {
-    this.updateMeetingEventSubject_.next(updateRequest);
+  public updateMeeting(updateRequest: UpdateMeetingRequest): Observable<number | undefined> {
+    return this.apollo.mutate<UpdatePersonnelMeetingResponse>({
+      mutation: gql`
+        mutation updateUserMeeting {
+          updateUserMeeting(input: {
+            id: "${updateRequest.id}",
+            name: "${updateRequest.name}",
+            people: ${updateRequest.people},
+            startTime: "${updateRequest.startTime}",
+            durationMinutes: ${updateRequest.durationMinutes},
+            meetingItems: ${updateRequest.meetingItems}
+          }) {
+            id
+          }
+        }
+      `
+    }).pipe(
+      map(a => a.data?.id),
+      catchError(e => {
+        console.warn(e);
+        return EMPTY;
+      })
+    )
   }
 
   // ---------- Search for Tags ----------
@@ -331,6 +357,32 @@ export class MeetService {
         return a.data!.meetingsByDate
       }),
       catchError(() => of([]))
+    )
+  }
+
+  public updateMeetingItem(updateMeetingItemRequest: UpdateMeetingItemRequestWrapper) {
+    console.log('updateMeetingItem', updateMeetingItemRequest)
+    return this.apollo.mutate<UpdateMeetingItemResponse>({
+      mutation: gql`
+        mutation updateMeetingItem {
+          updateMeetingItem(input: {
+            id: "${updateMeetingItemRequest.payload.id}",
+            personnelID: "${updateMeetingItemRequest.payload.personnelID}",
+            plannedAttendanceStatus: ${updateMeetingItemRequest.payload.plannedAttendanceStatus},
+            actualAttendanceStatus: ${updateMeetingItemRequest.payload.actualAttendanceStatus},
+            attendanceReason: ${updateMeetingItemRequest.payload.attendanceReason},
+            notes: ${updateMeetingItemRequest.payload.notes}
+          }) {
+            id
+          }
+        }
+      `
+    }).pipe(
+      map(a => a.data?.id),
+      catchError(e => {
+        console.warn(e);
+        return EMPTY;
+      })
     )
   }
 }

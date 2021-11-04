@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Meeting, MeetingNoteTag } from 'src/app/meet/models/common';
-import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
+import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest, UpdateMeetingItemRequest, UpdateMeetingRequest } from 'src/app/meet/models/requests';
 
 export const enum MeetingActionTypes {
   GET_MEETINGS_BY_DATE = '[Meeting API] Get Meetings By Date',
@@ -8,6 +8,16 @@ export const enum MeetingActionTypes {
   CREATE_PERSONNEL_MEETING = '[Meeting API] Create Personnel Meeting',
   CREATE_PROJECT_MEETING = '[Meeting API] Create Project Meeting',
   CREATE_MEETING = '[Meeting API] Create Meeting',
+
+  // Update Meeting
+  UPDATE_MEETING = '[Meeting API] Update Meeting',
+  UPDATE_MEETING_ERROR = '[Meeting API] Update Meeting Error',
+  UPDATE_MEETING_SUCCESS = '[Meeting API] Update Meeting Success',
+
+  // Update Meeting Item
+  UPDATE_MEETING_ITEM = '[Meeting API] Update Meeting Note',
+  UPDATE_MEETING_ITEM_SUCCESS = '[Meeting API] Update Meeting Note Success',
+  UPDATE_MEETING_ITEM_ERROR = '[Meeting API] Update Meeting Note Success',
 }
 
 export const getMeetingsByDate = createAction(
@@ -33,6 +43,11 @@ export const createProjectMeeting = createAction(
 export const createMeeting = createAction(
   MeetingActionTypes.CREATE_MEETING,
   props<{ meetingData: CreateMeetingRequest }>()
+)
+
+export const updateMeeting = createAction(
+  MeetingActionTypes.UPDATE_MEETING,
+  props<{ meetingData: UpdateMeetingRequest }>()
 )
 
 /* - - - - - - - - - - - - - -
@@ -81,4 +96,33 @@ export const enum CreateMeetingActionTypes {
 export const setMeetingType = createAction(
   CreateMeetingActionTypes.SET_MEETING_TYPE,
   props<{ payload: 'Project' | 'Personnel' }>()
+)
+
+/* - - - - - - - - - - - - - -
+        Update Meeting
+- - - - - - - - - - - - - - */
+
+export const updateMeetingSuccess = createAction(
+  MeetingActionTypes.UPDATE_MEETING_SUCCESS,
+  props<{ payload: string }>()
+)
+
+export const updateMeetingError = createAction(
+  MeetingActionTypes.UPDATE_MEETING_ERROR,
+  props<{ payload: string }>()
+)
+
+export const updateMeetingItem = createAction(
+  MeetingActionTypes.UPDATE_MEETING_ITEM,
+  props<{ payload: UpdateMeetingItemRequest }>()
+)
+
+export const updateMeetingItemSuccess = createAction(
+  MeetingActionTypes.UPDATE_MEETING_ITEM_SUCCESS,
+  props<{ payload: string }>()
+)
+
+export const updateMeetingItemError = createAction(
+  MeetingActionTypes.UPDATE_MEETING_ITEM_ERROR,
+  props<{ payload: string }>()
 )

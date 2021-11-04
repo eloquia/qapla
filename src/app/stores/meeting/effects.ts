@@ -3,9 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { SuccessToastConfig, WarningToastConfig } from 'src/app/core/models';
 import { MeetService } from 'src/app/meet/meet.service';
-import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest } from 'src/app/meet/models/requests';
+import { CreateMeetingRequest, CreatePeopleMeetingRequest, CreateProjectMeetingRequest, UpdateMeetingItemRequest, UpdateMeetingItemRequestWrapper, UpdateMeetingRequest } from 'src/app/meet/models/requests';
 import { TagService } from 'src/app/meet/tag.service';
 import { MeetingActionTypes, TagActionTypes } from './actions';
 
@@ -93,6 +94,64 @@ export class MeetingEffects {
       )
     )
   ))
+
+  updateMeeting$ = createEffect(() => this.actions$.pipe(
+    ofType(MeetingActionTypes.UPDATE_MEETING),
+    mergeMap((updateMeetingRequest: UpdateMeetingRequest) => this.meetingService.updateMeeting(updateMeetingRequest)
+      .pipe(
+        map(r => ({ type: MeetingActionTypes.GET_MEETINGS_BY_DATE })),
+        catchError(() => of({ type: MeetingActionTypes.UPDATE_MEETING_ERROR }))
+      )
+    )
+  ));
+
+  updateMeetingSuccess$ = createEffect(
+    () => this.actions$.pipe(
+      ofType(MeetingActionTypes.UPDATE_MEETING_SUCCESS),
+      tap((r) => this.toasterService.success(
+        `Update Meeting Success`,
+        `Success`,
+        SuccessToastConfig,
+      ))
+    ),
+    { dispatch: false }
+  );
+
+  updateMeetingItem$ = createEffect(
+    () => this.actions$.pipe(
+      ofType(MeetingActionTypes.UPDATE_MEETING_ITEM),
+      mergeMap((updateMeetingItemRequest: UpdateMeetingItemRequestWrapper) => this.meetingService.updateMeetingItem(updateMeetingItemRequest)
+        .pipe(
+          map(r => ({ type: MeetingActionTypes.UPDATE_MEETING_ITEM_SUCCESS })),
+          catchError(() => of({ type: MeetingActionTypes.UPDATE_MEETING_ITEM_ERROR }))
+        )
+      )
+    )
+  );
+
+  updateMeetingItemSuccess$ = createEffect(
+    () => this.actions$.pipe(
+      ofType(MeetingActionTypes.UPDATE_MEETING_ITEM_SUCCESS),
+      tap((r) => this.toasterService.success(
+        `Update Meeting Success`,
+        `Success`,
+        SuccessToastConfig,
+      ))
+    ),
+    { dispatch: false }
+  );
+
+  updateMeetingItemError$ = createEffect(
+    () => this.actions$.pipe(
+      ofType(MeetingActionTypes.UPDATE_MEETING_ITEM_ERROR),
+      tap((r) => this.toasterService.warning(
+        `Update Meeting Failure: ${r}`,
+        `Success`,
+        WarningToastConfig,
+      ))
+    ),
+    { dispatch: false }
+  );
 
   constructor(
     private actions$: Actions,

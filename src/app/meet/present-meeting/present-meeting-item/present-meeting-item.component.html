@@ -1,104 +1,121 @@
 <div class="meeting-item mb-4">
-  <form [formGroup]="meetingItemForm">
-    <div class="attendance-container gap-2" *ngIf="!!meetingItem; else noMeetingItem">
-      <section class="attendee-name mb-4 flex gap-6">
-        <h2 class="font-bold text-lg">
-          {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
-        </h2>
-        <span *ngIf="showProjectName">|</span>
-        <h3 class="italic font-bold" *ngIf="showProjectName">
-          {{ meetingItem.project.name }}
-        </h3>
-      </section>
+  <div class="meeting-item-header flex justify-between justify-end" *ngIf="!!meetingItem">
+    <h2 class="font-bold text-lg">
+      {{ meetingItem.personnel.firstName }} {{ meetingItem.personnel.lastName }}
+    </h2>
 
-      <article class="grid grid-cols-2 gap-4">
-        <!-- Planned Attendance -->
-        <section class="col-span-2">
-          <div class="flex items-center">
-            <label style="width:150px">Expected</label>
-            <mat-button-toggle-group name="plannedAttendanceStatus" aria-label="Planned Attendance Status"
-              formControlName="plannedAttendance">
-              <mat-button-toggle *ngFor="let option of plannedAttendanceOptions" [value]="option">{{ option }}
-              </mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
-        </section>
+    <div class="meeting-item-actions">
+      <button mat-icon-button aria-label="Save meeting changes" (click)="saveMeetingDetails()">
+        <mat-icon>save</mat-icon>
+      </button>
 
-        <!-- Actual Attendance -->
-        <section class="col-span-2">
-          <div class="flex items-center">
-            <label style="width:150px">Actual</label>
-            <mat-button-toggle-group name="actualAttendanceStatus" aria-label="Actual Attendance Status"
-              formControlName="actualAttendance">
-              <mat-button-toggle *ngFor="let option of actualAttendanceOptions" [value]="option">{{ option }}
-              </mat-button-toggle>
-            </mat-button-toggle-group>
-          </div>
-        </section>
-
-        <!-- Tracks attendance reason -->
-        <section class="col-span-2">
-          <div class="flex items-center">
-            <label style="width:150px">Attendance Reason</label>
-            <textarea matInput id="attendance-reason" formControlName="attendanceReason"
-              placeholder="Neuroscience conference..."></textarea>
-          </div>
-        </section>
-
-        <!-- Tracks meeting notes -->
-        <section class="track-notes col-span-1">
-          <div class="track-notes-header">
-            <h3 class="">Your Thoughts?</h3>
-          </div>
-
-          <div class="notes-container mt-2 flex flex-col">
-            <div class="flex gap-2" *ngFor="let note of notes; let noteIdx = index">
-              <!-- Delete Note -->
-              <button mat-icon-button aria-label="Delete Note" (click)="removeNoteByIndex(noteIdx)">
-                <mat-icon>delete</mat-icon>
-              </button>
-
-              <app-note-tag [note]="note"></app-note-tag>
-            </div>
-
-            <button class="mt-4 py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300 hover:shadow-md"
-              (click)="addNote()">
-              + Add note
-            </button>
-          </div>
-        </section>
-
-        <!-- Displays others' meeting notes -->
-        <section class="col-span-1">
-          <h3>Others said</h3>
-
-          <div *ngIf="meetingItem.othersNotes && meetingItem.othersNotes.length; else noNotes"
-            class="meeting-notes-others">
-            <div *ngFor="let otherNote of meetingItem.othersNotes" class="meeting-notes-other p-4 flex justify-between">
-              <div class="meeting-notes-other-content flex flex-col">
-                <span class="text-gray-500 italic">{{ otherNote.text }}</span>
-                <ul *ngIf="otherNote.tags && otherNote.tags.length">
-                  <li class="text-gray-500 font-bold italic" *ngFor="let otherTag of otherNote.tags">
-                    {{ otherTag }}
-                  </li>
-                </ul>
-              </div>
-              <span class="text-gray-500 italic">{{ otherNote.authorName }}</span>
-            </div>
-          </div>
-          <ng-template #noNotes>
-            <div class="no-meeting-notes h-32 flex justify-center items-center">
-              <p class="text-gray-500 italic">No one's said anything yet</p>
-            </div>
-          </ng-template>
-        </section>
-      </article>
-
+      <button *ngIf="isVisible; else showMaximize" mat-icon-button aria-label="Minimize meeting item"
+        (click)="toggleVisibility()">
+        <mat-icon>minimize</mat-icon>
+      </button>
+      <ng-template #showMaximize>
+        <button mat-icon-button aria-label="Maximize meeting item" (click)="toggleVisibility()">
+          <mat-icon>maximize</mat-icon>
+        </button>
+      </ng-template>
     </div>
+  </div>
 
-    <ng-template #noMeetingItem>
-      No Meeting Item details to display. Does it exist?
-    </ng-template>
-  </form>
+  <ng-template [ngIf]="isVisible">
+    <form [formGroup]="meetingItemForm">
+      <div class="attendance-container gap-2">
+
+        <article class="grid grid-cols-2 gap-4">
+          <!-- Planned Attendance -->
+          <section class="col-span-2">
+            <div class="flex items-center">
+              <label style="width:150px">Expected</label>
+              <mat-button-toggle-group name="plannedAttendanceStatus" aria-label="Planned Attendance Status"
+                formControlName="plannedAttendance">
+                <mat-button-toggle *ngFor="let option of plannedAttendanceOptions" [value]="option">{{ option }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </section>
+
+          <!-- Actual Attendance -->
+          <section class="col-span-2">
+            <div class="flex items-center">
+              <label style="width:150px">Actual</label>
+              <mat-button-toggle-group name="actualAttendanceStatus" aria-label="Actual Attendance Status"
+                formControlName="actualAttendance">
+                <mat-button-toggle *ngFor="let option of actualAttendanceOptions" [value]="option">{{ option }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </section>
+
+          <!-- Tracks attendance reason -->
+          <section class="col-span-2">
+            <div class="flex items-center">
+              <label style="width:150px">Attendance Reason</label>
+              <textarea matInput id="attendance-reason" formControlName="attendanceReason"
+                placeholder="Neuroscience conference..."></textarea>
+            </div>
+          </section>
+
+          <!-- Tracks meeting notes -->
+          <section class="track-notes col-span-1">
+            <div class="track-notes-header">
+              <h3 class="">Your Thoughts?</h3>
+            </div>
+
+            <div class="notes-container mt-2 flex flex-col">
+              <div class="flex gap-2" *ngFor="let note of notes; let noteIdx = index">
+                <!-- Delete Note -->
+                <button mat-icon-button aria-label="Delete Note" (click)="removeNoteByIndex(noteIdx)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+
+                <app-note-tag [note]="note"></app-note-tag>
+              </div>
+
+              <button
+                class="mt-4 py-1 px-2 border rounded border-blue-300 bg-blue-200 hover:bg-blue-300 hover:shadow-md"
+                (click)="addNote()">
+                + Add note
+              </button>
+            </div>
+          </section>
+
+          <!-- Displays others' meeting notes -->
+          <section class="col-span-1">
+            <h3>Others said</h3>
+
+            <div *ngIf="meetingItem!.othersNotes && meetingItem!.othersNotes.length; else noNotes"
+              class="meeting-notes-others">
+              <div *ngFor="let otherNote of meetingItem!.othersNotes"
+                class="meeting-notes-other p-4 flex justify-between">
+                <div class="meeting-notes-other-content flex flex-col">
+                  <span class="text-gray-500 italic">{{ otherNote.text }}</span>
+                  <ul *ngIf="otherNote.tags && otherNote.tags.length">
+                    <li class="text-gray-500 font-bold italic" *ngFor="let otherTag of otherNote.tags">
+                      {{ otherTag }}
+                    </li>
+                  </ul>
+                </div>
+                <span class="text-gray-500 italic">{{ otherNote.authorName }}</span>
+              </div>
+            </div>
+            <ng-template #noNotes>
+              <div class="no-meeting-notes h-32 flex justify-center items-center">
+                <p class="text-gray-500 italic">No one's said anything yet</p>
+              </div>
+            </ng-template>
+          </section>
+        </article>
+
+      </div>
+
+      <ng-template #noMeetingItem>
+        No Meeting Item details to display. Does it exist?
+      </ng-template>
+    </form>
+  </ng-template>
 
 </div>
