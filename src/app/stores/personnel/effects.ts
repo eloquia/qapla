@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { CreatePersonnelRequest } from 'src/app/personnel/models';
+import { CreatePersonnelRequest, CreatePersonnelRequestWrapper } from 'src/app/personnel/models';
 import { PersonnelService } from 'src/app/personnel/personnel.service';
 import { PersonnelActionTypes } from './actions';
 
@@ -29,9 +31,13 @@ export class PersonnelEffects {
 
   createPersonnel$ = createEffect(() => this.actions$.pipe(
     ofType(PersonnelActionTypes.CREATE_PERSONNEL),
-    switchMap((createPersonnelRequest: CreatePersonnelRequest) => this.personnelService.createPersonnel(createPersonnelRequest)
+    switchMap((createPersonnelRequest: CreatePersonnelRequestWrapper) => this.personnelService.createPersonnelGql(createPersonnelRequest)
       .pipe(
-        map(r => ({ type: '[Personnel API] Create Personnel Success' })),
+        map(r => {
+          this.matDialog.closeAll();
+          this.toasterService.success('Successfully created personnel')
+          return ({ type: PersonnelActionTypes.CREATE_PERSONNEL_SUCCESS })
+        }),
         catchError(() => of({ type: '[Personnel API] Create Personnel Error' }))
       )
     )
@@ -50,6 +56,8 @@ export class PersonnelEffects {
   constructor(
     private actions$: Actions,
     private personnelService: PersonnelService,
+    private matDialog: MatDialog,
+    private toasterService: ToastrService,
   ) {}
 
 }

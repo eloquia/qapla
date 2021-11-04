@@ -3,10 +3,13 @@ import { CreatePersonnelRequest, Personnel, UpdatePersonnelRequest } from 'src/a
 
 export const enum PersonnelActionTypes {
   CREATE_PERSONNEL = '[Personnel API] Create Personnel',
+  CREATE_PERSONNEL_SUCCESS = '[Personnel API] Create Personnel Success',
+
   GET_PERSONNEL_LIST = '[Personnel API] Get Personnel List',
   SET_PERSONNEL_LIST = '[Personnel API] Set Personnel List',
   GET_PERSONNEL_LIST_SUCCESS = '[Personnel API] Personnel Loaded Success',
   GET_PERSONNEL_DETAILS = '[Personnel API] Get Personnel Details',
+
   UPDATE_PERSONNEL = '[Personnel API] Update Personnel',
   DELETE_PERSONNEL = '[Personnel API] Delete Personnel',
 }
@@ -14,6 +17,11 @@ export const enum PersonnelActionTypes {
 export const createPersonnel = createAction(
   PersonnelActionTypes.CREATE_PERSONNEL,
   props<{ createPersonnelRequest: CreatePersonnelRequest }>()
+)
+
+export const createPersonnelSuccess = createAction(
+  PersonnelActionTypes.CREATE_PERSONNEL_SUCCESS,
+  props<{ payload: string }>()
 )
 
 export const getPersonnelList = createAction(

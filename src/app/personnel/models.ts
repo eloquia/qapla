@@ -87,6 +87,11 @@ export interface CreatePersonnelRequest {
   assignedProjectIDs?: number[];
 }
 
+export interface CreatePersonnelRequestWrapper {
+  type: string;
+  payload: CreatePersonnelRequest;
+}
+
 export interface CreatePersonnelResponse {
   id: number;
 }

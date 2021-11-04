@@ -36,7 +36,7 @@ export class PersonnelComponent implements OnInit {
             return {
               id: p.id,
               name: `${p.firstName} ${p.lastName}`,
-              projectNames: p.assignedProjects.map(ap => ap.name),
+              projectNames: p.assignedProjects ? p.assignedProjects.map(ap => ap.name) : ['Unassigned'],
             }
           })
         : []
@@ -89,8 +89,9 @@ export class PersonnelComponent implements OnInit {
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      this.personnelService.getUsers();
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('dispatched PersonnelActionTypes.GET_PERSONNEL_LIST')
+      this.store.dispatch({ type: PersonnelActionTypes.GET_PERSONNEL_LIST })
     });
   }
 

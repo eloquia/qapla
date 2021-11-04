@@ -11,6 +11,7 @@ import { PersonnelDetailResolverService } from './views/personnel-detail/personn
 import { CommonComponentsModule } from '../common/common.module';
 import { CreatePersonnelComponent } from './views/create-personnel/create-personnel.component';
 import { CoreModule } from '../core/core.module';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { CoreModule } from '../core/core.module';
   imports: [
     CommonModule,
     CoreModule,
+    MatInputModule,
     ReactiveFormsModule,
     HttpClientModule,
     CommonComponentsModule,

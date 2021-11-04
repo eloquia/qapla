@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { catchError, map, tap, withLatestFrom } from 'rxjs/operators';
 
-import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, DeletePersonnelResponse, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem } from './models';
+import { CreatePersonnelRequest, CreatePersonnelResponse, DeletePersonnelRequest, DeletePersonnelResponse, Personnel, EMPTY_PERSONNEL, UpdatePersonnelRequest, PersonnelNote, DisplayedPersonnel, PersonnelListItem, CreatePersonnelRequestWrapper } from './models';
 
 interface UsersResponse {
   userDetails: Personnel[];
@@ -21,31 +21,16 @@ export class PersonnelService {
   //     Observable Data Sources & Events
   // -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  private personnelsSubject_: BehaviorSubject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  // public personnel$: Observable<Personnel[]> = this.personnelsSubject_.asObservable();
   personnel$ = this.store.select(state => state.personnel);
 
   private personnelListSubject_: BehaviorSubject<PersonnelListItem[]> = new BehaviorSubject<PersonnelListItem[]>([]);
   public personnelList$: Observable<PersonnelListItem[]> = this.personnelListSubject_.asObservable();
-
-  // private unassignedPersonnelSubject: Subject<Personnel[]> = new BehaviorSubject<Personnel[]>([]);
-  // public unassignedPersonnel$: Observable<Personnel[]> = this.personnel$.pipe(
-  //   map(personnels => personnels.filter(personnel => !personnel.assignedProjects))
-  // );
 
   private selectedPersonnelSubject_: Subject<DisplayedPersonnel> = new BehaviorSubject<DisplayedPersonnel>(EMPTY_PERSONNEL);
   public selectedPersonnel$: Observable<DisplayedPersonnel> = this.selectedPersonnelSubject_.asObservable();
 
   private updatePersonnelEventSubject_: Subject<UpdatePersonnelRequest> = new Subject<UpdatePersonnelRequest>();
   public updatePersonnelEvent$: Observable<UpdatePersonnelRequest> = this.updatePersonnelEventSubject_.asObservable();
-  // updatePersonnelSub = this.updatePersonnelEvent$.pipe(
-  //   withLatestFrom(this.selectedPersonnelSubject_),
-  //   switchMap(([updateRequest, originalPersonnel]) => {
-  //     updateRequest.notes = originalPersonnel.goals
-  //       .concat(originalPersonnel.experiences, originalPersonnel.likes);
-  //     return this.httpClient.put(`http://localhost:8080/personnel/${updateRequest.id}`, updateRequest);
-  //   })
-  // ).subscribe();
 
   private addPersonnelGoalSubject_: Subject<PersonnelNote> = new Subject<PersonnelNote>();
   addGoalSub = this.addPersonnelGoalSubject_.asObservable().pipe(
@@ -135,7 +120,6 @@ export class PersonnelService {
 
   constructor(
     private httpClient: HttpClient,
-    private toasterService: ToastrService,
     private apollo: Apollo,
     private store: Store<{ personnel: Personnel[] }>
   ) {
@@ -207,6 +191,29 @@ export class PersonnelService {
   public createPersonnel(createPersonnelRequest: CreatePersonnelRequest): Observable<CreatePersonnelResponse> {
     console.log('personnelService.createPersonnel', createPersonnelRequest);
     return this.httpClient.post<CreatePersonnelResponse>('http://localhost:8080/personnel', createPersonnelRequest);
+  }
+
+  public createPersonnelGql(createPersonnelRequest: CreatePersonnelRequestWrapper) {
+    console.log('createPersonnelGql', createPersonnelRequest)
+    return this.apollo.mutate<CreatePersonnelResponse>({
+      mutation: gql`
+        mutation createPersonnel {
+          createPersonnel(input: {
+            firstName: "${createPersonnelRequest.payload.firstName}",
+            lastName: "${createPersonnelRequest.payload.lastName}",
+            middleName: "${createPersonnelRequest.payload.middleName}",
+            goesBy: "${createPersonnelRequest.payload.goesBy}",
+            email: "${createPersonnelRequest.payload.email}",
+            gender: "${createPersonnelRequest.payload.gender}",
+            ethnicity: "${createPersonnelRequest.payload.ethnicity}",
+            position: "${createPersonnelRequest.payload.position}",
+            institution: "${createPersonnelRequest.payload.institution}"
+          }) {
+            id
+          }
+        }
+      `
+    })
   }
 
   public deletePersonnel(deletePersonnelRequest: DeletePersonnelRequest) {

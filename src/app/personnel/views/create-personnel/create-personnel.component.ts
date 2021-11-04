@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Project } from 'src/app/project/models';
-import { ProjectService } from 'src/app/project/project.service';
+import { PersonnelActionTypes } from 'src/app/stores/personnel/actions';
+import { IPersonnelState } from 'src/app/stores/personnel/state';
+import { selectProjectList } from 'src/app/stores/project/selectors';
+import { IProjectState } from 'src/app/stores/project/state';
 
 import { CreatePersonnelRequest } from '../../models';
-import { PersonnelService } from '../../personnel.service';
 import { CreatePersonnelService } from './create-personnel.service';
 
 @Component({
@@ -33,14 +36,13 @@ export class CreatePersonnelComponent {
     assignedProjects: [''],
   });
 
-  projects$: Observable<Project[]> = this.projectService.projects$;
+  projects$: Observable<Project[]> = this.projectStore.select(selectProjectList)
 
   constructor(
     private formBuilder: FormBuilder,
-    private personnelService: PersonnelService,
-    private projectService: ProjectService,
-    private createPersonnelService: CreatePersonnelService,
     public dialogRef: MatDialogRef<CreatePersonnelComponent>,
+    private projectStore: Store<IProjectState>,
+    private personnelStore: Store<IPersonnelState>,
   ) { }
 
   public createPersonnel(): void {
@@ -64,22 +66,8 @@ export class CreatePersonnelComponent {
         institution: this.personnelForm.get('institution')?.value ? this.personnelForm.get('institution')?.value : '',
         assignedProjectIDs: this.personnelForm.get('assignedProjects')?.value ? this.personnelForm.get('assignedProjects')?.value : [],
       }
-      // this.personnelService.createPersonnel(createPersonnelRequest).subscribe(response => {
-      //   this.clearForm();
-      // });
-      this.createPersonnelService.createPersonnel(createPersonnelRequest).subscribe({
-        next: r => {
-          console.log('User created successfully', r);
-          this.emailInUse = false;
-          this.dialogRef.close();
-        },
-        error: e => {
-          console.warn(e)
-          if (e.message === 'Email already in use') {
-            this.emailInUse = true;
-          }
-        },
-      })
+
+      this.personnelStore.dispatch({ type: PersonnelActionTypes.CREATE_PERSONNEL, payload: createPersonnelRequest });
     }
   }
 
